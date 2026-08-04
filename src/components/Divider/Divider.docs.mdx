@@ -1,0 +1,31 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as DividerStories from './Divider.stories';
+
+<Meta of={DividerStories} />
+
+# Divider
+
+A thin line that separates content, either horizontally or vertically.
+Renders as a `<div role="separator">` rather than an `<hr>` so it can
+support both orientations correctly — `aria-orientation` is always set to
+match the `orientation` prop.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Orientation
+
+Horizontal dividers span the full width of their container. Vertical
+dividers use `self-stretch` so they fill the height of a flex container
+without needing an explicit height on the divider itself.
+
+<Stories />
+
+## Colors
+
+`color` maps onto the same semantic border tokens the rest of the library
+uses (`border-default`, `border-subtle`, `border-strong`, `border-brand`),
+so a divider always tracks the current theme instead of a hardcoded gray.

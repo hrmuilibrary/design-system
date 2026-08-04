@@ -1,0 +1,27 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as ProgressStories from './Progress.stories';
+
+<Meta of={ProgressStories} />
+
+# Progress
+
+Communicates completion of a task, either as a linear bar or a circular
+ring. Both variants expose the same `percent` / `stepCount` + `currentStep`
+API — pass step counts when progress advances in discrete steps (e.g.
+"2/4") and `percent` for continuous progress.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Indeterminate state
+
+Circular progress supports `loop`, which renders a spinning ring instead
+of tracking `percent` — use it when the duration of an operation is
+unknown. `loop` is not available on the linear variant.
