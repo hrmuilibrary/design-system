@@ -1,0 +1,32 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as SkeletonStories from './Skeleton.stories';
+
+<Meta of={SkeletonStories} />
+
+# Skeleton
+
+A placeholder shown in place of content while it loads. Renders a
+`role="status"` `<span>` sized from `width`/`height` (numbers are treated
+as px, strings pass through as-is), or from `children` when provided.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants and animation
+
+<Stories />
+
+## Sizing from children
+
+Pass `children` instead of `width`/`height` to have the skeleton infer its
+size from real content used as a layout guide — the children are rendered
+but kept invisible, so the placeholder always matches the eventual layout
+exactly.
+
+## Multiple lines
+
+`count` renders N stacked placeholders — useful for paragraph-shaped
+loading states without repeating the component by hand.

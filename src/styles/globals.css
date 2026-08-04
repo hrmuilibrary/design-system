@@ -31,3 +31,24 @@
     font-family: var(--font-sans);
   }
 }
+
+/*
+ * Skeleton's `wave` animation — declaring `--animate-*` inside `@theme`
+ * auto-generates the `animate-skeleton-wave` utility, same as any other
+ * `@theme` variable in tokens.css/theme.css.
+ */
+@theme {
+  --animate-skeleton-wave: skeleton-wave 1.6s linear infinite;
+}
+
+@keyframes skeleton-wave {
+  0% {
+    transform: translateX(-100%);
+  }
+  60% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
