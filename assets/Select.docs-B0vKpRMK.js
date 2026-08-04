@@ -1,0 +1,32 @@
+import{i as e}from"./preload-helper-BdFrVu1K.js";import{t}from"./iframe-BgCNYJC5.js";import{c as n,l as r,o as i,r as a,s as o,x as s}from"./blocks-CpjVkczv.js";import{t as c}from"./mdx-react-shim-peawkiiJ.js";import{n as l,t as u}from"./Select.stories-DNfzQFXo.js";function d(e){let t={code:`code`,h1:`h1`,h2:`h2`,p:`p`,pre:`pre`,...s(),...e.components};return(0,p.jsxs)(p.Fragment,{children:[(0,p.jsx)(i,{of:u}),`
+`,(0,p.jsx)(t.h1,{id:`select`,children:`Select`}),`
+`,(0,p.jsxs)(t.p,{children:[`A custom single-select listbox (not a native `,(0,p.jsx)(t.code,{children:`<select>`}),`). Renders as a
+button that toggles a floating option list, styled with plain Tailwind
+utility classes resolved from a `,(0,p.jsx)(t.code,{children:`size`}),` lookup table — same pattern as
+`,(0,p.jsx)(t.code,{children:`Button`}),`. Supports controlled (`,(0,p.jsx)(t.code,{children:`value`}),`/`,(0,p.jsx)(t.code,{children:`onChange`}),`) and uncontrolled
+(`,(0,p.jsx)(t.code,{children:`defaultValue`}),`) usage, keyboard navigation (arrow keys, Enter/Space,
+Escape), and outside-click dismissal.`]}),`
+`,(0,p.jsx)(o,{}),`
+`,(0,p.jsx)(t.h2,{id:`props`,children:`Props`}),`
+`,(0,p.jsx)(a,{}),`
+`,(0,p.jsx)(t.h2,{id:`variants`,children:`Variants`}),`
+`,(0,p.jsx)(n,{}),`
+`,(0,p.jsx)(t.h2,{id:`controlled-vs-uncontrolled`,children:`Controlled vs. uncontrolled`}),`
+`,(0,p.jsxs)(t.p,{children:[`Pass `,(0,p.jsx)(t.code,{children:`value`}),` + `,(0,p.jsx)(t.code,{children:`onChange`}),` for a controlled select, or `,(0,p.jsx)(t.code,{children:`defaultValue`}),` for an
+uncontrolled one — never both. `,(0,p.jsx)(t.code,{children:`Select`}),` decides which mode it's in by
+checking whether `,(0,p.jsx)(t.code,{children:`value !== undefined`}),`.`]}),`
+`,(0,p.jsx)(t.pre,{children:(0,p.jsx)(t.code,{className:`language-tsx`,children:`// Uncontrolled
+<Select options={options} defaultValue="apple" />
+
+// Controlled
+const [value, setValue] = useState('apple');
+<Select options={options} value={value} onChange={setValue} />
+`})}),`
+`,(0,p.jsx)(t.h2,{id:`validation-state`,children:`Validation state`}),`
+`,(0,p.jsxs)(t.p,{children:[(0,p.jsx)(t.code,{children:`error`}),` (boolean) switches the trigger to the danger border/ring styles;
+`,(0,p.jsx)(t.code,{children:`errorText`}),` does the same and also renders below the control in place of
+`,(0,p.jsx)(t.code,{children:`helperText`}),`.`]}),`
+`,(0,p.jsx)(t.h2,{id:`composition`,children:`Composition`}),`
+`,(0,p.jsxs)(t.p,{children:[(0,p.jsx)(t.code,{children:`Select`}),` forwards its ref to the trigger `,(0,p.jsx)(t.code,{children:`<button>`}),` element. Its root DOM
+node is the wrapping `,(0,p.jsx)(t.code,{children:`<div>`}),` (label + trigger + listbox + helper/error
+text), which is where `,(0,p.jsx)(t.code,{children:`dataTestId`}),` is applied as `,(0,p.jsx)(t.code,{children:`data-test-id`}),`.`]})]})}function f(e={}){let{wrapper:t}={...s(),...e.components};return t?(0,p.jsx)(t,{...e,children:(0,p.jsx)(d,{...e})}):d(e)}var p;e((()=>{p=t(),c(),r(),l()}))();export{f as default};
