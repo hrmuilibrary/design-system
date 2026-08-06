@@ -39,6 +39,11 @@ export default defineConfig({
         'react-hook-form',
         'yup',
         '@hookform/resolvers/yup',
+        '@tanstack/react-table',
+        '@tanstack/react-virtual',
+        '@dnd-kit/core',
+        '@dnd-kit/sortable',
+        '@dnd-kit/utilities',
       ],
       output: {
         preserveModules: false,

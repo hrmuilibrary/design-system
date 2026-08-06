@@ -1,0 +1,186 @@
+import { Meta, Primary, Stories } from '@storybook/addon-docs/blocks';
+import * as TableV2Stories from './TableV2.stories';
+
+<Meta of={TableV2Stories} />
+
+# TableV2
+
+An enterprise data-grid built on [TanStack Table v8](https://tanstack.com/table/v8)
+and this design system's own primitives (`Checkbox`, `DropdownMenu`, `Input`,
+`Select`, `Pagination`, `Skeleton`, `Empty`, `InlineAlert`) — not shadcn/ui,
+since that library isn't part of this stack. Every feature (sorting,
+filtering, selection, visibility, drag-and-drop column ordering, pinning,
+resizing, pagination, virtualization) is opt-in via a boolean prop, and every
+piece of feature state can be either uncontrolled (TableV2 manages it
+internally) or controlled (you own the state — local `useState`, React
+Query, Redux, whatever).
+
+`Table`/`DataTable` (in `src/components/Table`) remain unchanged and
+untouched by this component — reach for `TableV2` when you need TanStack's
+feature set; reach for the original `Table` primitives for hand-authored
+markup or a simple columns/rows table.
+
+<Primary />
+
+## Controlled vs. uncontrolled state
+
+Every stateful feature follows the same pair of props: a value and an
+`onXChange` callback, mirroring TanStack Table's own state API one-to-one.
+
+- **Omit both** — TableV2 manages that slice of state internally (fully
+  uncontrolled). This is enough for `enableSorting`, `enableRowSelection`,
+  etc. in the common case.
+- **Pass both** — you own the state. TableV2 reads your value and calls your
+  setter; nothing is stored internally. This is how it plugs into external
+  state without any special-casing:
+
+```tsx
+// Local state
+const [sorting, setSorting] = useState<SortingState>([]);
+<TableV2 data={data} columns={columns} enableSorting sorting={sorting} onSortingChange={setSorting} />
+
+// React Query-backed server pagination
+const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 20 });
+const { data, isLoading } = useQuery(['users', pagination], () => fetchUsers(pagination));
+<TableV2
+  data={data?.rows ?? []}
+  columns={columns}
+  loading={isLoading}
+  enablePagination
+  manualPagination
+  pageCount={data?.pageCount}
+  pagination={pagination}
+  onPaginationChange={setPagination}
+/>
+```
+
+The same pattern covers `columnFilters`/`onColumnFiltersChange`,
+`globalFilter`/`onGlobalFilterChange`, `rowSelection`/`onRowSelectionChange`,
+`columnVisibility`/`onColumnVisibilityChange`, `columnOrder`/`onColumnOrderChange`,
+and `columnPinning`/`onColumnPinningChange` — so a Redux-backed table, for
+instance, just dispatches from the `onXChange` and selects the value back in.
+
+## Feature flags
+
+| Prop | Feature |
+| --- | --- |
+| `enableSorting` / `enableMultiSort` | Column sorting, shift-click for multi-sort |
+| `enableFiltering` | Per-column filter row (driven by `meta.filterVariant`) |
+| `enableGlobalFilter` | Toolbar search box |
+| `enableRowSelection` / `enableMultiRowSelection` | Checkbox column with select-all + indeterminate state |
+| `enableColumnVisibility` | "Columns" toolbar dropdown |
+| `enableColumnOrdering` | Drag-and-drop column header reordering |
+| `enablePinning` | Pin columns left/right via the per-header menu |
+| `enableColumnResizing` | Draggable column edge resize handles |
+| `enablePagination` | Footer pagination — client-side by default, or manual/server via `manualPagination` |
+| `enableVirtualization` | Row virtualization (`@tanstack/react-virtual`) for large datasets |
+
+All default to `false` — opt in per table.
+
+## Column filters
+
+Set `meta.filterVariant` on a column to make it filterable when
+`enableFiltering` is on:
+
+```tsx
+const columns: ColumnDef<Employee>[] = [
+  { accessorKey: 'name', header: 'Name', meta: { filterVariant: 'text' } },
+  {
+    accessorKey: 'department',
+    header: 'Department',
+    meta: {
+      filterVariant: 'select',
+      filterOptions: [{ label: 'Engineering', value: 'Engineering' }, /* ... */],
+    },
+  },
+  { accessorKey: 'joinDate', header: 'Joined', meta: { filterVariant: 'date' } },
+  { accessorKey: 'notes', header: 'Notes', meta: { filterVariant: 'custom', filterComponent: (column) => <MyControl column={column} /> } },
+];
+```
+
+Columns without a `filterVariant` simply render no filter input. `meta.align`
+(`'left' | 'center' | 'right'`) controls header/cell text alignment
+independent of filtering.
+
+## Row selection and row actions
+
+`enableRowSelection` prepends a checkbox column automatically — you don't
+need to define it yourself. Row actions are different: since the action list
+is inherently domain-specific, add a trailing column with the
+`createRowActionsColumn` helper instead of a boolean flag:
+
+```tsx
+import { createRowActionsColumn } from '@ps-tools/ui';
+
+const columns: ColumnDef<Employee>[] = [
+  ...baseColumns,
+  createRowActionsColumn<Employee>((employee) => [
+    { label: 'Edit', icon: <Pencil className="h-4 w-4" />, onSelect: (row) => edit(row) },
+    { label: 'Duplicate', onSelect: (row) => duplicate(row) },
+    { label: 'Delete', destructive: true, onSelect: (row) => remove(row), disabled: (row) => row.status === 'Inactive' },
+  ]),
+];
+```
+
+## Toolbar
+
+The default toolbar (search, refresh, export, column visibility,
+`toolbarActions` slot) is fully replaceable — pass your own `toolbar`
+node, or `false` to render none:
+
+```tsx
+<TableV2 data={data} columns={columns} toolbar={<MyCustomToolbar />} />
+// or
+<TableV2 data={data} columns={columns} toolbar={false} />
+```
+
+## Responsive behavior
+
+Below the `md` breakpoint, TableV2 swaps the `<table>` for a card list (one
+card per row: a primary field as the title, remaining visible columns as a
+label/value grid) instead of shrinking columns illegibly. This is driven by
+the real browser viewport width, not the component's container width — see
+the **Mobile** story.
+
+## Performance
+
+- `getCoreRowModel`/`getSortedRowModel`/`getFilteredRowModel`/`getPaginationRowModel`
+  are only constructed when the corresponding feature is enabled.
+- `enableVirtualization` (via `@tanstack/react-virtual`) renders only the
+  rows in (and slightly beyond) the visible scroll viewport — use it for
+  datasets in the thousands of rows, in place of or alongside pagination.
+- Column resizing defaults to TanStack's `'onChange'` resize mode; pass
+  `columnResizeMode="onEnd"` if dragging large tables feels janky.
+
+## Accessibility checklist
+
+- Sortable headers are real `<button>`s (keyboard + screen-reader
+  operable) with `aria-sort` reflecting the current direction.
+- The select-all checkbox exposes the indeterminate ("some selected") state
+  via `aria-checked="mixed"`.
+- The per-header options menu, row-actions menu, and column-visibility
+  dropdown all use the shared `DropdownMenu` primitive, which provides
+  roving-focus arrow-key navigation, `Escape` to close, and focus return to
+  the trigger.
+- Column drag handles are labeled (`aria-label="Reorder {column} column"`)
+  and drag-and-drop is also operable via keyboard (dnd-kit's
+  `KeyboardSensor`).
+- Loading state renders skeleton rows (never a spinner), each carrying
+  `role="status"`/`aria-label="Loading"` from the shared `Skeleton`
+  primitive.
+
+## Extension points
+
+- **Custom cells** — a column's `cell` renderer is plain JSX; compose any
+  component (`Avatar`, `Badge`, `Status`, `Progress`, `Link`, icons, or a
+  fully custom component) — see the **Custom cells** story.
+- **Custom filter inputs** — `meta.filterVariant: 'custom'` +
+  `meta.filterComponent`.
+- **Custom toolbar** — the `toolbar` prop, as above.
+- **`createSelectionColumn()` / `createRowActionsColumn()` / `getPinnedStyles()`**
+  are exported for consumers building their own header/cell composition on
+  top of TanStack Table directly.
+
+## Variants
+
+<Stories />
