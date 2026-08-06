@@ -56,8 +56,7 @@ Typography uses a semantic scale, not Tailwind's default `xs/sm/base/lg`:
 ## Component architecture
 
 Components live under `src/components/<Name>/` with a fixed file set
-(established by `Button`, the only component so far — follow this exact
-shape for every new one):
+(established by `Button` — follow this exact shape for every new one):
 
 ```
 src/components/<Name>/
@@ -70,6 +69,22 @@ src/components/<Name>/
 
 Root `src/index.ts` re-exports every component's barrel, `cn` from
 `src/lib/cn.ts`, everything in `src/tokens`, and everything in `src/types`.
+
+**Exception — subpath-only exports**: a component whose implementation
+requires a dependency most consumers won't have (and shouldn't be forced
+to install) is exported from its own subpath instead of the root barrel:
+`src/icons` (`./icons`) and `FormContainer`/`FormField` (`./form`, pulling
+in `react-hook-form`/`yup`/`@hookform/resolvers` as optional
+peerDependencies). This matters because `vite.lib.config.ts` builds with
+`preserveModules: false`, so everything reachable from `src/index.ts`
+bundles into one `dist/index.js` — a root re-export would make that
+dependency load-bearing for every consumer, even ones only using
+`Button`. Each subpath needs: the component still lives under
+`src/components/<Name>/` as normal, but its own barrel is re-exported
+from a dedicated `src/<subpath>/index.ts` instead of from
+`src/index.ts`; a matching entry in `vite.lib.config.ts`'s `build.lib.entry`
+and `rollupOptions.external`; and a `"./<subpath>"` entry in
+`package.json`'s `exports` map.
 
 **Styling approach**: components resolve `variant`/`size` (and similar
 props) through plain `Record<Variant, string>` lookup tables of Tailwind

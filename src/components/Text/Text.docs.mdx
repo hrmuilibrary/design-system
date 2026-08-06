@@ -36,6 +36,17 @@ resolves to.
 
 <Stories />
 
+## Truncation
+
+`truncate` clamps to a single line with an ellipsis. `clamp` clamps to any
+number of lines instead (via CSS line-clamp) — useful for card summaries
+or list previews where a fixed number of lines reads better than a single
+truncated one. `clamp` is ignored when `truncate` is also set.
+
+```tsx
+<Text clamp={2}>A longer paragraph that gets cut off after two lines...</Text>
+```
+
 ## Overriding styles
 
 Because `Text` resolves its `className` prop through the same `cn()` merge

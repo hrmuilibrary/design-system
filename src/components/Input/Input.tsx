@@ -30,6 +30,7 @@ const iconSlotSize: Record<InputSize, string> = {
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     label,
+    labelAddons,
     helperText,
     errorText,
     size = 'md',
@@ -55,15 +56,23 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
   return (
     <div className={cn('flex flex-col gap-1.5 w-full', wrapperClassName)} data-test-id={dataTestId}>
-      {label && (
-        <label htmlFor={inputId} className="text-p-std font-medium text-fg-default inline-flex items-center gap-1">
-          {label}
-          {required && (
-            <span className="text-red-600" aria-hidden>
-              *
-            </span>
+      {(label || labelAddons) && (
+        <div className="flex items-center gap-1.5">
+          {label && (
+            <label
+              htmlFor={inputId}
+              className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
+            >
+              {label}
+              {required && (
+                <span className="text-red-600" aria-hidden>
+                  *
+                </span>
+              )}
+            </label>
           )}
-        </label>
+          {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}
+        </div>
       )}
       <div
         className={cn(

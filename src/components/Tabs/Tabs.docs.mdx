@@ -68,14 +68,55 @@ bordered segmented control).
 
 `Tab` accepts an optional `icon` node rendered before the label, and a
 `badge` node (e.g. an unread count) rendered after it — hidden entirely
-when `badge` is `undefined`, `null`, or `false`. Both recolor to match the
-tab's active state.
+when `badge` is `undefined`, `null`, or `false`. By default `badge` renders
+through a fixed-style pill that recolors to match the tab's active state;
+pass `badgeProps` (a subset of `Badge`'s `variant`/`appearance`/`size`) to
+render it through `Badge` instead with full styling control.
+
+## Trailing icon (closable tabs)
+
+`rightIcon` renders a second, independent button after the label — e.g. a
+close (X) button — with its own `onRightIconClick(value)` handler and
+`rightIconLabel` accessible name. It's rendered as a *sibling* of the tab
+button rather than nested inside it (nesting a `<button>` inside another
+`<button>` is invalid HTML), so clicking it never also activates the tab.
+
+```tsx
+<Tab value="report-1" rightIcon={<X className="size-3.5" />} rightIconLabel="Close"
+  onRightIconClick={(value) => closeTab(value)}>
+  Q1 Report
+</Tab>
+```
 
 ## Disabled tabs
 
 `Tab` accepts a native `disabled` attribute, which blocks selection and
 applies the same `disabled:opacity-50 disabled:cursor-not-allowed`
-treatment used elsewhere in the library.
+treatment used elsewhere in the library. `Tabs` also accepts a bar-level
+`disabled`, OR'd with each tab's own — use it to disable every tab at once
+(e.g. while a page is loading).
+
+## Scrollable overflow
+
+`TabList` accepts `scrollable`, which switches the bar from wrapping to a
+horizontally-scrolling strip (with a fade at both edges) when there are
+too many tabs to fit.
+
+## Keyboard navigation
+
+`ArrowLeft`/`ArrowRight` move between tabs (wrapping at each end) and
+activate the newly-focused one immediately (the WAI-ARIA "automatic
+activation" pattern); `Home`/`End` jump to the first/last tab. Only the
+active tab is a keyboard tab-stop — arrowing through the bar moves focus
+without adding every tab to the page's tab order.
+
+## Keeping panels mounted
+
+By default an inactive `TabPanel` unmounts rather than hiding via CSS, so
+its content isn't kept alive in the DOM while hidden. Pass `keepMounted`
+on a `TabPanel` to keep it mounted (toggled via the `hidden` attribute
+instead) — useful for preserving scroll position or in-panel state across
+tab switches.
 
 ## Overriding styles
 
@@ -86,8 +127,10 @@ app-level override always wins over the component defaults.
 ## Ref forwarding
 
 `Tabs`, `TabList`, and `TabPanel` forward their ref to their own root
-`<div>`; `Tab` forwards its ref to its root `<button>`. All four spread
-their remaining native attributes, so they compose with the rest of the
-library without a separate "as child" API. `TabList`, `Tab`, and `TabPanel`
-must always be rendered inside a `Tabs` — they read the active value from
-context and throw if that context is missing.
+`<div>`; `Tab` forwards its ref to its `<button>` — always the tab button
+itself, even when `rightIcon` is set and that button is wrapped in an
+outer `<span>` alongside the second, independent icon button. All four
+spread their remaining native attributes, so they compose with the rest of
+the library without a separate "as child" API. `TabList`, `Tab`, and
+`TabPanel` must always be rendered inside a `Tabs` — they read the active
+value from context and throw if that context is missing.

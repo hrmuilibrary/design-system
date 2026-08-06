@@ -1,0 +1,42 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as CopyStories from './Copy.stories';
+
+<Meta of={CopyStories} />
+
+# Copy
+
+An icon-only button that copies `text` to the clipboard via the native
+`navigator.clipboard.writeText` API (no clipboard library needed), and
+flashes a "Copied" `Popover` for feedback.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Feedback
+
+Feedback shows two ways at once, since a `Popover` mount alone isn't
+reliably announced by a screen reader: a visible `Popover` bubble above
+the button (`copiedLabel`, default `'Copied'`), and a visually-hidden
+`role="status" aria-live="polite"` region carrying the same text. The icon
+also swaps to a checkmark for the same duration, so the feedback survives
+a user who dismisses or doesn't notice the popover.
+
+## When the Clipboard API is unavailable
+
+`navigator.clipboard.writeText` isn't available in every context (older
+browsers, insecure/non-HTTPS origins). `Copy` detects this up front and
+renders the button `disabled` instead of throwing when clicked.
+
+## Composition
+
+`Copy` forwards its ref to the underlying `<button>` element (the same
+one `Button` forwards to) and spreads all remaining native `<button>`
+attributes, aside from `children`/`onClick`/`leftIcon`/`rightIcon`, which
+`Copy` owns.

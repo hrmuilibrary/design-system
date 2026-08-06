@@ -1,0 +1,65 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Hooks/useStepper" />
+
+# useStepper
+
+Drives a multi-step flow's current index — the logic half of a wizard,
+with no rendering of its own. Render `list[step]` (or whatever your steps
+look like) yourself; `useStepper` only tracks which one is current.
+
+```tsx
+import { useStepper } from '@dinofront/design_system';
+
+function Wizard() {
+  const { step, isFirst, isLast, next, prev } = useStepper({ count: 3 });
+
+  return (
+    <div>
+      {step === 0 && <AccountDetailsStep />}
+      {step === 1 && <PreferencesStep />}
+      {step === 2 && <ReviewStep />}
+
+      <Button onClick={prev} disabled={isFirst}>Back</Button>
+      <Button onClick={next} disabled={isLast}>Next</Button>
+    </div>
+  );
+}
+```
+
+## Controlled vs. uncontrolled
+
+Uncontrolled usage passes `initialStep` (default `0`) and `useStepper`
+tracks the current step internally. Controlled usage passes both `step`
+and `onStepChange`, and the consumer owns the state entirely — same shape
+as a controlled/uncontrolled form input.
+
+```tsx
+const [step, setStep] = useState(0);
+const stepper = useStepper({ count: 3, step, onStepChange: setStep });
+```
+
+## API
+
+```ts
+function useStepper(options: {
+  count: number;
+  initialStep?: number;
+  step?: number;
+  onStepChange?: (step: number) => void;
+  loop?: boolean;
+}): {
+  step: number;
+  count: number;
+  isFirst: boolean;
+  isLast: boolean;
+  next: () => void;
+  prev: () => void;
+  goTo: (step: number) => void;
+  reset: () => void;
+};
+```
+
+`next`/`prev` clamp at the first/last step by default; pass `loop` to wrap
+around instead. `goTo` clamps any out-of-range index into `[0, count-1]`.
+`reset` returns to `initialStep`.

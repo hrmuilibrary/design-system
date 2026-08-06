@@ -1,10 +1,11 @@
-import { forwardRef, useId } from 'react';
+import { forwardRef, useId, useState, type ChangeEvent } from 'react';
 import { cn } from '../../lib/cn';
 import type { TextAreaProps } from './TextArea.types';
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextArea(
   {
     label,
+    labelAddons,
     helperText,
     errorText,
     error = false,
@@ -19,6 +20,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
     defaultValue,
     rows = 4,
     dataTestId,
+    onChange,
     ...rest
   },
   ref,
@@ -27,20 +29,39 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
   const inputId = id ?? reactId;
   const hasError = error || !!errorText;
   const describedBy = errorText ? `${inputId}-error` : helperText ? `${inputId}-help` : undefined;
-  const currentLength =
-    value !== undefined ? String(value).length : defaultValue !== undefined ? String(defaultValue).length : 0;
+
+  const isControlled = value !== undefined;
+  const countsEnabled = showCount && !!maxLength;
+  // Uncontrolled length has to be tracked in state and updated on every
+  // keystroke — deriving it from `defaultValue` (as before) only reflects
+  // the initial render and never moves after that.
+  const [uncontrolledLength, setUncontrolledLength] = useState(() => String(defaultValue ?? '').length);
+  const currentLength = isControlled ? String(value).length : uncontrolledLength;
+
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    if (!isControlled && countsEnabled) setUncontrolledLength(event.target.value.length);
+    onChange?.(event);
+  };
 
   return (
     <div className={cn('flex flex-col gap-1.5 w-full', wrapperClassName)} data-test-id={dataTestId}>
-      {label && (
-        <label htmlFor={inputId} className="text-p-std font-medium text-fg-default inline-flex items-center gap-1">
-          {label}
-          {required && (
-            <span className="text-red-600" aria-hidden>
-              *
-            </span>
+      {(label || labelAddons) && (
+        <div className="flex items-center gap-1.5">
+          {label && (
+            <label
+              htmlFor={inputId}
+              className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
+            >
+              {label}
+              {required && (
+                <span className="text-red-600" aria-hidden>
+                  *
+                </span>
+              )}
+            </label>
           )}
-        </label>
+          {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}
+        </div>
       )}
       <textarea
         ref={ref}
@@ -51,6 +72,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
         rows={rows}
         value={value}
         defaultValue={defaultValue}
+        onChange={handleChange}
         aria-invalid={hasError || undefined}
         aria-describedby={describedBy}
         className={cn(
@@ -76,7 +98,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
             </p>
           ) : null}
         </div>
-        {showCount && maxLength && (
+        {countsEnabled && (
           <p className="text-p-sm text-fg-tertiary tabular-nums shrink-0">
             {currentLength}/{maxLength}
           </p>

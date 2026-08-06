@@ -47,6 +47,19 @@ and a `disabled` flag that blocks toggling and dims the trigger — same
 `disabled:opacity-50 disabled:cursor-not-allowed` treatment used elsewhere
 in the library.
 
+## Animation
+
+Panels animate open/closed by default (`animated={true}` on `Accordion`,
+applying to every item) using a CSS-only `grid-template-rows` transition —
+no JS height measurement, so it keeps following content that changes size
+while a panel is open. It respects `prefers-reduced-motion` automatically.
+Pass `animated={false}` to restore the pre-1.x instant toggle, which also
+swaps back to a plain `hidden` attribute on the panel instead of the
+animated grid wrapper.
+
+`showDivider` renders a `Divider` between each item's header and its
+content.
+
 ## Variants
 
 <Stories />

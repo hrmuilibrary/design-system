@@ -1,11 +1,14 @@
 import { createContext, forwardRef, useContext, useId, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { Divider } from '../Divider';
 import type { AccordionItemProps, AccordionProps } from './Accordion.types';
 
 interface AccordionContextValue {
   openValues: string[];
   toggle: (value: string) => void;
+  animated: boolean;
+  showDivider: boolean;
 }
 
 const AccordionContext = createContext<AccordionContextValue | null>(null);
@@ -21,7 +24,18 @@ function normalize(value: string | string[] | undefined): string[] {
 }
 
 export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Accordion(
-  { type = 'single', defaultValue, value, onValueChange, className, children, dataTestId, ...rest },
+  {
+    type = 'single',
+    defaultValue,
+    value,
+    onValueChange,
+    animated = true,
+    showDivider = false,
+    className,
+    children,
+    dataTestId,
+    ...rest
+  },
   ref,
 ) {
   const [internal, setInternal] = useState<string[]>(() => normalize(defaultValue));
@@ -40,7 +54,7 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
   };
 
   return (
-    <AccordionContext.Provider value={{ openValues, toggle }}>
+    <AccordionContext.Provider value={{ openValues, toggle, animated, showDivider }}>
       <div
         ref={ref}
         data-test-id={dataTestId}
@@ -60,9 +74,16 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
   { value, title, icon, disabled, className, children, dataTestId, ...rest },
   ref,
 ) {
-  const { openValues, toggle } = useAccordion();
+  const { openValues, toggle, animated, showDivider } = useAccordion();
   const isOpen = openValues.includes(value);
   const panelId = useId();
+  const triggerId = useId();
+  const panelContent = (
+    <>
+      {showDivider && <Divider className="mb-4" />}
+      {children}
+    </>
+  );
 
   return (
     <div
@@ -74,6 +95,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
     >
       <h3>
         <button
+          id={triggerId}
           type="button"
           onClick={() => toggle(value)}
           disabled={disabled}
@@ -100,14 +122,36 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
           />
         </button>
       </h3>
-      <div
-        id={panelId}
-        role="region"
-        hidden={!isOpen}
-        className="px-5 pb-4 text-p-std text-fg-secondary"
-      >
-        {children}
-      </div>
+      {animated ? (
+        <div
+          className={cn(
+            'grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none',
+            isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+          )}
+        >
+          <div className="overflow-hidden min-h-0">
+            <div
+              id={panelId}
+              role="region"
+              aria-labelledby={triggerId}
+              inert={!isOpen || undefined}
+              className="px-5 pb-4 text-p-std text-fg-secondary"
+            >
+              {panelContent}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div
+          id={panelId}
+          role="region"
+          aria-labelledby={triggerId}
+          hidden={!isOpen}
+          className="px-5 pb-4 text-p-std text-fg-secondary"
+        >
+          {panelContent}
+        </div>
+      )}
     </div>
   );
 });

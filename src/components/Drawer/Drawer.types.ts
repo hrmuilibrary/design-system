@@ -21,5 +21,9 @@ export interface DrawerProps extends BaseProps {
   closeOnOverlayClick?: boolean;
   /** Whether the built-in close (X) button is rendered. */
   showClose?: boolean;
+  /** Slides/fades the drawer in and out. Set `false` for the pre-1.x instant mount/unmount. */
+  animated?: boolean;
+  /** Extra controls in the header, left of the close button — e.g. a pin or back button. */
+  headerActions?: ReactNode;
   className?: string;
 }

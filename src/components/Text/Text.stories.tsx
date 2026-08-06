@@ -96,6 +96,22 @@ export const Truncated: Story = {
   ],
 };
 
+export const Clamped: Story = {
+  name: 'Clamped to N lines',
+  args: {
+    clamp: 2,
+    children:
+      'This is a much longer paragraph of text that will be clamped to exactly two lines with an ellipsis, no matter how much content follows after the cutoff point in the source string.',
+  },
+  decorators: [
+    (Story) => (
+      <div className="w-64">
+        <Story />
+      </div>
+    ),
+  ],
+};
+
 export const CustomElement: Story = {
   name: 'Overriding the rendered element via `as`',
   args: {

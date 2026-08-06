@@ -34,6 +34,13 @@ up automatically:
 <Input label="Email address" error errorText="Please enter a valid email address." />
 ```
 
+## Label addons
+
+`labelAddons` renders content on the label row, to the right of the label
+text and required marker — e.g. an info tooltip trigger. It's rendered as
+a sibling of the `<label>` element, not a child, so an interactive addon
+never steals focus into the field when clicked.
+
 ## Overriding styles
 
 Because `Input` resolves its `className` prop through the same `cn()` merge

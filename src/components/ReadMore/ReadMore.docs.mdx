@@ -1,0 +1,48 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as ReadMoreStories from './ReadMore.stories';
+
+<Meta of={ReadMoreStories} />
+
+# ReadMore
+
+A clamped block of text with a "Show more"/"Show less" toggle. Built on
+`Text`'s `clamp` prop (a pure CSS line-clamp) plus a real
+`<button aria-expanded aria-controls>` — not a synthetic click handler on
+a `<span>`.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Controlled vs. uncontrolled
+
+Uncontrolled usage passes `defaultExpanded` (default `false`) and
+`ReadMore` tracks the expanded state internally. Controlled usage passes
+both `expanded` and `onExpandedChange`, and the consumer owns the state
+entirely — same shape as an uncontrolled/controlled form input.
+
+## Collapsed content
+
+By default, collapsing just re-applies the `clamp` to the same `children`.
+Pass `collapsedContent` when the collapsed state should show genuinely
+different copy (a one-line summary) instead of a clamped version of the
+full text.
+
+## Labels
+
+`expandLabel`/`collapseLabel` default to English ("Show more"/"Show
+less") and are plain `ReactNode`s — override them for localization or
+custom copy.
+
+## Composition
+
+`ReadMore` forwards its ref to the root `<div>` and spreads all native
+`<div>` attributes. The toggle button calls `stopPropagation()` on click,
+so it works correctly nested inside a clickable card without also
+triggering the card's own click handler.

@@ -1,0 +1,40 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as FormFieldStories from './FormField.stories';
+
+<Meta of={FormFieldStories} />
+
+# FormField
+
+Connects one named field to a `FormContainer`'s react-hook-form `control`
+via `Controller`, and hands the result to a render prop — so it works with
+any input in the library, or your own.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Render prop
+
+`render` receives `name`, `value`, `onChange`, `onBlur`, `ref` (react-hook-form's
+`Controller` field bindings), plus `error: boolean` and `errorText?: string`
+derived from that field's validation state. Every input in this library
+already renders its own error text via an `error`/`errorText` pair
+(`Input`, `TextArea`, `Select`, ...), so `FormField` doesn't render a
+separate error message of its own — just spread the render props onto
+whichever input you're wiring up:
+
+```tsx
+<FormField name="email" render={(props) => <Input {...props} label="Email" />} />
+```
+
+## Variants
+
+<Stories />
+
+## Must be inside a FormContainer
+
+`FormField` reads react-hook-form's `control` from `FormContainer`'s
+context and throws if that context isn't present — there's no standalone
+mode, since a field with nothing to register against isn't meaningful.

@@ -1,0 +1,48 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as PopoverStories from './Popover.stories';
+
+<Meta of={PopoverStories} />
+
+# Popover
+
+A click-triggered floating bubble that can host **interactive content** —
+forms, buttons, links — unlike `Tooltip`, whose bubble is
+`pointer-events-none` and only ever shows static text on hover.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Positioning
+
+`side` (`top`/`bottom`/`left`/`right`) and `align` (`start`/`center`/`end`)
+give 12 placement combinations. The bubble portals to `document.body`
+with `position: fixed`, so it's never clipped by an `overflow: hidden` or
+`overflow: auto` ancestor. It auto-flips to the opposite side on the same
+axis when there isn't room (disable with `flip={false}`) and clamps on
+the cross axis so it always stays inside the viewport.
+
+<Stories />
+
+## Trigger
+
+`children` must be a single element — `Popover` clones it to attach an
+`onClick` (composed with any the child already has; the toggle is skipped
+if that handler calls `preventDefault()`) plus `aria-haspopup="dialog"`
+and `aria-expanded`.
+
+## Dismissal
+
+The popover closes on: an outside click, `Escape`, or any ancestor
+scrolling (`closeOnScroll`, default `true`). There is **no focus trap** in
+this version — `autoFocus` moves focus into the bubble on open and
+restores it to the trigger on close, but Tab can still leave the bubble.
+Use it for simple interactive content, not multi-step flows.
+
+## Composition
+
+`Popover` doesn't forward a ref of its own — it clones `children` to
+attach the trigger's ref internally for position measurement, and the
+portaled bubble is an implementation detail, not a ref target.

@@ -43,4 +43,6 @@ export interface TextProps extends HTMLAttributes<HTMLElement>, BaseProps {
   as?: ElementType;
   /** Truncate to a single line with ellipsis. */
   truncate?: boolean;
+  /** Truncate to this many lines with ellipsis (CSS line-clamp). Ignored when `truncate` is set. */
+  clamp?: number;
 }

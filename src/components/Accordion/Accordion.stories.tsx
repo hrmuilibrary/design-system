@@ -137,3 +137,62 @@ export const CustomClassName: Story = {
     </Accordion>
   ),
 };
+
+export const ShowDivider: Story = {
+  name: 'Divider between header and content',
+  args: { showDivider: true },
+  render: (args) => (
+    <Accordion {...args} defaultValue="billing" className="w-96">
+      <AccordionItem value="billing" title="How does billing work?">
+        Billing is monthly, based on active seats.
+      </AccordionItem>
+      <AccordionItem value="cancel" title="Can I cancel anytime?">
+        Yes — cancel from account settings anytime.
+      </AccordionItem>
+    </Accordion>
+  ),
+};
+
+export const NotAnimated: Story = {
+  name: 'animated={false}',
+  args: { animated: false },
+  render: (args) => (
+    <Accordion {...args} defaultValue="billing" className="w-96">
+      <AccordionItem value="billing" title="How does billing work?">
+        Billing is monthly, based on active seats. This item toggles open/closed instantly, with no
+        height transition — the pre-1.x behavior.
+      </AccordionItem>
+      <AccordionItem value="cancel" title="Can I cancel anytime?">
+        Yes — cancel from account settings anytime.
+      </AccordionItem>
+    </Accordion>
+  ),
+};
+
+export const DynamicContent: Story = {
+  name: 'Content that changes height while open',
+  render: (args) => {
+    function DynamicContentExample() {
+      const [lines, setLines] = useState(1);
+      return (
+        <Accordion {...args} defaultValue="notes" className="w-96">
+          <AccordionItem value="notes" title="Meeting notes">
+            <div className="flex flex-col gap-2">
+              {Array.from({ length: lines }, (_, i) => (
+                <p key={i}>Note {i + 1}: the panel height follows this content with no JS measurement.</p>
+              ))}
+              <button
+                type="button"
+                onClick={() => setLines((n) => n + 1)}
+                className="self-start text-fg-brand hover:underline text-p-sm font-medium"
+              >
+                Add a note
+              </button>
+            </div>
+          </AccordionItem>
+        </Accordion>
+      );
+    }
+    return <DynamicContentExample />;
+  },
+};

@@ -31,12 +31,15 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     options,
     value,
     onChange,
+    onAdd,
+    onRemove,
     size = 'md',
     placeholder = 'Select…',
     addMorePlaceholder = 'Add another…',
     disabled = false,
     error = false,
     label,
+    labelAddons,
     helperText,
     errorText,
     required = false,
@@ -45,6 +48,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     searchable = true,
     suggestionsLabel = 'Suggestions',
     emptyText = 'No matches. Try a different search.',
+    showAvatars = false,
     id,
     className,
     wrapperClassName,
@@ -106,6 +110,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     const opt = byValue.get(v);
     if (disabled || reached || !opt || opt.disabled) return;
     onChange([...value, v]);
+    onAdd?.(opt);
     setQuery('');
     setActive(0);
     innerInputRef.current?.focus();
@@ -114,6 +119,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
   const remove = (v: string) => {
     if (disabled || lockedValues.includes(v)) return;
     onChange(value.filter((x) => x !== v));
+    onRemove?.(v);
   };
 
   const moveActive = (dir: 1 | -1) => {
@@ -155,11 +161,23 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
 
   return (
     <div data-test-id={dataTestId} className={cn('flex flex-col gap-1.5 w-full', wrapperClassName)}>
-      {label && (
-        <label htmlFor={inputId} className="text-p-std font-medium text-fg-default inline-flex items-center gap-1">
-          {label}
-          {required && <span className="text-red-600" aria-hidden>*</span>}
-        </label>
+      {(label || labelAddons) && (
+        <div className="flex items-center gap-1.5">
+          {label && (
+            <label
+              htmlFor={inputId}
+              className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
+            >
+              {label}
+              {required && (
+                <span className="text-red-600" aria-hidden>
+                  *
+                </span>
+              )}
+            </label>
+          )}
+          {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}
+        </div>
       )}
 
       <div ref={wrapRef} className="relative">
@@ -189,7 +207,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                 )}
                 title={o.description}
               >
-                {o.avatarSrc && <Avatar src={o.avatarSrc} name={o.label} size={SIZES[size].avatar} />}
+                {(showAvatars || o.avatarSrc) && (
+                  <Avatar src={o.avatarSrc} name={o.label} size={SIZES[size].avatar} />
+                )}
                 <span className="font-medium">{o.label}</span>
                 {o.badge && (
                   <span className="text-label-xxs uppercase tracking-wider opacity-70">{o.badge}</span>
@@ -273,7 +293,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                           : 'hover:bg-bg-subtle',
                       )}
                     >
-                      {o.avatarSrc && <Avatar src={o.avatarSrc} name={o.label} size="sm" />}
+                      {(showAvatars || o.avatarSrc) && <Avatar src={o.avatarSrc} name={o.label} size="sm" />}
                       <span className="flex-1 min-w-0">
                         <span className="block text-p-std font-medium text-fg-default truncate">{o.label}</span>
                         {o.description && (

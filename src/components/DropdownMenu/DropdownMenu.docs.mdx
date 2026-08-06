@@ -70,17 +70,45 @@ const [open, setOpen] = useState(false);
 
 <Stories />
 
+## Positioning
+
+By default `DropdownContent` portals to `document.body` and positions
+itself with fixed coordinates computed from the trigger's (or `anchorRef`'s)
+bounding box (`strategy="fixed"`, the default) — so the panel is never
+clipped by an `overflow: hidden` ancestor, unlike a plain `position:
+absolute` child would be. It auto-flips between `side="bottom"` and
+`side="top"` when there isn't room (disable with `flip={false}`), and
+clamps horizontally into the viewport (disable with `shift={false}`).
+`matchTriggerWidth` sets the panel's `min-width` to the trigger's width,
+and `closeOnScroll` closes the menu when any ancestor scrolls.
+
+Pass `strategy="absolute"` to opt back into the pre-1.x behavior — the
+panel renders inline, positioned with `absolute top-full`, for consumers
+who already position it themselves via `className`.
+
+`DropdownMenu` also accepts an `anchorRef` prop to anchor the panel to an
+element other than `DropdownTrigger`'s child — useful when the visual
+trigger and the positioning anchor need to differ.
+
+## Keyboard navigation
+
+While open, `ArrowDown`/`ArrowUp` move focus between `DropdownItem`s
+(wrapping at each end), and `Home`/`End` jump to the first/last item. The
+first item is focused automatically when the menu opens. `Escape` closes
+the menu from anywhere.
+
 ## Items
 
 `DropdownItem` accepts an optional `icon` node (rendered before the
-label), a `shortcut` node (e.g. a keyboard shortcut, rendered after the
-label), a `destructive` flag that recolors the item into the danger
-palette, and a `checked` prop that renders a leading check mark when
-`true` and reserves the same space (unchecked) when `false` — useful for
-a small set of mutually exclusive or toggleable options. Leave `checked`
-`undefined` for items with no check state at all. `onSelect` fires after
-any native `onClick`, and the menu closes right after — a native
-`disabled` attribute blocks both.
+label), a `meta` node (a secondary line rendered under the label), a
+`shortcut` node (e.g. a keyboard shortcut, rendered after the label), a
+`destructive` flag that recolors the item into the danger palette, and a
+`checked` prop that renders a leading check mark when `true` and reserves
+the same space (unchecked) when `false` — useful for a small set of
+mutually exclusive or toggleable options. Leave `checked` `undefined` for
+items with no check state at all. `onSelect` fires after any native
+`onClick`, and the menu closes right after — a native `disabled` attribute
+blocks both.
 
 ## Overriding styles
 

@@ -21,6 +21,10 @@ export interface MultiSelectProps extends BaseProps {
   /** Selected option values (controlled). */
   value: string[];
   onChange: (values: string[]) => void;
+  /** Called with the option that was just added, alongside `onChange` (never instead of it). */
+  onAdd?: (option: MultiSelectOption) => void;
+  /** Called with the value that was just removed, alongside `onChange` (never instead of it). */
+  onRemove?: (value: string) => void;
   size?: MultiSelectSize;
   placeholder?: string;
   /** Placeholder once at least one chip exists. Defaults to "Add another…". */
@@ -28,6 +32,8 @@ export interface MultiSelectProps extends BaseProps {
   disabled?: boolean;
   error?: boolean;
   label?: ReactNode;
+  /** Content rendered on the label row, right of the label text and required marker — e.g. an info tooltip trigger. Rendered as a sibling of the `<label>`, not a child, so an interactive addon never steals focus into the field. */
+  labelAddons?: ReactNode;
   helperText?: ReactNode;
   errorText?: ReactNode;
   required?: boolean;
@@ -35,6 +41,8 @@ export interface MultiSelectProps extends BaseProps {
   lockedValues?: string[];
   /** Cap on how many can be selected (default: unlimited). */
   max?: number;
+  /** Renders an Avatar on every chip and dropdown row, falling back to initials derived from the option's `label` when it has no `avatarSrc`. Default `false` — avatars still render for options that already set `avatarSrc` regardless. */
+  showAvatars?: boolean;
   /** Set false for a click-to-open picker with no text filter. */
   searchable?: boolean;
   /** Dropdown header shown when the query is empty. */

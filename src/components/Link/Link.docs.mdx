@@ -1,0 +1,49 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as LinkStories from './Link.stories';
+
+<Meta of={LinkStories} />
+
+# Link
+
+A semantic-colored anchor, built directly on `Text` (`<Text as="a">`) so it
+shares the same typography scale, semantic color aliases, and `truncate`
+behavior rather than maintaining a second color map.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Underline
+
+`underline` defaults to `'hover'` (underlines only on hover/focus).
+`'always'` keeps the underline at rest; `'none'` never underlines — useful
+when the link is already visually distinct (an icon button, a nav item).
+
+## Icons
+
+`leftIcon`/`rightIcon` render inside the anchor itself
+(`inline-flex items-center gap-1`), so the whole label — icon included —
+stays one clickable target and wraps together.
+
+## External links
+
+Setting `target="_blank"` automatically adds `rel="noopener noreferrer"`
+unless you pass your own `rel`.
+
+## Overriding styles
+
+Because `Link` resolves its `className` prop through the same `cn()` merge
+utility the rest of the library uses, an app-level override always wins
+over the color/variant defaults.
+
+## Composition
+
+`Link` forwards its ref to the rendered `<a>` element and spreads all
+native `<a>` attributes, so it composes with routers and any other
+component in this library without a separate "as child" API.

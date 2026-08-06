@@ -17,6 +17,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
     onChange,
     placeholder = 'Select…',
     label,
+    labelAddons,
     helperText,
     errorText,
     error = false,
@@ -96,10 +97,15 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       data-test-id={dataTestId}
       className={cn('flex flex-col gap-1.5 w-full relative', wrapperClassName)}
     >
-      {label && (
-        <label htmlFor={triggerId} className="text-p-std font-medium text-fg-default inline-flex">
-          {label}
-        </label>
+      {(label || labelAddons) && (
+        <div className="flex items-center gap-1.5">
+          {label && (
+            <label htmlFor={triggerId} className="text-p-std font-medium text-fg-default inline-flex">
+              {label}
+            </label>
+          )}
+          {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}
+        </div>
       )}
       <button
         ref={ref}

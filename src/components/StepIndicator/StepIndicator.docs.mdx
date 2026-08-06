@@ -1,0 +1,49 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as StepIndicatorStories from './StepIndicator.stories';
+
+<Meta of={StepIndicatorStories} />
+
+# StepIndicator
+
+A labeled step indicator — numbered, dotted, or icon markers joined by
+connector lines, horizontal or vertical, with completed/rejected states
+and an optional highlight halo.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Status vs. highlighted
+
+`status` (`upcoming`/`active`/`completed`/`rejected`) drives the marker's
+color and icon. `highlighted` is an orthogonal boolean that adds a halo
+ring — the two are independent, so a step can be `completed` **and**
+`highlighted` (e.g. "completed, awaiting review").
+
+## Variants
+
+<Stories />
+
+## Connectors
+
+Each step renders its own leading and trailing connector half — not a
+single line running behind the marker, and not `::before`/`::after`
+pseudo-elements. This means each half can carry its own completion color:
+the segment between two steps lights up as soon as either the step before
+or the step itself is marked `completed`. The first step has no leading
+connector; the last has no trailing connector.
+
+## Interactive steps
+
+Pass `onStepSelect` to wrap each marker in a real `<button>`; omit it for
+a non-interactive, purely informational indicator. `activeValue` marks the
+matching step `aria-current="step"` regardless of whether it's
+interactive.
+
+## Composition
+
+`StepIndicator` forwards its ref to the root `<ol>` and spreads all
+native `<ol>` attributes, so it composes with the rest of the library
+without a separate "as child" API.
