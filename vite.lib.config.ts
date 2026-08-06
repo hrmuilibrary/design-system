@@ -22,6 +22,7 @@ export default defineConfig({
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
         icons: resolve(__dirname, 'src/icons/index.ts'),
+        form: resolve(__dirname, 'src/form/index.ts'),
         'tailwind/preset': resolve(__dirname, 'src/tailwind/preset.ts'),
       },
       formats: ['es'],
@@ -35,6 +36,9 @@ export default defineConfig({
         'class-variance-authority',
         'tailwind-merge',
         'lucide-react',
+        'react-hook-form',
+        'yup',
+        '@hookform/resolvers/yup',
       ],
       output: {
         preserveModules: false,

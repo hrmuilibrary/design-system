@@ -1,0 +1,55 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as FormContainerStories from './FormContainer.stories';
+
+<Meta of={FormContainerStories} />
+
+# FormContainer
+
+A `<form>` wired to [react-hook-form](https://react-hook-form.com), validated
+against a [yup](https://github.com/jquense/yup) schema via
+`@hookform/resolvers/yup`. Pair it with `FormField` to connect any input
+component in the library (or your own) to a field.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Installing
+
+`FormContainer`/`FormField` are exported from a separate `./form` subpath,
+not the root package:
+
+```ts
+import { FormContainer } from '@dinofront/design_system/form';
+import { FormField } from '@dinofront/design_system/form';
+```
+
+They pull in `react-hook-form`, `yup`, and `@hookform/resolvers` — all
+**optional peer dependencies**. Every other component in this package has
+none of these as a hard dependency; only import from `./form` if you're
+actually building a form, and install the three peers alongside it:
+
+```
+npm install react-hook-form yup @hookform/resolvers
+```
+
+## Variants
+
+<Stories />
+
+## Buttons
+
+`buttons` renders a row of `Button`s below `children` — pass
+`{ type: 'submit', ... }` on the one that should submit the form. Omit it
+and render your own footer (e.g. inside a `Card` or `Modal` footer slot)
+if the default row layout doesn't fit.
+
+## Context
+
+`FormContainer` provides `control`, `errors`, `isSubmitting`, and the rest
+of react-hook-form's `useForm()` return value via an internal context —
+`FormField` reads `control` from it to wire up `Controller`. The context
+isn't exported publicly; reach for `FormField` rather than consuming the
+context directly.

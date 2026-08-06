@@ -1,0 +1,32 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as UnderConstructionStories from './UnderConstruction.stories';
+
+<Meta of={UnderConstructionStories} />
+
+# UnderConstruction
+
+A maintenance / coming-soon placeholder page — built on top of `Empty`
+with maintenance-flavored defaults, so it inherits the same
+illustration/title/description layout and sizing.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Copy
+
+`title` and `description` default to English maintenance copy. This
+component doesn't bundle translations — pass your own localized strings
+via `title`/`description` for other locales, the same way `ReadMore` and
+`Copy` leave their button labels to the consumer.
+
+## Illustration
+
+`illustration` defaults to a `Construction` icon inside an `IconTile`
+circle — not a bundled image asset, consistent with `Empty`.
