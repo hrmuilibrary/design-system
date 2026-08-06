@@ -1,0 +1,1 @@
+import{i as e}from"./preload-helper-BdFrVu1K.js";function t(...e){return t=>{for(let n of e)n&&(typeof n==`function`?n(t):n.current=t)}}var n=e((()=>{}));export{t as n,n as t};
