@@ -15,53 +15,72 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Send Adaptive Card to Teams
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_REPOSITORY: ${{ github.repository }}
+          PR_SOURCE: ${{ github.event.pull_request.head.ref }}
+          PR_TARGET: ${{ github.event.pull_request.base.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
         run: |
-          curl -X POST "${{ secrets.TEAMS_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "type": "AdaptiveCard",
+          payload=$(jq -n \
+            --arg title "$PR_TITLE" \
+            --arg body "${PR_BODY:-No description provided.}" \
+            --arg author "$PR_AUTHOR" \
+            --arg repository "$PR_REPOSITORY" \
+            --arg source "$PR_SOURCE" \
+            --arg target "$PR_TARGET" \
+            --arg number "#$PR_NUMBER" \
+            --arg prUrl "$PR_URL" \
+            --arg repoUrl "$REPO_URL" \
+            '{
+              type: "AdaptiveCard",
               "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-              "version": "1.5",
-              "msteams": {
-                "width": "Full"
+              version: "1.5",
+              msteams: {
+                width: "Full"
               },
-              "body": [
+              body: [
                 {
-                  "type": "Container",
-                  "style": "emphasis",
-                  "bleed": true,
-                  "items": [
+                  type: "Container",
+                  style: "emphasis",
+                  bleed: true,
+                  items: [
                     {
-                      "type": "ColumnSet",
-                      "columns": [
+                      type: "ColumnSet",
+                      columns: [
                         {
-                          "type": "Column",
-                          "width": "auto",
-                          "items": [
+                          type: "Column",
+                          width: "auto",
+                          items: [
                             {
-                              "type": "TextBlock",
-                              "text": "🚀",
-                              "size": "ExtraLarge"
+                              type: "TextBlock",
+                              text: "🚀",
+                              size: "ExtraLarge"
                             }
                           ]
                         },
                         {
-                          "type": "Column",
-                          "width": "stretch",
-                          "items": [
+                          type: "Column",
+                          width: "stretch",
+                          items: [
                             {
-                              "type": "TextBlock",
-                              "text": "New Pull Request",
-                              "weight": "Bolder",
-                              "size": "Large",
-                              "wrap": true
+                              type: "TextBlock",
+                              text: "New Pull Request",
+                              weight: "Bolder",
+                              size: "Large",
+                              wrap: true
                             },
                             {
-                              "type": "TextBlock",
-                              "text": "@frontend review requested",
-                              "spacing": "None",
-                              "color": "Accent",
-                              "wrap": true
+                              type: "TextBlock",
+                              text: "@frontend review requested",
+                              spacing: "None",
+                              color: "Accent",
+                              wrap: true
                             }
                           ]
                         }
@@ -70,73 +89,62 @@ jobs:
                   ]
                 },
                 {
-                  "type": "Container",
-                  "spacing": "Medium",
-                  "items": [
+                  type: "Container",
+                  spacing: "Medium",
+                  items: [
                     {
-                      "type": "TextBlock",
-                      "text": "${{ github.event.pull_request.title }}",
-                      "weight": "Bolder",
-                      "size": "Medium",
-                      "wrap": true
+                      type: "TextBlock",
+                      text: $title,
+                      weight: "Bolder",
+                      size: "Medium",
+                      wrap: true
                     }
                   ]
                 },
                 {
-                  "type": "FactSet",
-                  "facts": [
-                    {
-                      "title": "Author",
-                      "value": "${{ github.event.pull_request.user.login }}"
-                    },
-                    {
-                      "title": "Repository",
-                      "value": "${{ github.repository }}"
-                    },
-                    {
-                      "title": "Source",
-                      "value": "${{ github.event.pull_request.head.ref }}"
-                    },
-                    {
-                      "title": "Target",
-                      "value": "${{ github.event.pull_request.base.ref }}"
-                    },
-                    {
-                      "title": "PR Number",
-                      "value": "#${{ github.event.pull_request.number }}"
-                    }
+                  type: "FactSet",
+                  facts: [
+                    { title: "Author", value: $author },
+                    { title: "Repository", value: $repository },
+                    { title: "Source", value: $source },
+                    { title: "Target", value: $target },
+                    { title: "PR Number", value: $number }
                   ]
                 },
                 {
-                  "type": "Container",
-                  "spacing": "Medium",
-                  "items": [
+                  type: "Container",
+                  spacing: "Medium",
+                  items: [
                     {
-                      "type": "TextBlock",
-                      "text": "Pull Request Description",
-                      "weight": "Bolder",
-                      "wrap": true
+                      type: "TextBlock",
+                      text: "Pull Request Description",
+                      weight: "Bolder",
+                      wrap: true
                     },
                     {
-                      "type": "TextBlock",
-                      "text": "${{ github.event.pull_request.body || 'No description provided.' }}",
-                      "wrap": true,
-                      "maxLines": 6,
-                      "spacing": "Small"
+                      type: "TextBlock",
+                      text: $body,
+                      wrap: true,
+                      maxLines: 6,
+                      spacing: "Small"
                     }
                   ]
                 }
               ],
-              "actions": [
+              actions: [
                 {
-                  "type": "Action.OpenUrl",
-                  "title": "🔍 View Pull Request",
-                  "url": "${{ github.event.pull_request.html_url }}"
+                  type: "Action.OpenUrl",
+                  title: "🔍 View Pull Request",
+                  url: $prUrl
                 },
                 {
-                  "type": "Action.OpenUrl",
-                  "title": "📂 Open Repository",
-                  "url": "${{ github.server_url }}/${{ github.repository }}"
+                  type: "Action.OpenUrl",
+                  title: "📂 Open Repository",
+                  url: $repoUrl
                 }
               ]
-            }'
+            }')
+
+          curl -X POST "$TEAMS_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "$payload"
