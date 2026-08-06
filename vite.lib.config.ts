@@ -21,6 +21,7 @@ export default defineConfig({
     lib: {
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
+        icons: resolve(__dirname, 'src/icons/index.ts'),
         'tailwind/preset': resolve(__dirname, 'src/tailwind/preset.ts'),
       },
       formats: ['es'],

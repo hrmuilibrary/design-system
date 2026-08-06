@@ -1,0 +1,53 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as BreadcrumbStories from './Breadcrumb.stories';
+
+<Meta of={BreadcrumbStories} />
+
+# Breadcrumb
+
+A trail of ancestor links showing where the current page sits in a
+hierarchy. Renders as a semantic `<nav aria-label="Breadcrumb"> <ol> <li>`
+structure with real `<a>`/`<button>` elements per crumb, so keyboard
+navigation and screen reader support come for free — no synthetic click
+handlers on non-interactive elements.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Current crumb
+
+The crumb matching `currentValue` (or the last item, if `currentValue` is
+omitted) renders as plain text with `aria-current="page"` instead of a
+link or button — it isn't a navigation target.
+
+## Interactive crumbs
+
+Each non-current item renders as an `<a>` when it has an `href`, or a
+`<button type="button">` otherwise — `onSelect` fires from either. A
+`disabled` item renders as plain, non-interactive text.
+
+## Separators
+
+Separators are explicit `<li aria-hidden="true">` elements between crumbs,
+not a CSS `content` pseudo-element — a screen reader would otherwise
+announce every "/" as if it were a real breadcrumb item. Override the
+default `'/'` with any `ReactNode` via `separator`.
+
+## Overriding styles
+
+`Breadcrumb` resolves its `className` prop through the same `cn()` merge
+utility the rest of the library uses, so an app-level override always
+wins over the size defaults.
+
+## Composition
+
+`Breadcrumb` forwards its ref to the root `<nav>` and spreads all native
+`<nav>` attributes, so it composes with the rest of the library without a
+separate "as child" API.

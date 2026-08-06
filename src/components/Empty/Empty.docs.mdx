@@ -1,0 +1,40 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as EmptyStories from './Empty.stories';
+
+<Meta of={EmptyStories} />
+
+# Empty
+
+An empty/no-results state — illustration, title, description, and an
+optional call-to-action. Use it for "no search results", "nothing here
+yet", or similar placeholder states.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Illustration
+
+`illustration` defaults to a `SearchX` icon inside an `IconTile` circle —
+not a bundled image asset, so it always tracks the current theme (no
+dark-mode-specific artwork to maintain) and adds no build-pipeline
+dependency. Pass your own `ReactNode` (an `IconTile` with a different
+icon, an SVG, anything) to override it.
+
+## Action
+
+`action` is a plain `ReactNode` slot rather than a structured button-props
+bag — render your own `<Button>` (or anything else) in it, same
+convention as `Card`'s `header`/`footer` and `Modal`'s `footer`.
+
+## Composition
+
+`Empty` forwards its ref to the root `<div>` and spreads all native
+`<div>` attributes, so it composes with the rest of the library without a
+separate "as child" API.

@@ -64,7 +64,7 @@ const defaultAs: Record<TextVariant, ElementType> = {
 };
 
 export const Text = forwardRef<HTMLElement, TextProps>(function Text(
-  { variant = 'p-std', weight, color = 'default', as, truncate, className, children, dataTestId, ...rest },
+  { variant = 'p-std', weight, color = 'default', as, truncate, clamp, style, className, children, dataTestId, ...rest },
   ref,
 ) {
   const Component = as ?? defaultAs[variant];
@@ -78,8 +78,10 @@ export const Text = forwardRef<HTMLElement, TextProps>(function Text(
         weight && weightClass[weight],
         colorClass[color],
         truncate && 'truncate',
+        clamp && !truncate && 'overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical]',
         className,
       ),
+      style: clamp && !truncate ? { ...style, WebkitLineClamp: clamp } : style,
       ...rest,
     },
     children,

@@ -1,0 +1,50 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as CounterStories from './Counter.stories';
+
+<Meta of={CounterStories} />
+
+# Counter
+
+A numeric stepper — a minus button, a number field, and a plus button —
+built on `Input`'s `leftAddon`/`rightAddon` slots rather than reimplementing
+the field shell. It inherits `label`, `helperText`, `errorText`, `error`,
+and `size` from `Input` for free.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Controlled vs. uncontrolled
+
+Uncontrolled usage passes `defaultValue` (default `0`) and `Counter`
+tracks its value internally. Controlled usage passes both `value` and
+`onValueChange`, and the consumer owns the state entirely.
+
+```tsx
+const [value, setValue] = useState(2);
+<Counter value={value} onValueChange={setValue} min={0} max={10} />
+```
+
+`onValueChange` is used instead of a native `onChange` because the value
+can change from a button press, which has no corresponding
+`ChangeEvent`.
+
+## Typing behavior
+
+The field tracks a plain string draft separately from the committed
+numeric value, so clearing the field doesn't immediately snap back to a
+number while you're typing. The typed value is parsed, clamped to
+`[min, max]`, and committed on blur — an invalid or empty value reverts to
+the last committed value instead of silently becoming `0`.
+
+## Min/max
+
+The decrease button disables at `min`, the increase button disables at
+`max`. `step` controls how much each button press changes the value.
+
+## Composition
+
+`Counter` forwards its ref to the native `<input>` element (the same one
+`Input` forwards to) and spreads all remaining native `<input>` attributes.

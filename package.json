@@ -19,6 +19,10 @@
       "import": "./dist/index.js"
     },
     "./styles.css": "./dist/styles.css",
+    "./icons": {
+      "types": "./dist/icons.d.ts",
+      "import": "./dist/icons.js"
+    },
     "./preset": {
       "types": "./dist/tailwind/preset.d.ts",
       "import": "./dist/tailwind/preset.js"

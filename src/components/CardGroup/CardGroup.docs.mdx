@@ -1,0 +1,46 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as CardGroupStories from './CardGroup.stories';
+
+<Meta of={CardGroupStories} />
+
+# CardGroup
+
+A bordered container with an optional colored title rail and a body that
+auto-divides its children with a border between each one. Composed
+internally from `Card` (`variant="outlined" padding="none"`) rather than
+adding this shape as a prop on `Card` itself — the vertical title rail is
+enough of a special case that it's kept quarantined in its own component.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Title placement
+
+`placement: 'left' | 'right'` (default `'left'`) renders the title as a
+vertical rail along that edge, using `[writing-mode:vertical-rl]` plus a
+`rotate-180` on the left rail so both edges read in the conventional
+direction. This is a deliberate cross-browser choice over
+`writing-mode: sideways-lr`/`sideways-rl`, which have effectively no
+support outside Firefox. `placement: 'top'` renders a horizontal bar
+instead.
+
+## Auto-dividing children
+
+Every direct child of the body (the `header` slot, if set, plus
+`children`) gets a divider below it except the last — this works whether
+`children` is a single node or several, since it's a plain CSS sibling
+selector rather than an `Array.isArray` check. Pass `noDivider` to turn
+it off.
+
+## Composition
+
+`CardGroup` forwards its ref to `Card`'s root `<div>` and spreads all
+native `<div>` attributes, so it composes with the rest of the library
+without a separate "as child" API.

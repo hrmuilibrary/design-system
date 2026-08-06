@@ -1,0 +1,49 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as ThemeSwitchStories from './ThemeSwitch.stories';
+
+<Meta of={ThemeSwitchStories} />
+
+# ThemeSwitch
+
+A sun/moon toggle for a light/dark theme control. **`ThemeSwitch` owns no
+theme state of its own** — it's a purely presentational controlled
+checkbox, exactly like `Switch`. The consumer wires `checked`/`onChange` to
+however their app actually applies a theme.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Wiring it to a real theme toggle
+
+A typical consumer pairs it with a small piece of app state and toggles
+the `.dark` class the same way this library's own dark-mode support
+expects:
+
+```tsx
+const [isDark, setIsDark] = useState(false);
+
+<ThemeSwitch
+  checked={isDark}
+  onChange={(e) => {
+    setIsDark(e.target.checked);
+    document.documentElement.classList.toggle('dark', e.target.checked);
+  }}
+/>
+```
+
+(This Storybook instance already has its own theme toolbar — see
+`.storybook/preview.tsx` — so `ThemeSwitch` isn't needed to preview dark
+mode here; it's for consumer apps that want a user-facing toggle.)
+
+## Variants
+
+<Stories />
+
+## Composition
+
+`ThemeSwitch` forwards its ref to the native `<input type="checkbox">`
+and spreads all native `<input>` attributes, so it composes with forms
+without a separate "as child" API.

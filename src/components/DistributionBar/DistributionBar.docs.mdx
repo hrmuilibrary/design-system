@@ -1,0 +1,53 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as DistributionBarStories from './DistributionBar.stories';
+
+<Meta of={DistributionBarStories} />
+
+# DistributionBar
+
+A stacked, 100%-width bar showing how a total splits across categories,
+with a legend underneath. Not a chart library integration — the geometry
+is plain `flex-basis` percentages on divs, so it has zero charting
+dependencies.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Empty and zero-value data
+
+`segments={[]}` and all-zero values both render an empty track with no
+`NaN` widths — proportions are computed as `total > 0 ? value / total : 0`
+per segment.
+
+## Formatting values
+
+`formatValue` defaults to `Intl.NumberFormat().format` (locale-correct
+digit grouping). Pass your own formatter for currency symbols, compact
+notation, or a fixed locale.
+
+## Series colors
+
+`color` is a small fixed palette (`brand`/`blue`/`purple`/`pink`/`yellow`/`red`/`gray`)
+rather than the semantic token set the rest of the library uses — a
+distribution's categories are arbitrary, not a fixed set of statuses, so
+there's no semantic alias to map them onto. This is a deliberate exception,
+same precedent as `IconTile`'s tones.
+
+## Overriding styles
+
+`DistributionBar` resolves its `className` prop through the same `cn()`
+merge utility the rest of the library uses, so an app-level override
+always wins over the defaults.
+
+## Composition
+
+`DistributionBar` forwards its ref to the root `<div>` and spreads all
+native `<div>` attributes, so it composes with the rest of the library
+without a separate "as child" API.

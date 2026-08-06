@@ -56,8 +56,7 @@ Typography uses a semantic scale, not Tailwind's default `xs/sm/base/lg`:
 ## Component architecture
 
 Components live under `src/components/<Name>/` with a fixed file set
-(established by `Button`, the only component so far — follow this exact
-shape for every new one):
+(established by `Button` — follow this exact shape for every new one):
 
 ```
 src/components/<Name>/
