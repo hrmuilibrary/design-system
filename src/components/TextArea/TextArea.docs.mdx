@@ -41,6 +41,18 @@ under the field.
 <TextArea label="Bio" showCount maxLength={200} />
 ```
 
+## Label addons
+
+`labelAddons` renders content on the label row, to the right of the label
+text and required marker — e.g. an info tooltip trigger. It's rendered as
+a sibling of the `<label>` element, not a child, so an interactive addon
+(a button, a tooltip trigger) never steals focus into the textarea when
+clicked.
+
+```tsx
+<TextArea label="Bio" labelAddons={<Tooltip content="Shown on your public profile.">…</Tooltip>} />
+```
+
 ## Overriding styles
 
 Because `TextArea` resolves its `className` prop through the same `cn()`

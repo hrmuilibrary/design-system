@@ -1,21 +1,113 @@
 import { forwardRef, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
-import { UploadCloud, File as FileIcon, Trash2, X, CheckCircle2, AlertCircle } from 'lucide-react';
+import {
+  UploadCloud,
+  File as FileIcon,
+  Trash2,
+  X,
+  CheckCircle2,
+  AlertCircle,
+  Paperclip,
+  Pencil,
+} from 'lucide-react';
 import { cn } from '../../lib/cn';
-import type { UploadItemProps, UploadItemStatus, UploadProps } from './Upload.types';
+import { Button } from '../Button';
+import type { UploadItemProps, UploadItemStatus, UploadProps, UploadRejection } from './Upload.types';
+
+function matchesAccept(file: File, accept: string): boolean {
+  const patterns = accept
+    .split(',')
+    .map((pattern) => pattern.trim().toLowerCase())
+    .filter(Boolean);
+  if (!patterns.length) return true;
+
+  const fileName = file.name.toLowerCase();
+  const fileType = file.type.toLowerCase();
+
+  return patterns.some((pattern) => {
+    if (pattern.endsWith('/*')) return fileType.startsWith(pattern.slice(0, -1));
+    if (pattern.startsWith('.')) return fileName.endsWith(pattern);
+    return fileType === pattern;
+  });
+}
 
 export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
-  { accept, multiple = false, maxSizeMB, hint, onFiles, disabled, className, dataTestId, ...rest },
+  {
+    accept,
+    multiple = false,
+    maxSizeMB,
+    hint,
+    onFiles,
+    disabled,
+    validateFiles = false,
+    maxFiles,
+    dedupe = validateFiles,
+    currentFiles = [],
+    onReject,
+    mode = 'dropzone',
+    triggerLabel,
+    triggerIcon,
+    label,
+    required,
+    labelAddons,
+    className,
+    dataTestId,
+    ...rest
+  },
   ref,
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  // `dragleave` bubbles from any child the pointer crosses, so a naive
+  // `setDragOver(false)` on every dragleave flickers the highlight off and
+  // on as the user drags across the inner icon/text. Track nesting depth
+  // instead and only clear once the pointer has left every descendant too.
+  const dragDepth = useRef(0);
+
+  const processFiles = (incoming: File[]) => {
+    if (!incoming.length) return;
+
+    if (!validateFiles) {
+      onFiles?.(incoming);
+      return;
+    }
+
+    const accepted: File[] = [];
+    const rejections: UploadRejection[] = [];
+    const seen = [...currentFiles];
+    let remainingSlots = maxFiles !== undefined ? Math.max(0, maxFiles - currentFiles.length) : Infinity;
+
+    for (const file of incoming) {
+      if (dedupe && seen.some((existing) => existing.name === file.name && existing.size === file.size)) {
+        rejections.push({ file, reason: 'duplicate' });
+        continue;
+      }
+      if (accept && !matchesAccept(file, accept)) {
+        rejections.push({ file, reason: 'type' });
+        continue;
+      }
+      if (maxSizeMB !== undefined && file.size > maxSizeMB * 1024 * 1024) {
+        rejections.push({ file, reason: 'size' });
+        continue;
+      }
+      if (remainingSlots <= 0) {
+        rejections.push({ file, reason: 'maxFiles' });
+        continue;
+      }
+      accepted.push(file);
+      seen.push(file);
+      remainingSlots -= 1;
+    }
+
+    if (accepted.length) onFiles?.(accepted);
+    if (rejections.length) onReject?.(rejections);
+  };
 
   const onDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    dragDepth.current = 0;
     setDragOver(false);
     if (disabled) return;
-    const files = Array.from(event.dataTransfer.files ?? []);
-    if (files.length) onFiles?.(files);
+    processFiles(Array.from(event.dataTransfer.files ?? []));
   };
 
   const hintText =
@@ -24,14 +116,70 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
       maxSizeMB ? `, up to ${maxSizeMB} MB` : ''
     }`;
 
-  return (
+  const fileInput = (
+    <input
+      ref={inputRef}
+      type="file"
+      accept={accept}
+      multiple={multiple}
+      disabled={disabled}
+      onChange={(event) => {
+        processFiles(Array.from(event.target.files ?? []));
+        event.target.value = '';
+      }}
+      className="sr-only"
+    />
+  );
+
+  const labelRow = (label || labelAddons) && (
+    <div className="flex items-center gap-1.5">
+      {label && (
+        <span className="text-p-std font-medium text-fg-default inline-flex items-center gap-1">
+          {label}
+          {required && (
+            <span className="text-red-600" aria-hidden>
+              *
+            </span>
+          )}
+        </span>
+      )}
+      {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}
+    </div>
+  );
+
+  if (mode !== 'dropzone') {
+    const isIcon = mode === 'icon';
+    return (
+      <div ref={ref} data-test-id={dataTestId} className={cn('flex flex-col gap-1.5', className)} {...rest}>
+        {labelRow}
+        <Button
+          type="button"
+          variant="secondary"
+          iconOnly={isIcon}
+          disabled={disabled}
+          onClick={() => inputRef.current?.click()}
+          leftIcon={isIcon ? undefined : triggerIcon ?? <Paperclip className="h-4 w-4" />}
+          aria-label={isIcon ? 'Upload file' : undefined}
+        >
+          {isIcon ? triggerIcon ?? <Pencil className="h-4 w-4" /> : (triggerLabel ?? 'Choose a file')}
+        </Button>
+        {fileInput}
+      </div>
+    );
+  }
+
+  const dropzone = (
     <div
       ref={ref}
-      onDragOver={(event) => {
-        event.preventDefault();
+      onDragEnter={() => {
+        dragDepth.current += 1;
         if (!disabled) setDragOver(true);
       }}
-      onDragLeave={() => setDragOver(false)}
+      onDragOver={(event) => event.preventDefault()}
+      onDragLeave={() => {
+        dragDepth.current = Math.max(0, dragDepth.current - 1);
+        if (dragDepth.current === 0) setDragOver(false);
+      }}
       onDrop={onDrop}
       onClick={() => !disabled && inputRef.current?.click()}
       role="button"
@@ -62,19 +210,16 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
         </p>
         <p className="text-p-sm text-fg-tertiary">{hintText}</p>
       </div>
-      <input
-        ref={inputRef}
-        type="file"
-        accept={accept}
-        multiple={multiple}
-        disabled={disabled}
-        onChange={(event) => {
-          const files = Array.from(event.target.files ?? []);
-          if (files.length) onFiles?.(files);
-          event.target.value = '';
-        }}
-        className="sr-only"
-      />
+      {fileInput}
+    </div>
+  );
+
+  if (!labelRow) return dropzone;
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      {labelRow}
+      {dropzone}
     </div>
   );
 });
@@ -86,9 +231,24 @@ const statusStyles: Record<UploadItemStatus, string> = {
 };
 
 export const UploadItem = forwardRef<HTMLDivElement, UploadItemProps>(function UploadItem(
-  { name, meta, status = 'processing', progress = 0, errorText, onRetry, onRemove, className, dataTestId, ...rest },
+  {
+    name,
+    meta,
+    status = 'processing',
+    progress = 0,
+    errorText,
+    onRetry,
+    onRemove,
+    previewSrc,
+    className,
+    dataTestId,
+    ...rest
+  },
   ref,
 ) {
+  const [previewFailed, setPreviewFailed] = useState(false);
+  const showPreview = !!previewSrc && !previewFailed;
+
   return (
     <div
       ref={ref}
@@ -98,11 +258,20 @@ export const UploadItem = forwardRef<HTMLDivElement, UploadItemProps>(function U
     >
       <div
         className={cn(
-          'shrink-0 flex items-center justify-center h-9 w-9 rounded-md',
-          status === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-700' : 'bg-bg-subtle text-fg-secondary',
+          'shrink-0 flex items-center justify-center h-9 w-9 rounded-md overflow-hidden',
+          !showPreview && (status === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-700' : 'bg-bg-subtle text-fg-secondary'),
         )}
       >
-        <FileIcon className="h-4 w-4" />
+        {showPreview ? (
+          <img
+            src={previewSrc}
+            alt=""
+            className="h-full w-full object-cover"
+            onError={() => setPreviewFailed(true)}
+          />
+        ) : (
+          <FileIcon className="h-4 w-4" />
+        )}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-2">

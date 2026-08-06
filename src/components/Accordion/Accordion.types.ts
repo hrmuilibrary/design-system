@@ -11,6 +11,10 @@ export interface AccordionProps extends HTMLAttributes<HTMLDivElement>, BaseProp
   /** Controlled open value(s). Pass alongside `onValueChange` to fully control which item(s) are open. */
   value?: string | string[];
   onValueChange?: (value: string | string[]) => void;
+  /** Animates each panel open/closed. Set `false` for the pre-1.x instant toggle (also restores the plain `hidden` attribute instead of the animated grid wrapper). */
+  animated?: boolean;
+  /** Renders a Divider between each item's header and its panel content. */
+  showDivider?: boolean;
   children: ReactNode;
 }
 

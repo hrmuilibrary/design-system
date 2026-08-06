@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { ArrowLeft, Pin } from 'lucide-react';
 import { Button } from '../Button';
 import { Drawer } from './Drawer';
 import type { DrawerProps } from './Drawer.types';
@@ -157,5 +158,40 @@ export const CustomClassName: Story = {
     className: 'bg-bg-container',
     title: 'Custom background',
     description: 'className is merged last, so it wins over the default panel background.',
+  },
+};
+
+export const WithHeaderActions: Story = {
+  name: 'With headerActions',
+  args: {
+    title: 'Edit item',
+    description: 'headerActions renders left of the close button — e.g. pin or back.',
+    headerActions: (
+      <>
+        <button
+          type="button"
+          aria-label="Back"
+          className="p-2 rounded-md text-fg-secondary hover:text-fg-default hover:bg-bg-subtle"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          aria-label="Pin"
+          className="p-2 rounded-md text-fg-secondary hover:text-fg-default hover:bg-bg-subtle"
+        >
+          <Pin className="h-5 w-5" />
+        </button>
+      </>
+    ),
+  },
+};
+
+export const NotAnimated: Story = {
+  name: 'animated={false}',
+  args: {
+    animated: false,
+    title: 'Instant open/close',
+    description: 'The pre-1.x behavior — mounts and unmounts synchronously, with no slide/fade.',
   },
 };

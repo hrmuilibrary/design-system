@@ -43,6 +43,13 @@ const [value, setValue] = useState('apple');
 `errorText` does the same and also renders below the control in place of
 `helperText`.
 
+## Label addons
+
+`labelAddons` renders content on the label row, to the right of the label
+text — e.g. an info tooltip trigger. It's rendered as a sibling of the
+`<label>` element, not a child, so an interactive addon never steals focus
+into the trigger when clicked.
+
 ## Composition
 
 `Select` forwards its ref to the trigger `<button>` element. Its root DOM

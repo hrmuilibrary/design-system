@@ -42,6 +42,31 @@ Passing `onDismiss` renders a trailing dismiss button (replacing
 <Badge onDismiss={() => removeTag(tag.id)}>{tag.label}</Badge>
 ```
 
+## Status dots
+
+`dot` renders a standalone status dot instead of a labeled badge —
+`children`, icons, and `onDismiss` are all ignored. Pass an `aria-label`
+if the dot conveys meaning on its own (otherwise it's treated as
+decorative and hidden from assistive tech).
+
+`withDot` instead renders a small leading dot before `children`, in place
+of `leftIcon`, for a "labeled status" badge like "Active".
+
+## Interactive badges
+
+`interactive` turns the badge into a `role="button"` with hover/active
+states, a focus ring, and Enter/Space activation for `onClick` — useful
+for a removable filter chip that also responds to a plain click. It stays
+a `<span>` rather than becoming a real `<button>`, so it composes as a
+label everywhere a `Badge` already does; if you need a fully native
+button element instead, render your own `<button>` styled with the same
+class tables.
+
+## Disabled
+
+`disabled` dims the badge and blocks all pointer/keyboard interaction,
+including the dismiss button.
+
 ## Composition
 
 `Badge` forwards its ref to the root `<span>` and spreads all native

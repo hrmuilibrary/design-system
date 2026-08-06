@@ -113,3 +113,43 @@ export const AllSizes: Story = {
     </div>
   ),
 };
+
+export const Pill: Story = {
+  name: 'Pill shape',
+  args: { shape: 'pill' },
+};
+
+export const Dot: Story = {
+  name: 'Standalone dot',
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-3">
+      {VARIANTS.map((variant) => (
+        <Badge key={variant} {...args} variant={variant} dot aria-label={variant} />
+      ))}
+    </div>
+  ),
+};
+
+export const WithDot: Story = {
+  name: 'With leading dot',
+  args: { withDot: true, variant: 'success', children: 'Active' },
+};
+
+export const Disabled: Story = {
+  args: { disabled: true, children: 'Disabled' },
+};
+
+export const Interactive: Story = {
+  args: { interactive: true, children: 'Click me', onClick: () => {} },
+};
+
+export const IconOnly: Story = {
+  name: 'Icon only',
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-2">
+      {SIZES.map((size) => (
+        <Badge key={size} {...args} size={size} leftIcon={<Star className="size-3" />} aria-label="Featured" />
+      ))}
+    </div>
+  ),
+};

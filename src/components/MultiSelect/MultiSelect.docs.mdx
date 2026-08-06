@@ -72,6 +72,37 @@ remaining option list under `suggestionsLabel`.
 `errorText` does the same and also renders below the control in place of
 `helperText`.
 
+## Label addons
+
+`labelAddons` renders content on the label row, to the right of the label
+text and required marker — e.g. an info tooltip trigger. It's rendered as
+a sibling of the `<label>` element, not a child, so an interactive addon
+never steals focus into the field when clicked.
+
+## Granular add/remove callbacks
+
+`onChange` always fires with the full next `value` array. `onAdd(option)`
+and `onRemove(value)` fire alongside it — never instead of it — for
+consumers who want to react to a single selection change (e.g. an audit
+log) without diffing the array themselves.
+
+```tsx
+<MultiSelect
+  options={options}
+  value={value}
+  onChange={setValue}
+  onAdd={(option) => track('reviewer_added', { id: option.value })}
+  onRemove={(value) => track('reviewer_removed', { id: value })}
+/>
+```
+
+## Avatars
+
+Options with an `avatarSrc` always show an avatar. Set `showAvatars` to
+render one for every option, even those without an image — `Avatar`
+already falls back to initials derived from the option's `label` (with a
+color hashed from the name) when there's no `src`.
+
 ## Composition
 
 `MultiSelect` forwards its ref to the inner text `<input>`. Its root DOM

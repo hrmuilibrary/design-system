@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Upload, UploadItem } from './Upload';
+import type { UploadRejection } from './Upload.types';
 
 const meta = {
   title: 'Components/Upload',
@@ -110,6 +111,87 @@ export const ItemError: Story = {
       status="error"
       errorText="Upload failed. Check your connection and try again."
       onRetry={() => {}}
+      onRemove={() => {}}
+    />
+  ),
+};
+
+export const EnforcedValidation: Story = {
+  name: 'Enforced validation',
+  render: (args) => {
+    function EnforcedValidationDemo() {
+      const [files, setFiles] = useState<File[]>([]);
+      const [rejections, setRejections] = useState<UploadRejection[]>([]);
+      return (
+        <div className="flex flex-col gap-3">
+          <Upload
+            {...args}
+            validateFiles
+            accept="image/png"
+            maxSizeMB={1}
+            maxFiles={3}
+            multiple
+            currentFiles={files}
+            onFiles={(accepted) => {
+              setFiles((prev) => [...prev, ...accepted]);
+              setRejections([]);
+            }}
+            onReject={setRejections}
+          />
+          {files.length > 0 && (
+            <ul className="text-p-sm text-fg-secondary list-disc pl-5">
+              {files.map((file, i) => (
+                <li key={`${file.name}-${i}`}>{file.name}</li>
+              ))}
+            </ul>
+          )}
+          {rejections.map((rejection, i) => (
+            <div
+              key={`${rejection.file.name}-${i}`}
+              className="flex items-center justify-between gap-3 rounded-lg border border-red-300 bg-bg-danger-lighter px-3 py-2 text-p-sm text-red-700"
+            >
+              <span>
+                {rejection.file.name} — {rejection.reason}
+              </span>
+              <button
+                type="button"
+                onClick={() => setRejections((prev) => prev.filter((r) => r !== rejection))}
+                className="shrink-0 font-medium underline hover:no-underline"
+              >
+                Dismiss
+              </button>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return <EnforcedValidationDemo />;
+  },
+};
+
+export const ButtonTrigger: Story = {
+  name: 'Button trigger',
+  args: { mode: 'button' },
+};
+
+export const IconTrigger: Story = {
+  name: 'Icon trigger',
+  args: { mode: 'icon' },
+};
+
+export const WithLabelAndRequired: Story = {
+  name: 'With label and required',
+  args: { label: 'Attachment', required: true },
+};
+
+export const ItemWithThumbnail: Story = {
+  name: 'UploadItem — image thumbnail',
+  render: () => (
+    <UploadItem
+      name="hero-image.png"
+      meta="4.8 MB"
+      status="completed"
+      previewSrc="https://images.unsplash.com/photo-1444492417251-9c84a5fa18e0?w=80&h=80&fit=crop"
       onRemove={() => {}}
     />
   ),

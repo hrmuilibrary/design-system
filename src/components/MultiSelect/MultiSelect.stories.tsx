@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { Info } from 'lucide-react';
 import { MultiSelect } from './MultiSelect';
+import { Tooltip } from '../Tooltip';
 import type { MultiSelectOption } from './MultiSelect.types';
 
 const tagOptions: MultiSelectOption[] = [
@@ -222,6 +224,72 @@ export const Empty: Story = {
   },
   args: {
     options: [],
+    label: 'Teams',
+  },
+};
+
+export const WithLabelAddons: Story = {
+  name: 'With label addons',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<string[]>([]);
+      return <MultiSelect {...args} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: {
+    label: 'Teams',
+    labelAddons: (
+      <Tooltip content="Teams determine who gets notified about this project.">
+        <button type="button" aria-label="More info" className="text-fg-tertiary hover:text-fg-default">
+          <Info className="h-3.5 w-3.5" />
+        </button>
+      </Tooltip>
+    ),
+  },
+};
+
+export const WithInitialsAvatars: Story = {
+  name: 'With initials avatars',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<string[]>(['design']);
+      return <MultiSelect {...args} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: {
+    label: 'Teams',
+    showAvatars: true,
+  },
+};
+
+export const GranularCallbacks: Story = {
+  name: 'Granular add/remove callbacks',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<string[]>(['design']);
+      const [log, setLog] = useState<string[]>([]);
+      return (
+        <div className="flex flex-col gap-3">
+          <MultiSelect
+            {...args}
+            value={value}
+            onChange={setValue}
+            onAdd={(option) => setLog((prev) => [`+ ${option.label}`, ...prev])}
+            onRemove={(removedValue) => setLog((prev) => [`- ${removedValue}`, ...prev])}
+          />
+          <ul className="text-p-sm text-fg-secondary font-mono">
+            {log.map((entry, i) => (
+              <li key={i}>{entry}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    }
+    return <Controlled />;
+  },
+  args: {
     label: 'Teams',
   },
 };

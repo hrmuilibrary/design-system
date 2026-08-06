@@ -1,7 +1,8 @@
-import { forwardRef, useEffect, useRef, type MutableRefObject, type Ref } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { mergeRefs } from '../../lib/mergeRefs';
 import type { ModalProps, ModalSize } from './Modal.types';
 
 const sizeStyles: Record<ModalSize, string> = {
@@ -11,21 +12,6 @@ const sizeStyles: Record<ModalSize, string> = {
   xl: 'max-w-2xl',
   '2xl': 'max-w-4xl',
 };
-
-// No shared ref-merging util exists in `src/lib` yet — the panel needs its
-// own ref for focus management (see below) as well as whatever ref the
-// consumer forwards in, so the two are combined locally here.
-function mergeRefs<T>(...refs: Array<Ref<T> | undefined>) {
-  return (node: T | null) => {
-    for (const ref of refs) {
-      if (typeof ref === 'function') {
-        ref(node);
-      } else if (ref) {
-        (ref as MutableRefObject<T | null>).current = node;
-      }
-    }
-  };
-}
 
 export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
   {

@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { Info } from 'lucide-react';
 import { Select } from './Select';
+import { Tooltip } from '../Tooltip';
 import type { SelectOption } from './Select.types';
 
 const fruitOptions: SelectOption[] = [
@@ -92,6 +94,20 @@ export const Controlled: Story = {
   },
   args: {
     label: 'Favorite fruit',
+  },
+};
+
+export const WithLabelAddons: Story = {
+  name: 'With label addons',
+  args: {
+    label: 'Favorite fruit',
+    labelAddons: (
+      <Tooltip content="This affects the suggestions on your dashboard.">
+        <button type="button" aria-label="More info" className="text-fg-tertiary hover:text-fg-default">
+          <Info className="h-3.5 w-3.5" />
+        </button>
+      </Tooltip>
+    ),
   },
 };
 

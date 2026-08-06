@@ -35,6 +35,20 @@ restoring the previously focused element on close.
 - **Focus & scroll** — body scroll is locked while open, and the panel
   receives focus on open, restoring focus to the previously focused element
   on close.
+- **Animation** — the drawer slides/fades in and out by default
+  (`animated={true}`), staying mounted through its exit transition instead
+  of unmounting the instant `open` goes `false`. Body scroll stays locked
+  for the full exit, but focus is restored immediately when `open` becomes
+  `false` rather than waiting for the transition to finish. Respects
+  `prefers-reduced-motion` automatically. Pass `animated={false}` to
+  restore the pre-1.x synchronous mount/unmount — useful if a test asserts
+  the drawer is gone immediately after `open` flips.
+
+## headerActions
+
+`headerActions` renders extra controls in the header, to the left of the
+close button — e.g. a back or pin button. It's a single `ReactNode` slot
+rather than named props for specific buttons, so it composes with anything.
 
 ## Variants
 
