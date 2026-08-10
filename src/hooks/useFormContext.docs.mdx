@@ -1,0 +1,35 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Hooks/useFormContext" />
+
+# useFormContext
+
+Reads the ambient form state provided by the nearest `FormContainer` —
+`control`, `register`, `errors`, and the rest of react-hook-form's form
+API, plus a `submit()` callback. Useful for a custom field or control that
+needs direct access to the form without going through `FormField`.
+
+```tsx
+import { useFormContext } from '@dinofront/design_system';
+
+function CustomField({ name }: { name: string }) {
+  const { register, errors } = useFormContext();
+
+  return (
+    <div>
+      <input {...register(name)} />
+      {errors[name] && <span>{errors[name]?.message}</span>}
+    </div>
+  );
+}
+```
+
+## API
+
+```ts
+function useFormContext(): FormContextValue;
+```
+
+Must be called from inside a `FormContainer` — throws
+`"useFormContext must be used inside a FormContainer."` otherwise, the
+same failure `FormField` raises when used outside one.
