@@ -5,3 +5,4 @@ export { useEscapeKey } from './useEscapeKey';
 export { useHideBodyScroll } from './useHideBodyScroll';
 export { useIsMobile } from './useIsMobile';
 export { useFormContext } from './useFormContext';
+export type { FormContextValue } from '../lib/FormContext';

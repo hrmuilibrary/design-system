@@ -1,20 +1,28 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
+
+let lockCount = 0;
+let previousOverflow = '';
 
 /** Locks `document.body` scrolling while `active`, restoring whatever
- *  `overflow` value was set before activation on cleanup — so this
- *  doesn't clobber a value another consumer of `body.style.overflow` set
- *  before it. */
+ *  `overflow` value was set before the first lock once the last active
+ *  caller deactivates. Reference-counted across concurrent callers (e.g.
+ *  a drawer opened from within a modal) so one overlay closing early
+ *  never clobbers another's lock. */
 export function useHideBodyScroll(active: boolean): void {
-  const previousOverflow = useRef<string | null>(null);
-
   useEffect(() => {
     if (!active) return;
 
-    previousOverflow.current = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    if (lockCount === 0) {
+      previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+    }
+    lockCount += 1;
 
     return () => {
-      document.body.style.overflow = previousOverflow.current ?? '';
+      lockCount -= 1;
+      if (lockCount === 0) {
+        document.body.style.overflow = previousOverflow;
+      }
     };
   }, [active]);
 }

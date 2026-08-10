@@ -7,7 +7,10 @@ import { Meta } from '@storybook/addon-docs/blocks';
 Reads the ambient form state provided by the nearest `FormContainer` —
 `control`, `register`, `errors`, and the rest of react-hook-form's form
 API, plus a `submit()` callback. Useful for a custom field or control that
-needs direct access to the form without going through `FormField`.
+needs direct access to the form without going through `FormField`. Despite
+the shared name, this is not react-hook-form's own `useFormContext` /
+`FormProvider` — it reads the bespoke context this library's
+`FormContainer` provides, not react-hook-form's.
 
 ```tsx
 import { useFormContext } from '@dinofront/design_system';

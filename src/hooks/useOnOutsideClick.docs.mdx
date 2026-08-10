@@ -32,6 +32,7 @@ function useOnOutsideClick(
 
 Listens on `document` for `mousedown` and `touchstart`, not scoped to the
 element's own subtree, so it also catches clicks on other overlays or the
-page background. Pass `enabled={false}` to skip attaching listeners
+page background. Pass `false` as the last argument — e.g.
+`useOnOutsideClick(ref, onClose, false)` — to skip attaching listeners
 entirely — useful when the overlay is closed and you don't want the
 listener live.

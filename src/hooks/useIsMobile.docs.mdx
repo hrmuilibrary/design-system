@@ -23,7 +23,9 @@ function Nav() {
 function useIsMobile(breakpoint?: number): boolean; // default 768
 ```
 
-Backed by `window.matchMedia('(max-width: ${breakpoint}px)')`. SSR-safe —
-returns `false` on the server and during the first client render before
-the media query can be evaluated, matching `prefersReducedMotion()`'s
-SSR-safety convention in `src/lib/motion.ts`.
+Backed by `window.matchMedia('(max-width: ${breakpoint}px)')`. Returns
+`false` during SSR and during the very first client render, then updates
+to the real value once the effect runs after mount — so the
+server-rendered markup and the client's first render always agree (no
+hydration mismatch), at the cost of one extra render after mount when the
+viewport actually is narrow.

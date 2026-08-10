@@ -2,19 +2,16 @@ import { useEffect, useState } from 'react';
 
 const DEFAULT_BREAKPOINT = 768;
 
-function getMatches(breakpoint: number): boolean {
-  return typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-    ? window.matchMedia(`(max-width: ${breakpoint}px)`).matches
-    : false;
-}
-
 /** True when the viewport is at or below `breakpoint` (default 768px).
- *  SSR-safe — returns `false` until mounted in a browser. Subscribes to
- *  the media query's `change` event rather than `window.resize`, so it
- *  only re-renders when the mobile/desktop boundary is actually
- *  crossed. */
+ *  Returns `false` during SSR and during the very first client render —
+ *  the effect computes and syncs the real value right after mount, so
+ *  the server-rendered markup and the client's first render always
+ *  agree (no hydration mismatch), at the cost of one extra render after
+ *  mount when the viewport actually is narrow. Subscribes to the media
+ *  query's `change` event rather than `window.resize`, so it only
+ *  re-renders when the mobile/desktop boundary is actually crossed. */
 export function useIsMobile(breakpoint: number = DEFAULT_BREAKPOINT): boolean {
-  const [isMobile, setIsMobile] = useState(() => getMatches(breakpoint));
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;

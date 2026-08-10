@@ -24,5 +24,6 @@ function useEscapeKey(onEscape: () => void, enabled?: boolean): void; // enabled
 ```
 
 Listens on `document`, so it fires regardless of which element inside your
-overlay currently has focus. Pass `enabled={false}` to skip attaching the
-listener entirely — useful when the overlay is closed.
+overlay currently has focus. Pass `false` as the last argument — e.g.
+`useEscapeKey(onClose, false)` — to skip attaching the listener entirely —
+useful when the overlay is closed.
