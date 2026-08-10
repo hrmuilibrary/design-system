@@ -43,6 +43,32 @@ const [value, setValue] = useState('apple');
 `errorText` does the same and also renders below the control in place of
 `helperText`.
 
+## Required
+
+`required` renders a red asterisk next to the label and sets `aria-required`
+on the trigger.
+
+## Loading
+
+`loading` shows a spinner in place of the chevron and blocks opening the
+list — it does not set the native `disabled` attribute, so a `Select` that
+starts loading while focused doesn't lose focus.
+
+## Grouped options
+
+Give any `SelectOption` a `group: string` to render it under a heading.
+Options sharing a group must be contiguous in the `options` array — the
+heading is emitted whenever `group` changes between consecutive options, so
+a non-contiguous group renders its heading more than once.
+
+## Searchable
+
+`searchable` adds a text filter pinned above the option list. Matching
+checks, in order, `option.searchText`, then `option.label` if it's a plain
+string, then `option.value` — so options with a rich (non-string) `label`
+still narrow via their `value` unless you supply `searchText` for a better
+match. `searchPlaceholder` and `emptyText` are overridable.
+
 ## Label addons
 
 `labelAddons` renders content on the label row, to the right of the label
