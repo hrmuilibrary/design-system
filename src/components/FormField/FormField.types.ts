@@ -1,5 +1,5 @@
 import type { HTMLAttributes, ReactElement } from 'react';
-import type { RefCallBack } from 'react-hook-form';
+import type { RefCallBack, SetValueConfig } from 'react-hook-form';
 import type { BaseProps } from '../../types';
 
 /** Deliberately untyped `value`/`onChange`: this render prop feeds whichever
@@ -16,6 +16,13 @@ export interface FormFieldRenderProps {
   error: boolean;
   errorText?: string;
   dataTestId?: string;
+  /** Imperatively set this field's value, pre-bound to this FormField's
+   *  `name` — for a component whose own change contract doesn't fit RHF's
+   *  field bindings. Defaults `shouldValidate`/`shouldDirty`/`shouldTouch`
+   *  to `true`, overridable via `options`. */
+  setFieldValue: (value: unknown, options?: SetValueConfig) => void;
+  /** True once the field has been touched, changed from its default value, and currently passes validation. */
+  isValid: boolean;
 }
 
 export interface FormFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'>, BaseProps {
