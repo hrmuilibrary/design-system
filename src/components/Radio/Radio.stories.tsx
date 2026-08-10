@@ -157,3 +157,20 @@ export const DisabledGroup: Story = {
     </RadioGroup>
   ),
 };
+
+export const GroupWithLabel: Story = {
+  name: 'Group with label',
+  render: () => {
+    function GroupDemo() {
+      const [value, setValue] = useState('comfortable');
+      return (
+        <RadioGroup name="density-labeled" label="Density" value={value} onChange={setValue}>
+          <Radio value="compact" label="Compact" />
+          <Radio value="comfortable" label="Comfortable" />
+          <Radio value="spacious" label="Spacious" />
+        </RadioGroup>
+      );
+    }
+    return <GroupDemo />;
+  },
+};
