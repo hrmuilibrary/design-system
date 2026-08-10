@@ -48,6 +48,8 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     triggerIcon,
     label,
     required,
+    error = false,
+    errorText,
     labelAddons,
     className,
     dataTestId,
@@ -62,6 +64,7 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
   // on as the user drags across the inner icon/text. Track nesting depth
   // instead and only clear once the pointer has left every descendant too.
   const dragDepth = useRef(0);
+  const hasError = error || !!errorText;
 
   const processFiles = (incoming: File[]) => {
     if (!incoming.length) return;
@@ -147,6 +150,8 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     </div>
   );
 
+  const errorRow = errorText ? <p className="text-p-sm text-red-700">{errorText}</p> : null;
+
   if (mode !== 'dropzone') {
     const isIcon = mode === 'icon';
     return (
@@ -164,6 +169,7 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
           {isIcon ? triggerIcon ?? <Pencil className="h-4 w-4" /> : (triggerLabel ?? 'Choose a file')}
         </Button>
         {fileInput}
+        {errorRow}
       </div>
     );
   }
@@ -191,10 +197,15 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
         }
       }}
       aria-disabled={disabled || undefined}
+      aria-invalid={hasError || undefined}
       data-test-id={dataTestId}
       className={cn(
         'flex flex-col items-center justify-center text-center gap-2 px-6 py-8 rounded-lg border-2 border-dashed cursor-pointer transition-colors outline-none',
-        dragOver ? 'border-brand-500 bg-brand-20' : 'border-border-default bg-bg-container hover:bg-bg-subtle',
+        hasError
+          ? 'border-red-300 bg-bg-danger-lighter'
+          : dragOver
+            ? 'border-brand-500 bg-brand-20'
+            : 'border-border-default bg-bg-container hover:bg-bg-subtle',
         'focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-1',
         disabled && 'opacity-50 cursor-not-allowed',
         className,
@@ -214,12 +225,13 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     </div>
   );
 
-  if (!labelRow) return dropzone;
+  if (!labelRow && !errorRow) return dropzone;
 
   return (
     <div className="flex flex-col gap-1.5">
       {labelRow}
       {dropzone}
+      {errorRow}
     </div>
   );
 });

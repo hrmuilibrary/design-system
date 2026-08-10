@@ -51,6 +51,10 @@ export interface UploadProps
   triggerIcon?: ReactNode;
   label?: ReactNode;
   required?: boolean;
+  /** Switches the dropzone (or, in `button`/`icon` mode, just the message below) to the danger styles. */
+  error?: boolean;
+  /** Message rendered below the control; also switches dropzone mode to the danger styles. */
+  errorText?: ReactNode;
   /** Content rendered on the label row, right of the label text and required marker — e.g. an info tooltip trigger. */
   labelAddons?: ReactNode;
 }

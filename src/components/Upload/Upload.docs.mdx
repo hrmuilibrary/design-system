@@ -41,6 +41,13 @@ you pass `hint` explicitly. `maxSizeMB` is display-only — `Upload` doesn't
 reject oversized files itself; enforce that limit in your `onFiles` handler
 and surface it via `UploadItem`'s `error` status.
 
+## Validation state
+
+`error`/`errorText` on `Upload` itself switch the dropzone to the danger
+styles and render a message below it — separate from `UploadItem`'s own
+per-file `error` status below, which is about an individual file's upload
+outcome rather than the control's overall validity.
+
 ## UploadItem statuses
 
 `UploadItem` renders one of three states via its `status` prop:
