@@ -1,0 +1,28 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Hooks/useEscapeKey" />
+
+# useEscapeKey
+
+Fires a callback when the user presses `Escape` — the logic half of a
+dismissible overlay's keyboard handling, with no rendering of its own.
+
+```tsx
+import { useEscapeKey } from '@dinofront/design_system';
+
+function Drawer({ onClose }: { onClose: () => void }) {
+  useEscapeKey(onClose);
+
+  return <div>...</div>;
+}
+```
+
+## API
+
+```ts
+function useEscapeKey(onEscape: () => void, enabled?: boolean): void; // enabled default true
+```
+
+Listens on `document`, so it fires regardless of which element inside your
+overlay currently has focus. Pass `enabled={false}` to skip attaching the
+listener entirely — useful when the overlay is closed.
