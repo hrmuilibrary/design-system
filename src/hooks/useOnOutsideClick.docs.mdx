@@ -1,0 +1,38 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Hooks/useOnOutsideClick" />
+
+# useOnOutsideClick
+
+Fires a handler when the user clicks or taps outside a given element —
+the logic half of a dismissible overlay (menu, popover, dropdown), with no
+rendering of its own.
+
+```tsx
+import { useRef } from 'react';
+import { useOnOutsideClick } from '@dinofront/design_system';
+
+function Menu({ onClose }: { onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useOnOutsideClick(ref, onClose);
+
+  return <div ref={ref}>...</div>;
+}
+```
+
+## API
+
+```ts
+function useOnOutsideClick(
+  ref: RefObject<HTMLElement | null> | null | undefined,
+  handler: (event: MouseEvent | TouchEvent) => void,
+  enabled?: boolean, // default true
+): void;
+```
+
+Listens on `document` for `mousedown` and `touchstart`, not scoped to the
+element's own subtree, so it also catches clicks on other overlays or the
+page background. Pass `false` as the last argument — e.g.
+`useOnOutsideClick(ref, onClose, false)` — to skip attaching listeners
+entirely — useful when the overlay is closed and you don't want the
+listener live.

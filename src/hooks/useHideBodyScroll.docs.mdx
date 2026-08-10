@@ -1,0 +1,31 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Hooks/useHideBodyScroll" />
+
+# useHideBodyScroll
+
+Locks page scrolling while a full-screen or modal-style overlay is open,
+restoring the page's previous scroll behavior when it closes.
+
+```tsx
+import { useHideBodyScroll } from '@dinofront/design_system';
+
+function Modal({ open }: { open: boolean }) {
+  useHideBodyScroll(open);
+
+  return open ? <div>...</div> : null;
+}
+```
+
+## API
+
+```ts
+function useHideBodyScroll(active: boolean): void;
+```
+
+Sets `document.body.style.overflow = 'hidden'` while `active` is `true`,
+and restores whatever value was present immediately before activation
+once `active` becomes `false` (or the component unmounts). Concurrent
+active callers (e.g. a drawer opened from within a modal) are
+reference-counted, so nesting multiple overlays that each call this hook
+is safe — the body only unlocks once the last one deactivates.
