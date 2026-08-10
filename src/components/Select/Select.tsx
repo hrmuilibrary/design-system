@@ -145,6 +145,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       setOpen(false);
       buttonRef.current?.focus();
     } else if (e.key === 'Tab') {
+      buttonRef.current?.focus();
       setOpen(false);
     }
   };
