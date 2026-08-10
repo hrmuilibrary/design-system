@@ -24,6 +24,21 @@ function sameDay(a: Date | null, b: Date | null) {
   );
 }
 
+function startOfDay(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+// Normalizing both sides to local midnight makes the comparison day-granular
+// in both directions without a separate `endOfDay` boundary — a `minDate`
+// carrying today's wall-clock time (e.g. `new Date()`) still leaves today
+// itself selectable, since today's grid cell is also midnight.
+function isDayDisabled(date: Date, minDate?: Date, maxDate?: Date, excludeDates?: Date[]) {
+  const time = startOfDay(date).getTime();
+  if (minDate && time < startOfDay(minDate).getTime()) return true;
+  if (maxDate && time > startOfDay(maxDate).getTime()) return true;
+  return !!excludeDates?.some((excluded) => sameDay(excluded, date));
+}
+
 function formatShort(date: Date) {
   return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
 }
@@ -50,6 +65,12 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     label,
     placeholder = 'Select date',
     fullWidth = false,
+    disabled = false,
+    minDate,
+    maxDate,
+    excludeDates,
+    error = false,
+    errorText,
     id,
     className,
     wrapperClassName,
@@ -63,15 +84,17 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   const [view, setView] = useState<Date>(value ?? rangeValue?.start ?? new Date());
   const [hoverEnd, setHoverEnd] = useState<Date | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasError = error || !!errorText;
+  const isOpen = open && !disabled;
 
   useEffect(() => {
-    if (!open) return;
+    if (!isOpen) return;
     const onClick = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) setOpen(false);
     };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
-  }, [open]);
+  }, [isOpen]);
 
   const display = range
     ? rangeValue?.start
@@ -120,21 +143,34 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           ref={ref}
           id={triggerId}
           type="button"
+          disabled={disabled}
+          aria-invalid={hasError || undefined}
           onClick={() => setOpen((v) => !v)}
           className={cn(
-            'inline-flex items-center gap-2 rounded-lg border border-border-default bg-bg-default text-left transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:border-brand-500',
+            'inline-flex items-center gap-2 rounded-lg border bg-bg-default text-left transition-colors focus-visible:outline-none focus-visible:ring-2',
+            hasError ? 'border-red-600' : 'border-border-default',
+            !disabled && !hasError && 'hover:border-border-strong',
+            hasError
+              ? 'focus-visible:ring-red-300 focus-visible:border-red-600'
+              : 'focus-visible:ring-brand-300 focus-visible:border-brand-500',
+            disabled && 'bg-bg-container border-border-default cursor-not-allowed text-fg-disabled',
             fullWidth ? 'w-full min-w-0' : 'min-w-[260px]',
             sizeStyles[size],
             className,
           )}
         >
-          <span className={cn('flex-1 text-left truncate', display ? 'text-fg-default' : 'text-fg-tertiary')}>
+          <span
+            className={cn(
+              'flex-1 text-left truncate',
+              disabled ? 'text-fg-disabled' : display ? 'text-fg-default' : 'text-fg-tertiary',
+            )}
+          >
             {display || placeholder}
           </span>
-          <Calendar className="w-4 h-4 text-fg-secondary" />
+          <Calendar className={cn('w-4 h-4', disabled ? 'text-fg-disabled' : 'text-fg-secondary')} />
         </button>
 
-        {open && (
+        {isOpen && (
           <div className="absolute z-50 mt-1 left-0 rounded-xl border border-border-default bg-bg-default shadow-z3 p-3 w-[300px]">
             <div className="flex items-center justify-between mb-2">
               <button
@@ -165,12 +201,15 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
               ))}
               {cells.map((date, index) => {
                 if (!date) return <div key={index} />;
+                const dayDisabled = isDayDisabled(date, minDate, maxDate, excludeDates);
                 const isSelected = !range && sameDay(date, value ?? null);
                 const isStart = range && sameDay(date, currentRange.start);
                 const isEnd = range && sameDay(date, rangeEnd);
-                const isInRange = range && !!currentRange.start && !!rangeEnd && date > currentRange.start && date < rangeEnd;
-                const stateClassName =
-                  isSelected || isStart || isEnd
+                const isInRange =
+                  range && !!currentRange.start && !!rangeEnd && date > currentRange.start && date < rangeEnd;
+                const stateClassName = dayDisabled
+                  ? 'text-fg-disabled cursor-not-allowed'
+                  : isSelected || isStart || isEnd
                     ? 'bg-brand-500 text-white'
                     : isInRange
                       ? 'bg-bg-brand-lighter text-brand-700'
@@ -179,8 +218,12 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                   <button
                     key={index}
                     type="button"
-                    onMouseEnter={() => range && currentRange.start && !currentRange.end && setHoverEnd(date)}
-                    onClick={() => pick(date)}
+                    disabled={dayDisabled}
+                    aria-disabled={dayDisabled || undefined}
+                    onMouseEnter={() =>
+                      !dayDisabled && range && currentRange.start && !currentRange.end && setHoverEnd(date)
+                    }
+                    onClick={() => !dayDisabled && pick(date)}
                     className={cn('h-8 rounded-md text-p-sm font-medium', stateClassName)}
                   >
                     {date.getDate()}
@@ -191,6 +234,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           </div>
         )}
       </div>
+      {errorText ? <p className="text-p-sm text-red-700">{errorText}</p> : null}
     </div>
   );
 });

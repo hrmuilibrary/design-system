@@ -44,6 +44,25 @@ are swapped automatically if the second click lands before `start`), and
 the popover closes once both ends are picked. Hovering a day after `start`
 is chosen previews the in-between range before `end` is committed.
 
+## Disabled
+
+`disabled` blocks the trigger natively — both mouse and keyboard activation
+are prevented, and the popover closes immediately if `disabled` becomes
+`true` while it's already open.
+
+## Validation state
+
+`error` switches the trigger to the danger border/ring styles; `errorText`
+does the same and also renders below the control.
+
+## Limiting selectable days
+
+`minDate`/`maxDate` (inclusive) and `excludeDates` disable individual days
+in the calendar grid — time-of-day is ignored on all three, so passing
+`new Date()` as `minDate` still leaves today itself selectable. In range
+mode, only the two endpoints are validated against these constraints; a
+committed range may still span an excluded day in the middle.
+
 ## Composition
 
 `DatePicker` forwards its ref to the trigger `<button>` element. Its root
