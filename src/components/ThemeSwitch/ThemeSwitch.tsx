@@ -39,12 +39,12 @@ export const ThemeSwitch = forwardRef<HTMLInputElement, ThemeSwitchProps>(functi
             'peer-focus-visible:ring-2 peer-focus-visible:ring-brand-300 peer-focus-visible:ring-offset-2',
           )}
         >
-          <Sun className="size-4 text-yellow-500" aria-hidden />
-          <Moon className="size-4 text-gray-400" aria-hidden />
+          <Sun className="size-4 text-yellow-500 z-1" aria-hidden />
+          <Moon className="size-4 text-gray-400 z-1" aria-hidden />
         </span>
         <span
           aria-hidden
-          className="absolute left-1 top-1 size-6 rounded-full bg-white shadow-z1 transition-transform peer-checked:translate-x-8"
+          className="absolute left-1 top-1 size-6 rounded-full bg-white shadow-z1 transition-transform peer-checked:translate-x-8 peer-checked:bg-gray-600"
         />
       </span>
       {label && <span className="text-p-std font-medium text-fg-default">{label}</span>}
