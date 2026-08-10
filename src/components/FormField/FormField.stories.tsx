@@ -54,3 +54,31 @@ export const ValidationError: Story = {
     </div>
   ),
 };
+
+export const CustomFieldWithSetFieldValue: Story = {
+  name: 'Custom field using setFieldValue',
+  render: () => (
+    <div className="flex w-96 flex-col gap-4">
+      <FormContainer
+        validationSchema={schema}
+        defaultValues={{ firstName: '', lastName: '' }}
+        onSubmit={() => {}}
+      >
+        <FormField
+          name="firstName"
+          render={({ value, setFieldValue, isValid, errorText }) => (
+            <div className="flex flex-col gap-1">
+              <input
+                className="rounded-lg border border-border-default px-3 py-2"
+                value={value ?? ''}
+                onChange={(e) => setFieldValue(e.target.value)}
+              />
+              {isValid && <span className="text-p-sm text-green-700">Looks good</span>}
+              {errorText && <span className="text-p-sm text-red-700">{errorText}</span>}
+            </div>
+          )}
+        />
+      </FormContainer>
+    </div>
+  ),
+};

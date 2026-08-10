@@ -16,6 +16,7 @@ const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
 export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function RadioGroup(
   {
     name,
+    label,
     value,
     defaultValue,
     onChange,
@@ -30,23 +31,36 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
 ) {
   const reactName = useId();
   const groupName = name ?? reactName;
+  const labelId = `${reactName}-label`;
+
+  const groupEl = (
+    <div
+      ref={ref}
+      role="radiogroup"
+      aria-labelledby={label ? labelId : undefined}
+      data-test-id={dataTestId}
+      className={cn(
+        'flex gap-3',
+        orientation === 'vertical' ? 'flex-col' : 'flex-row flex-wrap items-center gap-4',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
 
   return (
-    <RadioGroupContext.Provider
-      value={{ name: groupName, value, defaultValue, onChange, disabled, size }}
-    >
-      <div
-        ref={ref}
-        role="radiogroup"
-        data-test-id={dataTestId}
-        className={cn(
-          'flex gap-3',
-          orientation === 'vertical' ? 'flex-col' : 'flex-row flex-wrap items-center gap-4',
-          className,
-        )}
-      >
-        {children}
-      </div>
+    <RadioGroupContext.Provider value={{ name: groupName, value, defaultValue, onChange, disabled, size }}>
+      {label ? (
+        <div className="flex flex-col gap-1.5">
+          <span id={labelId} className="text-p-std font-medium text-fg-default inline-flex">
+            {label}
+          </span>
+          {groupEl}
+        </div>
+      ) : (
+        groupEl
+      )}
     </RadioGroupContext.Provider>
   );
 });

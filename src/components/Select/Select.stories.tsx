@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Info } from 'lucide-react';
 import { Select } from './Select';
 import { Tooltip } from '../Tooltip';
@@ -11,6 +11,14 @@ const fruitOptions: SelectOption[] = [
   { value: 'cherry', label: 'Cherry' },
   { value: 'durian', label: 'Durian (disabled)', disabled: true },
   { value: 'elderberry', label: 'Elderberry' },
+];
+
+const groupedFruitOptions: SelectOption[] = [
+  { value: 'banana', label: 'Banana' },
+  { value: 'apple', label: 'Apple', group: 'Pome' },
+  { value: 'pear', label: 'Pear', group: 'Pome' },
+  { value: 'cherry', label: 'Cherry', group: 'Stone' },
+  { value: 'peach', label: 'Peach', group: 'Stone' },
 ];
 
 const meta = {
@@ -33,6 +41,9 @@ const meta = {
     size: 'md',
     disabled: false,
     error: false,
+    required: false,
+    loading: false,
+    searchable: false,
   },
   decorators: [
     (Story) => (
@@ -108,6 +119,42 @@ export const WithLabelAddons: Story = {
         </button>
       </Tooltip>
     ),
+  },
+};
+
+export const Required: Story = {
+  args: { label: 'Favorite fruit', required: true },
+};
+
+export const Loading: Story = {
+  args: { label: 'Favorite fruit', loading: true },
+};
+
+export const Grouped: Story = {
+  args: { label: 'Favorite fruit', options: groupedFruitOptions },
+};
+
+export const Searchable: Story = {
+  args: { label: 'Favorite fruit', searchable: true },
+};
+
+export const SearchableGroupedLoading: Story = {
+  name: 'Searchable + grouped + loading (composed)',
+  render: (args) => {
+    function ComposedDemo() {
+      const [loading, setLoading] = useState(true);
+      useEffect(() => {
+        const t = setTimeout(() => setLoading(false), 1000);
+        return () => clearTimeout(t);
+      }, []);
+      return <Select {...args} loading={loading} />;
+    }
+    return <ComposedDemo />;
+  },
+  args: {
+    label: 'Favorite fruit',
+    options: groupedFruitOptions,
+    searchable: true,
   },
 };
 

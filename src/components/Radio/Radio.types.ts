@@ -5,6 +5,7 @@ export type RadioSize = 'md' | 'sm';
 
 export interface RadioGroupProps extends BaseProps {
   name?: string;
+  label?: ReactNode;
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;

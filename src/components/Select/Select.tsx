@@ -1,13 +1,18 @@
-import { forwardRef, useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
-import { ChevronDown, Check } from 'lucide-react';
+import { forwardRef, useEffect, useId, useMemo, useRef, useState, Fragment, type KeyboardEvent } from 'react';
+import { ChevronDown, Check, Loader2, Search } from 'lucide-react';
 import { cn } from '../../lib/cn';
-import type { SelectProps, SelectSize } from './Select.types';
+import { mergeRefs } from '../../lib/mergeRefs';
+import type { SelectOption, SelectProps, SelectSize } from './Select.types';
 
 const sizeStyles: Record<SelectSize, string> = {
   lg: 'h-12 text-p-md px-3.5',
   md: 'h-10 text-p-std px-3',
   sm: 'h-8 text-p-sm px-2.5',
 };
+
+function firstEnabledIndex(list: SelectOption[]) {
+  return list.findIndex((o) => !o.disabled);
+}
 
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select(
   {
@@ -21,6 +26,11 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
     helperText,
     errorText,
     error = false,
+    required = false,
+    loading = false,
+    searchable = false,
+    searchPlaceholder = 'Search…',
+    emptyText = 'No results',
     size = 'md',
     disabled,
     id,
@@ -32,20 +42,35 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
 ) {
   const reactId = useId();
   const triggerId = id ?? reactId;
+  const listId = `${triggerId}-listbox`;
   const [open, setOpen] = useState(false);
   const [internal, setInternal] = useState<string | undefined>(defaultValue);
   const isControlled = value !== undefined;
   const selected = isControlled ? value : internal;
   const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [query, setQuery] = useState('');
   const hasError = error || !!errorText;
+  const describedBy = errorText ? `${triggerId}-error` : helperText ? `${triggerId}-help` : undefined;
 
   const selectedOption = options.find((o) => o.value === selected);
+
+  const visibleOptions = useMemo(() => {
+    const q = searchable ? query.trim().toLowerCase() : '';
+    if (!q) return options;
+    return options.filter((o) => {
+      const haystack = o.searchText ?? (typeof o.label === 'string' ? o.label : undefined) ?? o.value;
+      return haystack.toLowerCase().includes(q);
+    });
+  }, [options, query, searchable]);
 
   const pick = (val: string) => {
     if (!isControlled) setInternal(val);
     onChange?.(val);
     setOpen(false);
+    if (searchable) buttonRef.current?.focus();
   };
 
   useEffect(() => {
@@ -58,16 +83,41 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   }, [open]);
 
   useEffect(() => {
-    if (open) {
-      const idx = options.findIndex((o) => o.value === selected);
-      setActiveIndex(idx >= 0 ? idx : 0);
-    } else {
+    if (!open) {
       setActiveIndex(-1);
+      setQuery('');
+      return;
     }
-  }, [open, selected, options]);
+    const selIdx = visibleOptions.findIndex((o) => o.value === selected);
+    setActiveIndex(selIdx >= 0 && !visibleOptions[selIdx]?.disabled ? selIdx : firstEnabledIndex(visibleOptions));
+  }, [open, selected, visibleOptions]);
+
+  useEffect(() => {
+    if (open && searchable) searchRef.current?.focus();
+  }, [open, searchable]);
+
+  useEffect(() => {
+    if (loading) setOpen(false);
+  }, [loading]);
+
+  const moveActive = (dir: 1 | -1) => {
+    const n = visibleOptions.length;
+    if (n === 0) return;
+    let next = activeIndex < 0 ? (dir === 1 ? -1 : 0) : activeIndex;
+    for (let i = 0; i < n; i++) {
+      next = (next + dir + n) % n;
+      if (!visibleOptions[next]?.disabled) break;
+    }
+    setActiveIndex(next);
+  };
+
+  const commitActive = () => {
+    const opt = visibleOptions[activeIndex];
+    if (opt && !opt.disabled) pick(opt.value);
+  };
 
   const onKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
-    if (disabled) return;
+    if (disabled || loading) return;
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       if (!open) {
@@ -75,18 +125,28 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
         return;
       }
       if (e.key === 'Enter' || e.key === ' ') {
-        const opt = options[activeIndex];
-        if (opt && !opt.disabled) pick(opt.value);
+        commitActive();
         return;
       }
-      const dir = e.key === 'ArrowDown' ? 1 : -1;
-      let next = activeIndex;
-      for (let i = 0; i < options.length; i++) {
-        next = (next + dir + options.length) % options.length;
-        if (!options[next]?.disabled) break;
-      }
-      setActiveIndex(next);
+      moveActive(e.key === 'ArrowDown' ? 1 : -1);
     } else if (e.key === 'Escape') {
+      setOpen(false);
+    }
+  };
+
+  const onSearchKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      moveActive(e.key === 'ArrowDown' ? 1 : -1);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      commitActive();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setOpen(false);
+      buttonRef.current?.focus();
+    } else if (e.key === 'Tab') {
+      buttonRef.current?.focus();
       setOpen(false);
     }
   };
@@ -100,23 +160,39 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       {(label || labelAddons) && (
         <div className="flex items-center gap-1.5">
           {label && (
-            <label htmlFor={triggerId} className="text-p-std font-medium text-fg-default inline-flex">
+            <label
+              htmlFor={triggerId}
+              className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
+            >
               {label}
+              {required && (
+                <span className="text-red-600" aria-hidden>
+                  *
+                </span>
+              )}
             </label>
           )}
           {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}
         </div>
       )}
       <button
-        ref={ref}
+        ref={mergeRefs(ref, buttonRef)}
         id={triggerId}
         type="button"
         disabled={disabled}
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          if (disabled || loading) return;
+          setOpen((o) => !o);
+        }}
         onKeyDown={onKeyDown}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-invalid={hasError || undefined}
+        aria-required={required || undefined}
+        aria-busy={loading || undefined}
+        aria-disabled={loading || undefined}
+        aria-describedby={describedBy}
+        aria-controls={open && visibleOptions.length > 0 ? listId : undefined}
         className={cn(
           'inline-flex items-center justify-between w-full rounded-lg border bg-bg-default transition-colors outline-none',
           'text-left',
@@ -127,6 +203,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
             ? 'focus-visible:ring-red-300 focus-visible:border-red-600'
             : 'focus-visible:ring-brand-300 focus-visible:border-brand-500',
           disabled && 'bg-bg-container border-border-default cursor-not-allowed text-fg-disabled',
+          loading && 'cursor-wait',
           sizeStyles[size],
           className,
         )}
@@ -134,45 +211,86 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
         <span className={cn('truncate', !selectedOption && 'text-fg-tertiary')}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <ChevronDown
-          className={cn('h-4 w-4 ml-2 shrink-0 text-fg-secondary transition-transform', open && 'rotate-180')}
-          aria-hidden
-        />
+        {loading ? (
+          <Loader2 className="h-4 w-4 ml-2 shrink-0 text-fg-secondary animate-spin" aria-hidden />
+        ) : (
+          <ChevronDown
+            className={cn('h-4 w-4 ml-2 shrink-0 text-fg-secondary transition-transform', open && 'rotate-180')}
+            aria-hidden
+          />
+        )}
       </button>
       {open && (
-        <ul
-          role="listbox"
-          className="absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto rounded-lg border border-border-default bg-bg-default shadow-z4 z-50 py-1"
-        >
-          {options.map((opt, i) => {
-            const isSel = opt.value === selected;
-            const isActive = i === activeIndex;
-            return (
-              <li
-                key={opt.value}
-                role="option"
-                aria-selected={isSel}
-                aria-disabled={opt.disabled || undefined}
-                onMouseEnter={() => !opt.disabled && setActiveIndex(i)}
-                onClick={() => !opt.disabled && pick(opt.value)}
-                className={cn(
-                  'flex items-center justify-between gap-2 px-3 py-2 text-p-std cursor-pointer select-none',
-                  opt.disabled && 'opacity-50 cursor-not-allowed',
-                  isActive && !opt.disabled && 'bg-bg-subtle',
-                  isSel && 'font-medium',
-                )}
-              >
-                <span className="truncate">{opt.label}</span>
-                {isSel && <Check className="h-4 w-4 text-brand-500 shrink-0" />}
-              </li>
-            );
-          })}
-        </ul>
+        <div className="absolute left-0 right-0 top-full mt-1 rounded-lg border border-border-default bg-bg-default shadow-z4 z-50 overflow-hidden">
+          {searchable && (
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-border-default">
+              <Search className="h-3.5 w-3.5 shrink-0 text-fg-tertiary" aria-hidden />
+              <input
+                ref={searchRef}
+                type="text"
+                role="combobox"
+                aria-expanded
+                aria-controls={visibleOptions.length > 0 ? listId : undefined}
+                aria-autocomplete="list"
+                aria-activedescendant={activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={onSearchKeyDown}
+                placeholder={searchPlaceholder}
+                className="w-full bg-transparent outline-none text-p-std text-fg-default placeholder:text-fg-tertiary"
+              />
+            </div>
+          )}
+          {visibleOptions.length === 0 ? (
+            <p className="px-3 py-6 text-center text-p-sm text-fg-secondary">{emptyText}</p>
+          ) : (
+            <ul id={listId} role="listbox" className="max-h-60 overflow-y-auto py-1">
+              {visibleOptions.map((opt, i) => {
+                const isSel = opt.value === selected;
+                const isActive = i === activeIndex;
+                const showGroupHeader = !!opt.group && opt.group !== visibleOptions[i - 1]?.group;
+                return (
+                  <Fragment key={opt.value}>
+                    {showGroupHeader && (
+                      <li
+                        role="presentation"
+                        className="px-3 pt-2 pb-1 text-label-sm font-medium uppercase tracking-wide text-fg-tertiary select-none"
+                      >
+                        {opt.group}
+                      </li>
+                    )}
+                    <li
+                      id={`${listId}-opt-${i}`}
+                      role="option"
+                      aria-selected={isSel}
+                      aria-disabled={opt.disabled || undefined}
+                      onMouseEnter={() => !opt.disabled && setActiveIndex(i)}
+                      onClick={() => !opt.disabled && pick(opt.value)}
+                      className={cn(
+                        'flex items-center justify-between gap-2 px-3 py-2 text-p-std cursor-pointer select-none',
+                        opt.disabled && 'opacity-50 cursor-not-allowed',
+                        isActive && !opt.disabled && 'bg-bg-subtle',
+                        isSel && 'font-medium',
+                      )}
+                    >
+                      <span className="truncate">{opt.label}</span>
+                      {isSel && <Check className="h-4 w-4 text-brand-500 shrink-0" />}
+                    </li>
+                  </Fragment>
+                );
+              })}
+            </ul>
+          )}
+        </div>
       )}
       {errorText ? (
-        <p className="text-p-sm text-red-700">{errorText}</p>
+        <p id={`${triggerId}-error`} className="text-p-sm text-red-700">
+          {errorText}
+        </p>
       ) : helperText ? (
-        <p className="text-p-sm text-fg-secondary">{helperText}</p>
+        <p id={`${triggerId}-help`} className="text-p-sm text-fg-secondary">
+          {helperText}
+        </p>
       ) : null}
     </div>
   );

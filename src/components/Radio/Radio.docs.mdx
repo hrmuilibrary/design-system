@@ -39,6 +39,10 @@ const [value, setValue] = useState('comfortable');
 </RadioGroup>;
 ```
 
+Pass `label` to render a heading above the group. It's additive-only — a
+`RadioGroup` without `label` renders exactly as before, with no extra
+wrapper element.
+
 `orientation` (`'vertical'` default, or `'horizontal'`) controls the layout
 of the group's children. A `Radio` rendered outside any `RadioGroup` falls
 back to its own `checked`/`defaultChecked`/`onChange` props and behaves like

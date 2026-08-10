@@ -18,8 +18,11 @@ any input in the library, or your own.
 ## Render prop
 
 `render` receives `name`, `value`, `onChange`, `onBlur`, `ref` (react-hook-form's
-`Controller` field bindings), plus `error: boolean` and `errorText?: string`
-derived from that field's validation state. Every input in this library
+`Controller` field bindings), `error: boolean`/`errorText?: string` derived
+from that field's validation state, plus `setFieldValue(value, options?)` —
+pre-bound to this field's `name`, for a component whose own change contract
+doesn't fit `onChange`/`onBlur` directly — and `isValid: boolean` (touched,
+dirty, and currently passing validation). Every input in this library
 already renders its own error text via an `error`/`errorText` pair
 (`Input`, `TextArea`, `Select`, ...), so `FormField` doesn't render a
 separate error message of its own — just spread the render props onto
