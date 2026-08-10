@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
+import { forwardRef, useId, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
 import {
   UploadCloud,
   File as FileIcon,
@@ -65,6 +65,8 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
   // instead and only clear once the pointer has left every descendant too.
   const dragDepth = useRef(0);
   const hasError = error || !!errorText;
+  const reactId = useId();
+  const describedBy = errorText ? `${reactId}-error` : undefined;
 
   const processFiles = (incoming: File[]) => {
     if (!incoming.length) return;
@@ -150,7 +152,11 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     </div>
   );
 
-  const errorRow = errorText ? <p className="text-p-sm text-red-700">{errorText}</p> : null;
+  const errorRow = errorText ? (
+    <p id={`${reactId}-error`} className="text-p-sm text-red-700">
+      {errorText}
+    </p>
+  ) : null;
 
   if (mode !== 'dropzone') {
     const isIcon = mode === 'icon';
@@ -198,6 +204,7 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
       }}
       aria-disabled={disabled || undefined}
       aria-invalid={hasError || undefined}
+      aria-describedby={describedBy}
       data-test-id={dataTestId}
       className={cn(
         'flex flex-col items-center justify-center text-center gap-2 px-6 py-8 rounded-lg border-2 border-dashed cursor-pointer transition-colors outline-none',

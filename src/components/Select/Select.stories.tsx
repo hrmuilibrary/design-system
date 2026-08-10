@@ -14,11 +14,11 @@ const fruitOptions: SelectOption[] = [
 ];
 
 const groupedFruitOptions: SelectOption[] = [
+  { value: 'banana', label: 'Banana' },
   { value: 'apple', label: 'Apple', group: 'Pome' },
   { value: 'pear', label: 'Pear', group: 'Pome' },
   { value: 'cherry', label: 'Cherry', group: 'Stone' },
   { value: 'peach', label: 'Peach', group: 'Stone' },
-  { value: 'banana', label: 'Banana' },
 ];
 
 const meta = {

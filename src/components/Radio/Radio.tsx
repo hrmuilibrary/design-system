@@ -31,11 +31,13 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
 ) {
   const reactName = useId();
   const groupName = name ?? reactName;
+  const labelId = `${reactName}-label`;
 
-  const group = (
+  const groupEl = (
     <div
       ref={ref}
       role="radiogroup"
+      aria-labelledby={label ? labelId : undefined}
       data-test-id={dataTestId}
       className={cn(
         'flex gap-3',
@@ -51,11 +53,13 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
     <RadioGroupContext.Provider value={{ name: groupName, value, defaultValue, onChange, disabled, size }}>
       {label ? (
         <div className="flex flex-col gap-1.5">
-          <span className="text-p-std font-medium text-fg-default inline-flex">{label}</span>
-          {group}
+          <span id={labelId} className="text-p-std font-medium text-fg-default inline-flex">
+            {label}
+          </span>
+          {groupEl}
         </div>
       ) : (
-        group
+        groupEl
       )}
     </RadioGroupContext.Provider>
   );

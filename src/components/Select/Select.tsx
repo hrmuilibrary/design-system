@@ -53,6 +53,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const [activeIndex, setActiveIndex] = useState(-1);
   const [query, setQuery] = useState('');
   const hasError = error || !!errorText;
+  const describedBy = errorText ? `${triggerId}-error` : helperText ? `${triggerId}-help` : undefined;
 
   const selectedOption = options.find((o) => o.value === selected);
 
@@ -190,7 +191,8 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
         aria-required={required || undefined}
         aria-busy={loading || undefined}
         aria-disabled={loading || undefined}
-        aria-controls={open ? listId : undefined}
+        aria-describedby={describedBy}
+        aria-controls={open && visibleOptions.length > 0 ? listId : undefined}
         className={cn(
           'inline-flex items-center justify-between w-full rounded-lg border bg-bg-default transition-colors outline-none',
           'text-left',
@@ -228,7 +230,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                 type="text"
                 role="combobox"
                 aria-expanded
-                aria-controls={listId}
+                aria-controls={visibleOptions.length > 0 ? listId : undefined}
                 aria-autocomplete="list"
                 aria-activedescendant={activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined}
                 value={query}
@@ -282,9 +284,13 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
         </div>
       )}
       {errorText ? (
-        <p className="text-p-sm text-red-700">{errorText}</p>
+        <p id={`${triggerId}-error`} className="text-p-sm text-red-700">
+          {errorText}
+        </p>
       ) : helperText ? (
-        <p className="text-p-sm text-fg-secondary">{helperText}</p>
+        <p id={`${triggerId}-help`} className="text-p-sm text-fg-secondary">
+          {helperText}
+        </p>
       ) : null}
     </div>
   );

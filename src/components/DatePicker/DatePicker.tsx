@@ -85,16 +85,20 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   const [hoverEnd, setHoverEnd] = useState<Date | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hasError = error || !!errorText;
-  const isOpen = open && !disabled;
+  const describedBy = errorText ? `${triggerId}-error` : undefined;
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (disabled) setOpen(false);
+  }, [disabled]);
+
+  useEffect(() => {
+    if (!open) return;
     const onClick = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) setOpen(false);
     };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
-  }, [isOpen]);
+  }, [open]);
 
   const display = range
     ? rangeValue?.start
@@ -145,6 +149,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           type="button"
           disabled={disabled}
           aria-invalid={hasError || undefined}
+          aria-describedby={describedBy}
           onClick={() => setOpen((v) => !v)}
           className={cn(
             'inline-flex items-center gap-2 rounded-lg border bg-bg-default text-left transition-colors focus-visible:outline-none focus-visible:ring-2',
@@ -170,7 +175,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           <Calendar className={cn('w-4 h-4', disabled ? 'text-fg-disabled' : 'text-fg-secondary')} />
         </button>
 
-        {isOpen && (
+        {open && (
           <div className="absolute z-50 mt-1 left-0 rounded-xl border border-border-default bg-bg-default shadow-z3 p-3 w-[300px]">
             <div className="flex items-center justify-between mb-2">
               <button
@@ -234,7 +239,11 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           </div>
         )}
       </div>
-      {errorText ? <p className="text-p-sm text-red-700">{errorText}</p> : null}
+      {errorText ? (
+        <p id={`${triggerId}-error`} className="text-p-sm text-red-700">
+          {errorText}
+        </p>
+      ) : null}
     </div>
   );
 });

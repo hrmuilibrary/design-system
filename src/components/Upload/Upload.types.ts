@@ -21,6 +21,7 @@ export interface UploadProps
       | 'role'
       | 'tabIndex'
       | 'aria-disabled'
+      | 'aria-invalid'
     >,
     BaseProps {
   /** Forwarded to the hidden native `<input type="file">`, e.g. `"image/png,image/jpeg"`. */
