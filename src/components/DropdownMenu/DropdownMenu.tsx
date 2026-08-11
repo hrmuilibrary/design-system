@@ -5,6 +5,7 @@ import {
   isValidElement,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
@@ -25,11 +26,19 @@ import type {
   DropdownTriggerProps,
 } from './DropdownMenu.types';
 
+/** Resolves either shape of `anchorRef` to a plain element, or `null` if absent. */
+function resolveAnchorElement(
+  anchorRef: RefObject<HTMLElement | null> | HTMLElement | null | undefined,
+): HTMLElement | null {
+  if (anchorRef == null) return null;
+  return anchorRef instanceof HTMLElement ? anchorRef : anchorRef.current;
+}
+
 interface DropdownCtx {
   open: boolean;
   setOpen: (open: boolean) => void;
   triggerRef: RefObject<HTMLElement | null>;
-  anchorRef?: RefObject<HTMLElement | null>;
+  anchorRef?: RefObject<HTMLElement | null> | HTMLElement | null;
 }
 
 const DropdownContext = createContext<DropdownCtx | null>(null);
@@ -119,9 +128,20 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
     const { open, setOpen, triggerRef, anchorRef } = useDropdown();
     const contentRef = useRef<HTMLDivElement>(null);
     const [panelEl, setPanelEl] = useState<HTMLDivElement | null>(null);
-    // Picking which ref object to measure from — not reading `.current` —
-    // so this stays a plain render-time choice, not a ref access.
-    const positionAnchorRef = anchorRef ?? triggerRef;
+    // A lazy-getter wrapper: `.current` is only evaluated when read (by
+    // useAnchoredPosition's own effect, after commit), so a RefObject anchor's
+    // `.current` is still read fresh post-commit, exactly like before — while a
+    // plain-HTMLElement anchor (or the triggerRef fallback) resolves immediately.
+    // Memoized on identity so useAnchoredPosition's effect (which depends on
+    // `anchor` by identity) doesn't re-run on every render.
+    const positionAnchorRef = useMemo<RefObject<HTMLElement | null>>(
+      () => ({
+        get current() {
+          return resolveAnchorElement(anchorRef) ?? triggerRef.current;
+        },
+      }),
+      [anchorRef, triggerRef],
+    );
 
     const { style, resolvedSide } = useAnchoredPosition({
       anchor: positionAnchorRef,
@@ -141,7 +161,7 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
         const target = e.target as Node;
         if (contentRef.current?.contains(target)) return;
         if (triggerRef.current?.contains(target)) return;
-        if (anchorRef?.current?.contains(target)) return;
+        if (resolveAnchorElement(anchorRef)?.contains(target)) return;
         setOpen(false);
       };
       document.addEventListener('mousedown', onDoc);
