@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import { CircleCheck, CircleX } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { isSameOptionValue } from '../../lib/optionValue';
 import type {
   StepIndicatorItem,
   StepIndicatorMarker,
@@ -149,8 +150,8 @@ export const StepIndicator = forwardRef<HTMLOListElement, StepIndicatorProps>(fu
 
         return (
           <li
-            key={step.value}
-            aria-current={step.value === activeValue ? 'step' : undefined}
+            key={String(step.value)}
+            aria-current={isSameOptionValue(step.value, activeValue) ? 'step' : undefined}
             className={cn('relative flex', isVertical ? 'flex-row gap-3' : 'flex-1 basis-0 min-w-0 flex-col')}
           >
             <div
