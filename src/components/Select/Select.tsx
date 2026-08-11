@@ -211,6 +211,11 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           className,
         )}
       >
+        {selectedOption?.icon && (
+          <span className="shrink-0 flex items-center justify-center [&_svg]:h-4 [&_svg]:w-4">
+            {selectedOption.icon}
+          </span>
+        )}
         <span className={cn('truncate', !selectedOption && 'text-fg-tertiary')}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
@@ -276,8 +281,16 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                         isSel && 'font-medium',
                       )}
                     >
-                      <span className="truncate">{opt.label}</span>
-                      {isSel && <Check className="h-4 w-4 text-brand-500 shrink-0" />}
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="w-4 shrink-0 flex items-center justify-center [&_svg]:h-4 [&_svg]:w-4">
+                          {opt.icon}
+                        </span>
+                        <span className="truncate">{opt.label}</span>
+                      </span>
+                      <span className="flex items-center gap-1.5 shrink-0">
+                        {opt.rightIcon}
+                        {isSel && <Check className="h-4 w-4 text-brand-500 shrink-0" />}
+                      </span>
                     </li>
                   </Fragment>
                 );
