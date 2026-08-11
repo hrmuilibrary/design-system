@@ -1,12 +1,12 @@
 import { createContext, forwardRef, useContext, useId, type ChangeEvent } from 'react';
 import { cn } from '../../lib/cn';
-import type { RadioGroupProps, RadioProps, RadioSize } from './Radio.types';
+import type { RadioGroupProps, RadioProps, RadioSize, RadioValue } from './Radio.types';
 
 interface RadioGroupContextValue {
   name: string;
-  value?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
+  value?: RadioValue;
+  defaultValue?: RadioValue;
+  onChange?: (value: RadioValue) => void;
   disabled?: boolean;
   size: RadioSize;
 }
@@ -100,9 +100,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   const effectiveDisabled = disabled ?? group?.disabled;
 
   const inGroup = group !== null;
-  const groupChecked = inGroup && group.value !== undefined ? group.value === value : undefined;
+  const groupChecked =
+    inGroup && group.value !== undefined ? String(group.value) === String(value) : undefined;
   const groupDefaultChecked =
-    inGroup && group.defaultValue !== undefined ? group.defaultValue === value : undefined;
+    inGroup && group.defaultValue !== undefined
+      ? String(group.defaultValue) === String(value)
+      : undefined;
 
   const isChecked = inGroup ? groupChecked : checked;
   const isDefaultChecked = inGroup ? groupDefaultChecked : defaultChecked;
@@ -128,7 +131,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
           id={inputId}
           type="radio"
           name={group?.name}
-          value={value}
+          value={String(value)}
           checked={isChecked}
           defaultChecked={isDefaultChecked}
           disabled={effectiveDisabled}
