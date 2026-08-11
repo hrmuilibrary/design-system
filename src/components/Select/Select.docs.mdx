@@ -63,10 +63,15 @@ a non-contiguous group renders its heading more than once.
 
 ## Icons
 
-Give any `SelectOption` an `icon` (leading, shown in a fixed-width column so
-labels stay aligned whether or not a given option has one — also mirrored on
-the closed trigger for the selected option) and/or a `rightIcon` (trailing,
-list-only). Neither participates in `searchable` text matching.
+Give any `SelectOption` an `icon` (leading, also mirrored on the closed
+trigger for the selected option) and/or a `rightIcon` (trailing, list-only).
+The leading `icon` column is only reserved — so labels line up whether or not
+a given option in that array has one — when at least one option in `options`
+actually has an `icon`; a `Select` whose options never set `icon` renders no
+extra column at all. Both `icon` and `rightIcon` are sized to 16px
+automatically via a CSS rule targeting any SVG child, so you don't need to
+size your own icon components. Neither participates in `searchable` text
+matching.
 
 ## Searchable
 

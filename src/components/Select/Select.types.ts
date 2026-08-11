@@ -6,13 +6,16 @@ export type SelectSize = 'lg' | 'md' | 'sm';
 export interface SelectOption {
   value: OptionValue;
   label: ReactNode;
-  /** Leading icon, rendered in a fixed-width column so labels align across all
-   *  options regardless of which ones have one. Also shown on the closed
-   *  trigger for the selected option. Does not participate in `searchable`
-   *  text matching. */
+  /** Leading icon. When at least one option in the array has one, rendered in
+   *  a fixed-width column so labels align across all options in that array
+   *  regardless of which ones have one; icon-less arrays reserve no extra
+   *  space. Also shown on the closed trigger for the selected option. Sized
+   *  to 16px automatically. Does not participate in `searchable` text
+   *  matching. */
   icon?: ReactNode;
   /** Trailing icon, right-aligned in the row. List-only — not mirrored on the
-   *  trigger. Does not participate in `searchable` text matching. */
+   *  trigger. Sized to 16px automatically. Does not participate in
+   *  `searchable` text matching. */
   rightIcon?: ReactNode;
   disabled?: boolean;
   /** Group heading this option belongs under. Options sharing a group MUST be
