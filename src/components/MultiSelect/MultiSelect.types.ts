@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import type { BaseProps } from '../../types';
+import type { BaseProps, OptionValue } from '../../types';
 
 export type MultiSelectSize = 'sm' | 'md' | 'lg';
 
 export interface MultiSelectOption {
-  value: string;
+  value: OptionValue;
   label: string;
   /** Optional second line under the label in the dropdown. */
   description?: string;
@@ -19,12 +19,12 @@ export interface MultiSelectOption {
 export interface MultiSelectProps extends BaseProps {
   options: MultiSelectOption[];
   /** Selected option values (controlled). */
-  value: string[];
-  onChange: (values: string[]) => void;
+  value: OptionValue[];
+  onChange: (values: OptionValue[]) => void;
   /** Called with the option that was just added, alongside `onChange` (never instead of it). */
   onAdd?: (option: MultiSelectOption) => void;
   /** Called with the value that was just removed, alongside `onChange` (never instead of it). */
-  onRemove?: (value: string) => void;
+  onRemove?: (value: OptionValue) => void;
   size?: MultiSelectSize;
   placeholder?: string;
   /** Placeholder once at least one chip exists. Defaults to "Add another…". */
@@ -38,7 +38,7 @@ export interface MultiSelectProps extends BaseProps {
   errorText?: ReactNode;
   required?: boolean;
   /** Values whose chips can't be removed. */
-  lockedValues?: string[];
+  lockedValues?: OptionValue[];
   /** Cap on how many can be selected (default: unlimited). */
   max?: number;
   /** Renders an Avatar on every chip and dropdown row, falling back to initials derived from the option's `label` when it has no `avatarSrc`. Default `false` — avatars still render for options that already set `avatarSrc` regardless. */

@@ -24,16 +24,16 @@ items open at once, each toggling independently.
 
 ## Controlled vs. uncontrolled
 
-Uncontrolled usage passes `defaultValue` (a string for `single`, a string
-array for `multiple`) and `Accordion` tracks open state internally.
-Controlled usage passes both `value` and `onValueChange`, and the consumer
-owns the state entirely — same shape as an uncontrolled/controlled form
-input.
+Uncontrolled usage passes `defaultValue` (a single value — string or number
+— for `single`, an array for `multiple`) and `Accordion` tracks open state
+internally. Controlled usage passes both `value` and `onValueChange`, and
+the consumer owns the state entirely — same shape as an
+uncontrolled/controlled form input.
 
 ```tsx
-const [value, setValue] = useState('billing');
+const [value, setValue] = useState<string | number>('billing');
 
-<Accordion value={value} onValueChange={(next) => setValue(next as string)}>
+<Accordion value={value} onValueChange={(next) => setValue(next as string | number)}>
   <AccordionItem value="billing" title="How does billing work?">
     ...
   </AccordionItem>

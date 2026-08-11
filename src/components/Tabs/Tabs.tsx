@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
+import { isSameOptionValue } from '../../lib/optionValue';
 import { Badge } from '../Badge';
 import type {
   TabListProps,
@@ -22,10 +23,11 @@ import type {
   TabsSize,
   TabsVariant,
 } from './Tabs.types';
+import type { OptionValue } from '../../types';
 
 interface TabsContextValue {
-  value: string;
-  setValue: (v: string) => void;
+  value: OptionValue;
+  setValue: (v: OptionValue) => void;
   variant: TabsVariant;
   size: TabsSize;
   tabsId: string;
@@ -42,7 +44,7 @@ function useTabs() {
 
 /** Walks `children` for a `<TabList>` and returns its first `<Tab>`'s value, used
  *  as the default active tab when `Tabs` is uncontrolled and no `defaultValue` is given. */
-function findFirstValue(children: ReactNode): string {
+function findFirstValue(children: ReactNode): OptionValue {
   const items: ReactElement[] = [];
   Children.forEach(children, (child) => {
     if (isValidElement(child)) items.push(child);
@@ -54,7 +56,7 @@ function findFirstValue(children: ReactNode): string {
   const listChildren = Children.toArray((list.props as { children?: ReactNode }).children);
   for (const child of listChildren) {
     if (isValidElement(child)) {
-      const value = (child.props as { value?: string }).value;
+      const value = (child.props as { value?: OptionValue }).value;
       if (value !== undefined) return value;
     }
   }
@@ -76,12 +78,12 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
   },
   ref,
 ) {
-  const [internal, setInternal] = useState<string>(() => defaultValue ?? findFirstValue(children));
+  const [internal, setInternal] = useState<OptionValue>(() => defaultValue ?? findFirstValue(children));
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
   const tabsId = useId();
 
-  const setValue = (v: string) => {
+  const setValue = (v: OptionValue) => {
     if (!controlled) setInternal(v);
     onValueChange?.(v);
   };
@@ -192,7 +194,7 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab(
   ref,
 ) {
   const { value: current, setValue, variant, size, tabsId, disabled: barDisabled } = useTabs();
-  const active = current === value;
+  const active = isSameOptionValue(current, value);
   const disabled = barDisabled || tabDisabled;
   const hasBadge = badge !== undefined && badge !== null && badge !== false;
   const tabId = id ?? `${tabsId}-tab-${value}`;
@@ -301,7 +303,7 @@ export const TabPanel = forwardRef<HTMLDivElement, TabPanelProps>(function TabPa
   ref,
 ) {
   const { value: current, tabsId } = useTabs();
-  const active = current === value;
+  const active = isSameOptionValue(current, value);
   if (!active && !keepMounted) return null;
   const panelId = id ?? `${tabsId}-panel-${value}`;
   const tabId = `${tabsId}-tab-${value}`;

@@ -23,11 +23,11 @@ plain tag input and a rich people picker.
 
 ## Controlled only
 
-Unlike `Select`, `MultiSelect` has no uncontrolled mode — `value` (a
-`string[]`) and `onChange` are both required:
+Unlike `Select`, `MultiSelect` has no uncontrolled mode — `value` (an array
+of option values, `string | number`) and `onChange` are both required:
 
 ```tsx
-const [value, setValue] = useState<string[]>([]);
+const [value, setValue] = useState<(string | number)[]>([]);
 <MultiSelect options={options} value={value} onChange={setValue} />
 ```
 
@@ -37,7 +37,7 @@ Each `MultiSelectOption` is data-agnostic:
 
 ```tsx
 interface MultiSelectOption {
-  value: string;
+  value: string | number;
   label: string;
   description?: string; // second line in the dropdown row
   avatarSrc?: string;    // shown on the chip and the dropdown row

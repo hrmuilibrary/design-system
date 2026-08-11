@@ -28,6 +28,8 @@ every `Radio` descendant via context — so those don't need to be repeated on
 each `Radio`. The group also owns the controlled/uncontrolled selection:
 pass `value`/`onChange` for a controlled group, or `defaultValue` for an
 uncontrolled one, and compare against each `Radio`'s own `value` prop.
+`value` accepts a `string`, `number`, or `boolean` — `boolean` is intended
+for yes/no groups (e.g. two `Radio`s with `value={true}`/`value={false}`).
 
 ```tsx
 const [value, setValue] = useState('comfortable');

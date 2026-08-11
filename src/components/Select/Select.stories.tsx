@@ -21,6 +21,12 @@ const groupedFruitOptions: SelectOption[] = [
   { value: 'peach', label: 'Peach', group: 'Stone' },
 ];
 
+const priorityOptions: SelectOption[] = [
+  { value: 1, label: 'Low' },
+  { value: 2, label: 'Medium' },
+  { value: 3, label: 'High' },
+];
+
 const meta = {
   title: 'Components/Select',
   component: Select,
@@ -98,13 +104,34 @@ export const DefaultValue: Story = {
 export const Controlled: Story = {
   render: (args) => {
     function ControlledSelect() {
-      const [value, setValue] = useState('apple');
+      const [value, setValue] = useState<string | number>('apple');
       return <Select {...args} value={value} onChange={setValue} />;
     }
     return <ControlledSelect />;
   },
   args: {
     label: 'Favorite fruit',
+  },
+};
+
+export const NumericValues: Story = {
+  name: 'Numeric values (round-trip through onChange)',
+  render: (args) => {
+    function NumericSelect() {
+      const [value, setValue] = useState<number>(2);
+      return (
+        <Select
+          {...args}
+          options={priorityOptions}
+          value={value}
+          onChange={(v) => setValue(v as number)}
+        />
+      );
+    }
+    return <NumericSelect />;
+  },
+  args: {
+    label: 'Priority',
   },
 };
 

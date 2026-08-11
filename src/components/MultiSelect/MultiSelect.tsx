@@ -2,7 +2,9 @@ import { forwardRef, useEffect, useId, useMemo, useRef, useState, type KeyboardE
 import { X, Search, Users } from 'lucide-react';
 import { Avatar } from '../Avatar';
 import { cn } from '../../lib/cn';
+import { includesOptionValue, isSameOptionValue } from '../../lib/optionValue';
 import type { MultiSelectOption, MultiSelectProps, MultiSelectSize } from './MultiSelect.types';
+import type { OptionValue } from '../../types';
 
 /* =============================================================================
  * MultiSelect — a chip/token multi-select combobox.
@@ -72,9 +74,12 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     else if (ref) (ref as MutableRefObject<HTMLInputElement | null>).current = node;
   };
 
-  const byValue = useMemo(() => new Map(options.map((o) => [o.value, o])), [options]);
+  const byValue = useMemo(
+    () => new Map(options.map((o) => [String(o.value), o])),
+    [options],
+  );
   const selected = useMemo(
-    () => value.map((v) => byValue.get(v)).filter((o): o is MultiSelectOption => !!o),
+    () => value.map((v) => byValue.get(String(v))).filter((o): o is MultiSelectOption => !!o),
     [value, byValue],
   );
 
@@ -82,7 +87,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     const q = query.trim().toLowerCase();
     return options.filter(
       (o) =>
-        !value.includes(o.value) &&
+        !includesOptionValue(value, o.value) &&
         (q === '' ||
           o.label.toLowerCase().includes(q) ||
           (o.description ?? '').toLowerCase().includes(q)),
@@ -106,8 +111,8 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     setActive((a) => Math.min(a, Math.max(0, matches.length - 1)));
   }, [matches.length]);
 
-  const add = (v: string) => {
-    const opt = byValue.get(v);
+  const add = (v: OptionValue) => {
+    const opt = byValue.get(String(v));
     if (disabled || reached || !opt || opt.disabled) return;
     onChange([...value, v]);
     onAdd?.(opt);
@@ -116,9 +121,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     innerInputRef.current?.focus();
   };
 
-  const remove = (v: string) => {
-    if (disabled || lockedValues.includes(v)) return;
-    onChange(value.filter((x) => x !== v));
+  const remove = (v: OptionValue) => {
+    if (disabled || includesOptionValue(lockedValues, v)) return;
+    onChange(value.filter((x) => !isSameOptionValue(x, v)));
     onRemove?.(v);
   };
 
@@ -148,7 +153,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     } else if (e.key === 'Escape') {
       setOpen(false);
     } else if (e.key === 'Backspace' && query === '' && selected.length > 0) {
-      const last = [...selected].reverse().find((o) => !lockedValues.includes(o.value));
+      const last = [...selected].reverse().find((o) => !includesOptionValue(lockedValues, o.value));
       if (last) remove(last.value);
     }
   };
@@ -196,10 +201,10 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
           onClick={() => !disabled && innerInputRef.current?.focus()}
         >
           {selected.map((o) => {
-            const locked = lockedValues.includes(o.value);
+            const locked = includesOptionValue(lockedValues, o.value);
             return (
               <span
-                key={o.value}
+                key={String(o.value)}
                 className={cn(
                   'inline-flex items-center gap-1.5 rounded-full text-fg-default bg-bg-subtle',
                   SIZES[size].chip,
@@ -275,7 +280,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
             ) : (
               <ul role="listbox" id={listId} className="py-1">
                 {matches.map((o, i) => (
-                  <li key={o.value} role="option" id={`${listId}-opt-${i}`} aria-selected={i === active} aria-disabled={o.disabled || undefined}>
+                  <li key={String(o.value)} role="option" id={`${listId}-opt-${i}`} aria-selected={i === active} aria-disabled={o.disabled || undefined}>
                     <button
                       type="button"
                       disabled={o.disabled}

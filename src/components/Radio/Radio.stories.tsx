@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { Radio, RadioGroup } from './Radio';
+import type { RadioValue } from './Radio.types';
 
 const meta = {
   title: 'Components/Radio',
@@ -84,7 +85,7 @@ export const AllSizes: Story = {
 export const Group: Story = {
   render: () => {
     function GroupDemo() {
-      const [value, setValue] = useState('comfortable');
+      const [value, setValue] = useState<RadioValue>('comfortable');
       return (
         <RadioGroup name="density" value={value} onChange={setValue}>
           <Radio value="compact" label="Compact" />
@@ -101,7 +102,7 @@ export const GroupHorizontal: Story = {
   name: 'Group (horizontal)',
   render: () => {
     function GroupDemo() {
-      const [value, setValue] = useState('yes');
+      const [value, setValue] = useState<RadioValue>('yes');
       return (
         <RadioGroup name="confirm" value={value} onChange={setValue} orientation="horizontal">
           <Radio value="yes" label="Yes" />
@@ -116,7 +117,7 @@ export const GroupHorizontal: Story = {
 export const GroupWithDescriptions: Story = {
   render: () => {
     function GroupDemo() {
-      const [value, setValue] = useState('free');
+      const [value, setValue] = useState<RadioValue>('free');
       return (
         <RadioGroup name="plan" value={value} onChange={setValue} className="w-72">
           <Radio value="free" label="Free" description="Basic features for individuals." />
@@ -137,7 +138,7 @@ export const GroupSmall: Story = {
   name: 'Group (size: sm)',
   render: () => {
     function GroupDemo() {
-      const [value, setValue] = useState('a');
+      const [value, setValue] = useState<RadioValue>('a');
       return (
         <RadioGroup name="small-group" value={value} onChange={setValue} size="sm">
           <Radio value="a" label="Option A" />
@@ -162,7 +163,7 @@ export const GroupWithLabel: Story = {
   name: 'Group with label',
   render: () => {
     function GroupDemo() {
-      const [value, setValue] = useState('comfortable');
+      const [value, setValue] = useState<RadioValue>('comfortable');
       return (
         <RadioGroup name="density-labeled" label="Density" value={value} onChange={setValue}>
           <Radio value="compact" label="Compact" />
@@ -172,5 +173,38 @@ export const GroupWithLabel: Story = {
       );
     }
     return <GroupDemo />;
+  },
+};
+
+export const GroupNumericValues: Story = {
+  name: 'Group with numeric values',
+  render: () => {
+    function NumericGroupDemo() {
+      const [value, setValue] = useState<RadioValue>(1);
+      return (
+        <RadioGroup name="rating" value={value} onChange={setValue}>
+          <Radio value={1} label="1 star" />
+          <Radio value={2} label="2 stars" />
+          <Radio value={3} label="3 stars" />
+        </RadioGroup>
+      );
+    }
+    return <NumericGroupDemo />;
+  },
+};
+
+export const GroupBooleanValues: Story = {
+  name: 'Group with boolean values (yes/no)',
+  render: () => {
+    function BooleanGroupDemo() {
+      const [value, setValue] = useState<RadioValue>(true);
+      return (
+        <RadioGroup name="confirm" value={value} onChange={setValue}>
+          <Radio value={true} label="Yes" />
+          <Radio value={false} label="No" />
+        </RadioGroup>
+      );
+    }
+    return <BooleanGroupDemo />;
   },
 };
