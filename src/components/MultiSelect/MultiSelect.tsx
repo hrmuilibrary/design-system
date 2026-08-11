@@ -19,7 +19,7 @@ import type { OptionValue } from '../../types';
  * removable chip, Esc closes. Data-agnostic — feed it any options.
  * =========================================================================== */
 
-function optionDisplayText(o: MultiSelectOption): string | undefined {
+function optionSearchText(o: MultiSelectOption): string | undefined {
   return o.searchText ?? (typeof o.label === 'string' ? o.label : undefined);
 }
 
@@ -93,7 +93,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     return options.filter((o) => {
       if (includesOptionValue(value, o.value)) return false;
       if (q === '') return true;
-      const text = optionDisplayText(o);
+      const text = optionSearchText(o);
       return (
         (text !== undefined && text.toLowerCase().includes(q)) ||
         (o.description ?? '').toLowerCase().includes(q)
@@ -207,11 +207,10 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
               : hasError
               ? 'border-red-500 focus-within:ring-2 focus-within:ring-red-300 focus-within:ring-offset-1 cursor-text'
               : 'border-border-default hover:border-border-strong focus-within:border-fg-tertiary focus-within:ring-2 focus-within:ring-brand-300 focus-within:ring-offset-1 cursor-text',
+            loading && 'cursor-wait',
             className,
           )}
           onClick={() => !disabled && !loading && innerInputRef.current?.focus()}
-          aria-busy={loading || undefined}
-          aria-disabled={loading || undefined}
         >
           {selected.map((o) => {
             const locked = includesOptionValue(lockedValues, o.value);
@@ -226,7 +225,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                 title={o.description}
               >
                 {(showAvatars || o.avatarSrc) && (
-                  <Avatar src={o.avatarSrc} name={optionDisplayText(o)} size={SIZES[size].avatar} />
+                  <Avatar src={o.avatarSrc} name={optionSearchText(o)} size={SIZES[size].avatar} />
                 )}
                 <span className="font-medium">{o.label}</span>
                 {o.badge && (
@@ -239,7 +238,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                       e.stopPropagation();
                       remove(o.value);
                     }}
-                    aria-label={`Remove ${optionDisplayText(o) ?? String(o.value)}`}
+                    aria-label={`Remove ${optionSearchText(o) ?? String(o.value)}`}
                     className="-mr-0.5 ml-0.5 text-fg-tertiary hover:text-fg-default p-0.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300"
                   >
                     <X className="w-3 h-3" />
@@ -260,6 +259,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
             aria-activedescendant={open && matches[active] ? `${listId}-opt-${active}` : undefined}
             aria-invalid={hasError || undefined}
             aria-describedby={describedBy}
+            aria-busy={loading || undefined}
             value={query}
             readOnly={!searchable}
             disabled={disabled || reached}
@@ -326,7 +326,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                               : 'hover:bg-bg-subtle',
                           )}
                         >
-                          {(showAvatars || o.avatarSrc) && <Avatar src={o.avatarSrc} name={optionDisplayText(o)} size="sm" />}
+                          {(showAvatars || o.avatarSrc) && <Avatar src={o.avatarSrc} name={optionSearchText(o)} size="sm" />}
                           <span className="flex-1 min-w-0">
                             <span className="block text-p-std font-medium text-fg-default truncate">{o.label}</span>
                             {o.description && (
