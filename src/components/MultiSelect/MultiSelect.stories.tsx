@@ -75,6 +75,7 @@ const meta = {
     placeholder: 'Select teams…',
     size: 'md',
     disabled: false,
+    loading: false,
     error: false,
     searchable: true,
   },
@@ -155,6 +156,10 @@ export const Disabled: Story = {
     label: 'Teams',
     disabled: true,
   },
+};
+
+export const Loading: Story = {
+  args: { loading: true, label: 'Assignees' },
 };
 
 export const WithAvatarsAndBadges: Story = {

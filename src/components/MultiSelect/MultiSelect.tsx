@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type MutableRefObject } from 'react';
-import { X, Search, Users } from 'lucide-react';
+import { Loader2, Search, Users, X } from 'lucide-react';
 import { Avatar } from '../Avatar';
 import { cn } from '../../lib/cn';
 import { includesOptionValue, isSameOptionValue } from '../../lib/optionValue';
@@ -39,6 +39,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     placeholder = 'Select…',
     addMorePlaceholder = 'Add another…',
     disabled = false,
+    loading = false,
     error = false,
     label,
     labelAddons,
@@ -111,6 +112,10 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     setActive((a) => Math.min(a, Math.max(0, matches.length - 1)));
   }, [matches.length]);
 
+  useEffect(() => {
+    if (loading) setOpen(false);
+  }, [loading]);
+
   const add = (v: OptionValue) => {
     const opt = byValue.get(String(v));
     if (disabled || reached || !opt || opt.disabled) return;
@@ -140,7 +145,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      if (!open) setOpen(true);
+      if (!open) { if (!loading) setOpen(true); }
       else moveActive(1);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
@@ -198,7 +203,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
               : 'border-border-default hover:border-border-strong focus-within:border-fg-tertiary focus-within:ring-2 focus-within:ring-brand-300 focus-within:ring-offset-1 cursor-text',
             className,
           )}
-          onClick={() => !disabled && innerInputRef.current?.focus()}
+          onClick={() => !disabled && !loading && innerInputRef.current?.focus()}
+          aria-busy={loading || undefined}
+          aria-disabled={loading || undefined}
         >
           {selected.map((o) => {
             const locked = includesOptionValue(lockedValues, o.value);
@@ -252,9 +259,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
             disabled={disabled || reached}
             onChange={(e) => {
               setQuery(e.target.value);
-              setOpen(true);
+              if (!loading) setOpen(true);
             }}
-            onFocus={() => setOpen(true)}
+            onFocus={() => !loading && setOpen(true)}
             onKeyDown={onKeyDown}
             placeholder={selected.length === 0 ? placeholder : reached ? `Limit ${max} reached` : addMorePlaceholder}
             className={cn(
@@ -263,10 +270,14 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
               SIZES[size].input,
             )}
           />
+
+          {loading && (
+            <Loader2 className="h-4 w-4 shrink-0 text-fg-secondary animate-spin" aria-hidden />
+          )}
         </div>
 
         {/* Dropdown */}
-        {open && !disabled && !reached && (
+        {open && !disabled && !loading && !reached && (
           <div className="absolute top-full left-0 right-0 mt-1 z-20 max-h-80 overflow-y-auto rounded-lg border border-border-default bg-bg-default shadow-z4">
             <div className="px-3 py-2 border-b border-border-subtle flex items-center gap-2 text-p-sm text-fg-tertiary">
               <Search className="w-3.5 h-3.5 shrink-0" />
