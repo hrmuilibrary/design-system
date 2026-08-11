@@ -64,6 +64,24 @@ export const Multiple: Story = {
   ),
 };
 
+export const NumericValues: Story = {
+  name: 'Numeric values (round-trip through onValueChange)',
+  args: { defaultValue: 1 },
+  render: (args) => (
+    <Accordion {...args} className="w-96">
+      <AccordionItem value={1} title="Step 1">
+        Contents of step 1.
+      </AccordionItem>
+      <AccordionItem value={2} title="Step 2">
+        Contents of step 2.
+      </AccordionItem>
+      <AccordionItem value={3} title="Step 3">
+        Contents of step 3.
+      </AccordionItem>
+    </Accordion>
+  ),
+};
+
 export const WithIcons: Story = {
   render: (args) => (
     <Accordion {...args} defaultValue="billing" className="w-96">
@@ -103,12 +121,12 @@ export const DisabledItem: Story = {
 export const Controlled: Story = {
   render: (args) => {
     function ControlledExample() {
-      const [value, setValue] = useState('billing');
+      const [value, setValue] = useState<string | number>('billing');
       return (
         <Accordion
           {...args}
           value={value}
-          onValueChange={(next) => setValue(next as string)}
+          onValueChange={(next) => setValue(next as string | number)}
           className="w-96"
         >
           <AccordionItem value="billing" title="How does billing work?">

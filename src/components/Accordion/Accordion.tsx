@@ -3,10 +3,11 @@ import { ChevronDown } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { Divider } from '../Divider';
 import type { AccordionItemProps, AccordionProps } from './Accordion.types';
+import type { OptionValue } from '../../types';
 
 interface AccordionContextValue {
-  openValues: string[];
-  toggle: (value: string) => void;
+  openValues: OptionValue[];
+  toggle: (value: OptionValue) => void;
   animated: boolean;
   showDivider: boolean;
 }
@@ -19,7 +20,7 @@ function useAccordion() {
   return ctx;
 }
 
-function normalize(value: string | string[] | undefined): string[] {
+function normalize(value: OptionValue | OptionValue[] | undefined): OptionValue[] {
   return value === undefined ? [] : Array.isArray(value) ? value : [value];
 }
 
@@ -38,16 +39,19 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
   },
   ref,
 ) {
-  const [internal, setInternal] = useState<string[]>(() => normalize(defaultValue));
+  const [internal, setInternal] = useState<OptionValue[]>(() => normalize(defaultValue));
   const isControlled = value !== undefined;
   const openValues = isControlled ? normalize(value) : internal;
 
-  const toggle = (val: string) => {
-    let next: string[];
+  const toggle = (val: OptionValue) => {
+    const isOpen = openValues.some((v) => String(v) === String(val));
+    let next: OptionValue[];
     if (type === 'single') {
-      next = openValues.includes(val) ? [] : [val];
+      next = isOpen ? [] : [val];
     } else {
-      next = openValues.includes(val) ? openValues.filter((v) => v !== val) : [...openValues, val];
+      next = isOpen
+        ? openValues.filter((v) => String(v) !== String(val))
+        : [...openValues, val];
     }
     if (!isControlled) setInternal(next);
     onValueChange?.(type === 'single' ? (next[0] ?? '') : next);
@@ -75,7 +79,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
   ref,
 ) {
   const { openValues, toggle, animated, showDivider } = useAccordion();
-  const isOpen = openValues.includes(value);
+  const isOpen = openValues.some((v) => String(v) === String(value));
   const panelId = useId();
   const triggerId = useId();
   const panelContent = (
