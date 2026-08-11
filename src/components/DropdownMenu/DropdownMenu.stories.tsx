@@ -285,9 +285,11 @@ export const ExternalAnchorState: Story = {
             Anchor element
           </div>
           <DropdownMenu open={open} onOpenChange={setOpen} anchorRef={anchorEl}>
-            <Button variant="secondary" onClick={() => setOpen((v) => !v)}>
-              Toggle menu
-            </Button>
+            <DropdownTrigger>
+              <Button variant="secondary" onClick={() => setOpen((v) => !v)}>
+                Toggle menu
+              </Button>
+            </DropdownTrigger>
             <DropdownContent>
               <DropdownItem onSelect={() => setOpen(false)}>Edit</DropdownItem>
               <DropdownItem onSelect={() => setOpen(false)}>Duplicate</DropdownItem>
