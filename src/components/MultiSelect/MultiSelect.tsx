@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type MutableRefObject } from 'react';
+import { forwardRef, Fragment, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type MutableRefObject } from 'react';
 import { Loader2, Search, Users, X } from 'lucide-react';
 import { Avatar } from '../Avatar';
 import { cn } from '../../lib/cn';
@@ -296,35 +296,48 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
               </div>
             ) : (
               <ul role="listbox" id={listId} className="py-1">
-                {matches.map((o, i) => (
-                  <li key={String(o.value)} role="option" id={`${listId}-opt-${i}`} aria-selected={i === active} aria-disabled={o.disabled || undefined}>
-                    <button
-                      type="button"
-                      disabled={o.disabled}
-                      onMouseEnter={() => setActive(i)}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        add(o.value);
-                      }}
-                      className={cn(
-                        'w-full px-3 py-2 flex items-center gap-3 text-left transition',
-                        o.disabled
-                          ? 'opacity-50 cursor-not-allowed'
-                          : i === active
-                          ? 'bg-bg-subtle'
-                          : 'hover:bg-bg-subtle',
+                {matches.map((o, i) => {
+                  const showGroupHeader = !!o.group && o.group !== matches[i - 1]?.group;
+                  return (
+                    <Fragment key={String(o.value)}>
+                      {showGroupHeader && (
+                        <li
+                          role="presentation"
+                          className="px-3 pt-2 pb-1 text-label-sm font-medium uppercase tracking-wide text-fg-tertiary select-none"
+                        >
+                          {o.group}
+                        </li>
                       )}
-                    >
-                      {(showAvatars || o.avatarSrc) && <Avatar src={o.avatarSrc} name={optionDisplayText(o)} size="sm" />}
-                      <span className="flex-1 min-w-0">
-                        <span className="block text-p-std font-medium text-fg-default truncate">{o.label}</span>
-                        {o.description && (
-                          <span className="block text-p-sm text-fg-secondary truncate">{o.description}</span>
-                        )}
-                      </span>
-                    </button>
-                  </li>
-                ))}
+                      <li role="option" id={`${listId}-opt-${i}`} aria-selected={i === active} aria-disabled={o.disabled || undefined}>
+                        <button
+                          type="button"
+                          disabled={o.disabled}
+                          onMouseEnter={() => setActive(i)}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            add(o.value);
+                          }}
+                          className={cn(
+                            'w-full px-3 py-2 flex items-center gap-3 text-left transition',
+                            o.disabled
+                              ? 'opacity-50 cursor-not-allowed'
+                              : i === active
+                              ? 'bg-bg-subtle'
+                              : 'hover:bg-bg-subtle',
+                          )}
+                        >
+                          {(showAvatars || o.avatarSrc) && <Avatar src={o.avatarSrc} name={optionDisplayText(o)} size="sm" />}
+                          <span className="flex-1 min-w-0">
+                            <span className="block text-p-std font-medium text-fg-default truncate">{o.label}</span>
+                            {o.description && (
+                              <span className="block text-p-sm text-fg-secondary truncate">{o.description}</span>
+                            )}
+                          </span>
+                        </button>
+                      </li>
+                    </Fragment>
+                  );
+                })}
               </ul>
             )}
           </div>

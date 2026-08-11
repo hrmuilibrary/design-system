@@ -10,6 +10,11 @@ export interface MultiSelectOption {
   searchText?: string;
   /** Optional second line under the label in the dropdown. */
   description?: string;
+  /** Group heading this option belongs under. Options sharing a group MUST be
+   *  contiguous in the (filtered) list — the heading is emitted whenever this
+   *  value changes between consecutive visible options, so a non-contiguous
+   *  group renders its heading more than once. */
+  group?: string;
   /** Optional avatar image — shown on the chip and the dropdown row. */
   avatarSrc?: string;
   /** Non-selectable option (shown dimmed in the list). */

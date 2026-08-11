@@ -50,6 +50,14 @@ const peopleOptions: MultiSelectOption[] = [
   },
 ];
 
+const groupedSkillOptions: MultiSelectOption[] = [
+  { value: 'js', label: 'JavaScript' },
+  { value: 'ts', label: 'TypeScript', group: 'Languages' },
+  { value: 'python', label: 'Python', group: 'Languages' },
+  { value: 'react', label: 'React', group: 'Frameworks' },
+  { value: 'vue', label: 'Vue', group: 'Frameworks' },
+];
+
 const idOptions: MultiSelectOption[] = [
   { value: 101, label: 'Ticket #101' },
   { value: 102, label: 'Ticket #102' },
@@ -379,6 +387,17 @@ export const AllSizes: Story = {
     }
     return <Controlled />;
   },
+};
+
+export const Grouped: Story = {
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<(string | number)[]>([]);
+      return <MultiSelect {...args} options={groupedSkillOptions} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Skills' },
 };
 
 export const RichLabels: Story = {
