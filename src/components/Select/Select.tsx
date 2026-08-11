@@ -211,13 +211,15 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           className,
         )}
       >
-        {selectedOption?.icon && (
-          <span className="shrink-0 flex items-center justify-center [&_svg]:h-4 [&_svg]:w-4">
-            {selectedOption.icon}
+        <span className="flex items-center gap-1.5 min-w-0">
+          {selectedOption?.icon && (
+            <span className="shrink-0 flex items-center justify-center [&_svg]:h-4 [&_svg]:w-4">
+              {selectedOption.icon}
+            </span>
+          )}
+          <span className={cn('truncate', !selectedOption && 'text-fg-tertiary')}>
+            {selectedOption ? selectedOption.label : placeholder}
           </span>
-        )}
-        <span className={cn('truncate', !selectedOption && 'text-fg-tertiary')}>
-          {selectedOption ? selectedOption.label : placeholder}
         </span>
         {loading ? (
           <Loader2 className="h-4 w-4 ml-2 shrink-0 text-fg-secondary animate-spin" aria-hidden />
