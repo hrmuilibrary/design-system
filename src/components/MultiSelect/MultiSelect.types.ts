@@ -5,7 +5,9 @@ export type MultiSelectSize = 'sm' | 'md' | 'lg';
 
 export interface MultiSelectOption {
   value: OptionValue;
-  label: string;
+  label: ReactNode;
+  /** Text used for search matching when `label` isn't a plain string. Options where neither this nor a string `label` is available are excluded from `searchable` matching. */
+  searchText?: string;
   /** Optional second line under the label in the dropdown. */
   description?: string;
   /** Optional avatar image — shown on the chip and the dropdown row. */

@@ -56,6 +56,39 @@ const idOptions: MultiSelectOption[] = [
   { value: 103, label: 'Ticket #103' },
 ];
 
+const richLabelOptions: MultiSelectOption[] = [
+  {
+    value: 'urgent',
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-red-600" />
+        Urgent
+      </span>
+    ),
+    searchText: 'urgent',
+  },
+  {
+    value: 'normal',
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-brand-500" />
+        Normal
+      </span>
+    ),
+    searchText: 'normal',
+  },
+  {
+    value: 'low',
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-gray-400" />
+        Low priority
+      </span>
+    ),
+    searchText: 'low priority',
+  },
+];
+
 const meta = {
   title: 'Components/MultiSelect',
   component: MultiSelect,
@@ -346,4 +379,16 @@ export const AllSizes: Story = {
     }
     return <Controlled />;
   },
+};
+
+export const RichLabels: Story = {
+  name: 'Rich ReactNode labels with searchText',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<(string | number)[]>([]);
+      return <MultiSelect {...args} options={richLabelOptions} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Priority tags' },
 };

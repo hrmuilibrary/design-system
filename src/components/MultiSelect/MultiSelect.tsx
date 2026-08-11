@@ -19,6 +19,10 @@ import type { OptionValue } from '../../types';
  * removable chip, Esc closes. Data-agnostic — feed it any options.
  * =========================================================================== */
 
+function optionDisplayText(o: MultiSelectOption): string | undefined {
+  return o.searchText ?? (typeof o.label === 'string' ? o.label : undefined);
+}
+
 const SIZES: Record<
   MultiSelectSize,
   { box: string; chip: string; chipText: string; input: string; avatar: 'xs' | 'sm' }
@@ -86,13 +90,15 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return options.filter(
-      (o) =>
-        !includesOptionValue(value, o.value) &&
-        (q === '' ||
-          o.label.toLowerCase().includes(q) ||
-          (o.description ?? '').toLowerCase().includes(q)),
-    );
+    return options.filter((o) => {
+      if (includesOptionValue(value, o.value)) return false;
+      if (q === '') return true;
+      const text = optionDisplayText(o);
+      return (
+        (text !== undefined && text.toLowerCase().includes(q)) ||
+        (o.description ?? '').toLowerCase().includes(q)
+      );
+    });
   }, [options, value, query]);
 
   const reached = max !== undefined && value.length >= max;
@@ -220,7 +226,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                 title={o.description}
               >
                 {(showAvatars || o.avatarSrc) && (
-                  <Avatar src={o.avatarSrc} name={o.label} size={SIZES[size].avatar} />
+                  <Avatar src={o.avatarSrc} name={optionDisplayText(o)} size={SIZES[size].avatar} />
                 )}
                 <span className="font-medium">{o.label}</span>
                 {o.badge && (
@@ -233,7 +239,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                       e.stopPropagation();
                       remove(o.value);
                     }}
-                    aria-label={`Remove ${o.label}`}
+                    aria-label={`Remove ${optionDisplayText(o) ?? String(o.value)}`}
                     className="-mr-0.5 ml-0.5 text-fg-tertiary hover:text-fg-default p-0.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300"
                   >
                     <X className="w-3 h-3" />
@@ -309,7 +315,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                           : 'hover:bg-bg-subtle',
                       )}
                     >
-                      {(showAvatars || o.avatarSrc) && <Avatar src={o.avatarSrc} name={o.label} size="sm" />}
+                      {(showAvatars || o.avatarSrc) && <Avatar src={o.avatarSrc} name={optionDisplayText(o)} size="sm" />}
                       <span className="flex-1 min-w-0">
                         <span className="block text-p-std font-medium text-fg-default truncate">{o.label}</span>
                         {o.description && (
