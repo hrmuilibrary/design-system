@@ -180,7 +180,7 @@ export const DisabledTab: Story = {
 export const Controlled: Story = {
   render: (args) => {
     function ControlledExample() {
-      const [value, setValue] = useState('profile');
+      const [value, setValue] = useState<string | number>('profile');
       return (
         <Tabs {...args} value={value} onValueChange={setValue} className="w-96">
           <TabList>
@@ -201,6 +201,28 @@ export const Controlled: Story = {
       );
     }
     return <ControlledExample />;
+  },
+};
+
+export const NumericValues: Story = {
+  name: 'Numeric values (round-trip through onValueChange)',
+  render: (args) => {
+    function NumericExample() {
+      const [value, setValue] = useState<number>(1);
+      return (
+        <Tabs {...args} value={value} onValueChange={(v) => setValue(v as number)} className="w-96">
+          <TabList>
+            <Tab value={1}>Step 1</Tab>
+            <Tab value={2}>Step 2</Tab>
+            <Tab value={3}>Step 3</Tab>
+          </TabList>
+          <TabPanel value={1}>Contents of step 1.</TabPanel>
+          <TabPanel value={2}>Contents of step 2.</TabPanel>
+          <TabPanel value={3}>Contents of step 3.</TabPanel>
+        </Tabs>
+      );
+    }
+    return <NumericExample />;
   },
 };
 
