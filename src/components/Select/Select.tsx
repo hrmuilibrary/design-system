@@ -3,6 +3,7 @@ import { ChevronDown, Check, Loader2, Search } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
 import type { SelectOption, SelectProps, SelectSize } from './Select.types';
+import type { OptionValue } from '../../types';
 
 const sizeStyles: Record<SelectSize, string> = {
   lg: 'h-12 text-p-md px-3.5',
@@ -44,7 +45,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const triggerId = id ?? reactId;
   const listId = `${triggerId}-listbox`;
   const [open, setOpen] = useState(false);
-  const [internal, setInternal] = useState<string | undefined>(defaultValue);
+  const [internal, setInternal] = useState<OptionValue | undefined>(defaultValue);
   const isControlled = value !== undefined;
   const selected = isControlled ? value : internal;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -55,18 +56,21 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const hasError = error || !!errorText;
   const describedBy = errorText ? `${triggerId}-error` : helperText ? `${triggerId}-help` : undefined;
 
-  const selectedOption = options.find((o) => o.value === selected);
+  const selectedOption = options.find(
+    (o) => selected !== undefined && String(o.value) === String(selected),
+  );
 
   const visibleOptions = useMemo(() => {
     const q = searchable ? query.trim().toLowerCase() : '';
     if (!q) return options;
     return options.filter((o) => {
-      const haystack = o.searchText ?? (typeof o.label === 'string' ? o.label : undefined) ?? o.value;
+      const haystack =
+        o.searchText ?? (typeof o.label === 'string' ? o.label : undefined) ?? String(o.value);
       return haystack.toLowerCase().includes(q);
     });
   }, [options, query, searchable]);
 
-  const pick = (val: string) => {
+  const pick = (val: OptionValue) => {
     if (!isControlled) setInternal(val);
     onChange?.(val);
     setOpen(false);
@@ -88,7 +92,9 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       setQuery('');
       return;
     }
-    const selIdx = visibleOptions.findIndex((o) => o.value === selected);
+    const selIdx = visibleOptions.findIndex(
+      (o) => selected !== undefined && String(o.value) === String(selected),
+    );
     setActiveIndex(selIdx >= 0 && !visibleOptions[selIdx]?.disabled ? selIdx : firstEnabledIndex(visibleOptions));
   }, [open, selected, visibleOptions]);
 
@@ -246,11 +252,11 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           ) : (
             <ul id={listId} role="listbox" className="max-h-60 overflow-y-auto py-1">
               {visibleOptions.map((opt, i) => {
-                const isSel = opt.value === selected;
+                const isSel = selected !== undefined && String(opt.value) === String(selected);
                 const isActive = i === activeIndex;
                 const showGroupHeader = !!opt.group && opt.group !== visibleOptions[i - 1]?.group;
                 return (
-                  <Fragment key={opt.value}>
+                  <Fragment key={String(opt.value)}>
                     {showGroupHeader && (
                       <li
                         role="presentation"

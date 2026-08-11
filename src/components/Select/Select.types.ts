@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import type { BaseProps } from '../../types';
+import type { BaseProps, OptionValue } from '../../types';
 
 export type SelectSize = 'lg' | 'md' | 'sm';
 
 export interface SelectOption {
-  value: string;
+  value: OptionValue;
   label: ReactNode;
   disabled?: boolean;
   /** Group heading this option belongs under. Options sharing a group MUST be
@@ -18,9 +18,9 @@ export interface SelectOption {
 
 export interface SelectProps extends BaseProps {
   options: SelectOption[];
-  value?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
+  value?: OptionValue;
+  defaultValue?: OptionValue;
+  onChange?: (value: OptionValue) => void;
   placeholder?: string;
   label?: ReactNode;
   /** Content rendered on the label row, right of the label text — e.g. an info tooltip trigger. Rendered as a sibling of the `<label>`, not a child, so an interactive addon never steals focus into the trigger. */
