@@ -52,4 +52,6 @@ export interface MultiSelectProps extends BaseProps {
   id?: string;
   className?: string;
   wrapperClassName?: string;
+  isLoading?: boolean;
+  language?: string
 }
