@@ -82,6 +82,34 @@ export const NumericValues: Story = {
   ),
 };
 
+export const ControlledNumericValues: Story = {
+  name: 'Controlled numeric values (single mode)',
+  render: (args) => {
+    function ControlledNumericDemo() {
+      const [value, setValue] = useState<number | undefined>(1);
+      return (
+        <Accordion
+          {...args}
+          value={value}
+          onValueChange={(next) => setValue(next as number | undefined)}
+          className="w-96"
+        >
+          <AccordionItem value={1} title="Step 1">
+            Contents of step 1.
+          </AccordionItem>
+          <AccordionItem value={2} title="Step 2">
+            Contents of step 2.
+          </AccordionItem>
+          <AccordionItem value={3} title="Step 3">
+            Contents of step 3.
+          </AccordionItem>
+        </Accordion>
+      );
+    }
+    return <ControlledNumericDemo />;
+  },
+};
+
 export const WithIcons: Story = {
   render: (args) => (
     <Accordion {...args} defaultValue="billing" className="w-96">
