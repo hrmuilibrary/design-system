@@ -61,6 +61,13 @@ Options sharing a group must be contiguous in the `options` array — the
 heading is emitted whenever `group` changes between consecutive options, so
 a non-contiguous group renders its heading more than once.
 
+## Icons
+
+Give any `SelectOption` an `icon` (leading, shown in a fixed-width column so
+labels stay aligned whether or not a given option has one — also mirrored on
+the closed trigger for the selected option) and/or a `rightIcon` (trailing,
+list-only). Neither participates in `searchable` text matching.
+
 ## Searchable
 
 `searchable` adds a text filter pinned above the option list. Matching
