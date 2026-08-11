@@ -124,8 +124,10 @@ log) without diffing the array themselves.
 
 Options with an `avatarSrc` always show an avatar. Set `showAvatars` to
 render one for every option, even those without an image — `Avatar`
-already falls back to initials derived from the option's `label` (with a
-color hashed from the name) when there's no `src`.
+falls back to initials (with a color hashed from the name) derived from
+`searchText` when present, or from `label` when it's a plain string.
+A rich (non-string) `label` with no `searchText` has no string to derive
+initials from, so it gets `Avatar`'s generic fallback icon instead.
 
 ## Composition
 
