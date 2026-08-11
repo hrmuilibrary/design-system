@@ -131,7 +131,7 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
     // A lazy-getter wrapper: `.current` is only evaluated when read (by
     // useAnchoredPosition's own effect, after commit), so a RefObject anchor's
     // `.current` is still read fresh post-commit, exactly like before — while a
-    // plain-HTMLElement anchor (or the triggerRef fallback) resolves immediately.
+    // plain-HTMLElement anchor (or the triggerRef fallback) needs no ref indirection.
     // Memoized on identity so useAnchoredPosition's effect (which depends on
     // `anchor` by identity) doesn't re-run on every render.
     const positionAnchorRef = useMemo<RefObject<HTMLElement | null>>(

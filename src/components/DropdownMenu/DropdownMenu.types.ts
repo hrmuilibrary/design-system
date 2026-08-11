@@ -16,7 +16,9 @@ export interface DropdownMenuProps extends HTMLAttributes<HTMLDivElement>, BaseP
   /** Anchor the panel to an element the consumer owns instead of `<DropdownTrigger>`'s child.
    *  Accepts either a ref object or the element itself, so consumers holding the anchor as
    *  plain `useState<HTMLElement | null>` state don't have to fabricate a `{ current: el }`
-   *  wrapper every render. */
+   *  wrapper every render. If the resolved anchor element is `null` (e.g. it hasn't mounted
+   *  yet, or was unmounted while the menu is open), the panel positions against the trigger
+   *  instead of staying un-positioned. */
   anchorRef?: RefObject<HTMLElement | null> | HTMLElement | null;
 }
 
