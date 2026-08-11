@@ -2,6 +2,7 @@ import { createContext, forwardRef, useContext, useId, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { Divider } from '../Divider';
+import { includesOptionValue, isSameOptionValue } from '../../lib/optionValue';
 import type { AccordionItemProps, AccordionProps } from './Accordion.types';
 import type { OptionValue } from '../../types';
 
@@ -44,17 +45,17 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
   const openValues = isControlled ? normalize(value) : internal;
 
   const toggle = (val: OptionValue) => {
-    const isOpen = openValues.some((v) => String(v) === String(val));
+    const isOpen = includesOptionValue(openValues, val);
     let next: OptionValue[];
     if (type === 'single') {
       next = isOpen ? [] : [val];
     } else {
       next = isOpen
-        ? openValues.filter((v) => String(v) !== String(val))
+        ? openValues.filter((v) => !isSameOptionValue(v, val))
         : [...openValues, val];
     }
     if (!isControlled) setInternal(next);
-    onValueChange?.(type === 'single' ? (next[0] ?? '') : next);
+    onValueChange?.(type === 'single' ? next[0] : next);
   };
 
   return (
@@ -79,7 +80,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
   ref,
 ) {
   const { openValues, toggle, animated, showDivider } = useAccordion();
-  const isOpen = openValues.some((v) => String(v) === String(value));
+  const isOpen = includesOptionValue(openValues, value);
   const panelId = useId();
   const triggerId = useId();
   const panelContent = (

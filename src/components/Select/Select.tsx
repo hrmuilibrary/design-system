@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useId, useMemo, useRef, useState, Fragment, type
 import { ChevronDown, Check, Loader2, Search } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
+import { isSameOptionValue } from '../../lib/optionValue';
 import type { SelectOption, SelectProps, SelectSize } from './Select.types';
 import type { OptionValue } from '../../types';
 
@@ -56,9 +57,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const hasError = error || !!errorText;
   const describedBy = errorText ? `${triggerId}-error` : helperText ? `${triggerId}-help` : undefined;
 
-  const selectedOption = options.find(
-    (o) => selected !== undefined && String(o.value) === String(selected),
-  );
+  const selectedOption = options.find((o) => isSameOptionValue(o.value, selected));
 
   const visibleOptions = useMemo(() => {
     const q = searchable ? query.trim().toLowerCase() : '';
@@ -92,9 +91,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       setQuery('');
       return;
     }
-    const selIdx = visibleOptions.findIndex(
-      (o) => selected !== undefined && String(o.value) === String(selected),
-    );
+    const selIdx = visibleOptions.findIndex((o) => isSameOptionValue(o.value, selected));
     setActiveIndex(selIdx >= 0 && !visibleOptions[selIdx]?.disabled ? selIdx : firstEnabledIndex(visibleOptions));
   }, [open, selected, visibleOptions]);
 
@@ -252,7 +249,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           ) : (
             <ul id={listId} role="listbox" className="max-h-60 overflow-y-auto py-1">
               {visibleOptions.map((opt, i) => {
-                const isSel = selected !== undefined && String(opt.value) === String(selected);
+                const isSel = isSameOptionValue(opt.value, selected);
                 const isActive = i === activeIndex;
                 const showGroupHeader = !!opt.group && opt.group !== visibleOptions[i - 1]?.group;
                 return (

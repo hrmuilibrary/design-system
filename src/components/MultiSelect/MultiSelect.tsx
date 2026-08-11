@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useId, useMemo, useRef, useState, type KeyboardE
 import { X, Search, Users } from 'lucide-react';
 import { Avatar } from '../Avatar';
 import { cn } from '../../lib/cn';
+import { includesOptionValue, isSameOptionValue } from '../../lib/optionValue';
 import type { MultiSelectOption, MultiSelectProps, MultiSelectSize } from './MultiSelect.types';
 import type { OptionValue } from '../../types';
 
@@ -86,7 +87,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     const q = query.trim().toLowerCase();
     return options.filter(
       (o) =>
-        !value.some((v) => String(v) === String(o.value)) &&
+        !includesOptionValue(value, o.value) &&
         (q === '' ||
           o.label.toLowerCase().includes(q) ||
           (o.description ?? '').toLowerCase().includes(q)),
@@ -121,8 +122,8 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
   };
 
   const remove = (v: OptionValue) => {
-    if (disabled || lockedValues.some((locked) => String(locked) === String(v))) return;
-    onChange(value.filter((x) => String(x) !== String(v)));
+    if (disabled || includesOptionValue(lockedValues, v)) return;
+    onChange(value.filter((x) => !isSameOptionValue(x, v)));
     onRemove?.(v);
   };
 
@@ -152,7 +153,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     } else if (e.key === 'Escape') {
       setOpen(false);
     } else if (e.key === 'Backspace' && query === '' && selected.length > 0) {
-      const last = [...selected].reverse().find((o) => !lockedValues.some((locked) => String(locked) === String(o.value)));
+      const last = [...selected].reverse().find((o) => !includesOptionValue(lockedValues, o.value));
       if (last) remove(last.value);
     }
   };
@@ -200,7 +201,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
           onClick={() => !disabled && innerInputRef.current?.focus()}
         >
           {selected.map((o) => {
-            const locked = lockedValues.some((locked) => String(locked) === String(o.value));
+            const locked = includesOptionValue(lockedValues, o.value);
             return (
               <span
                 key={String(o.value)}

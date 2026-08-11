@@ -1,5 +1,6 @@
 import { createContext, forwardRef, useContext, useId, type ChangeEvent } from 'react';
 import { cn } from '../../lib/cn';
+import { isSameOptionValue } from '../../lib/optionValue';
 import type { RadioGroupProps, RadioProps, RadioSize, RadioValue } from './Radio.types';
 
 interface RadioGroupContextValue {
@@ -101,10 +102,10 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
 
   const inGroup = group !== null;
   const groupChecked =
-    inGroup && group.value !== undefined ? String(group.value) === String(value) : undefined;
+    inGroup && group.value !== undefined ? isSameOptionValue(group.value, value) : undefined;
   const groupDefaultChecked =
     inGroup && group.defaultValue !== undefined
-      ? String(group.defaultValue) === String(value)
+      ? isSameOptionValue(group.defaultValue, value)
       : undefined;
 
   const isChecked = inGroup ? groupChecked : checked;

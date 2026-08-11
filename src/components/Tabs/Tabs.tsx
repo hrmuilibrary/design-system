@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
+import { isSameOptionValue } from '../../lib/optionValue';
 import { Badge } from '../Badge';
 import type {
   TabListProps,
@@ -193,7 +194,7 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab(
   ref,
 ) {
   const { value: current, setValue, variant, size, tabsId, disabled: barDisabled } = useTabs();
-  const active = String(current) === String(value);
+  const active = isSameOptionValue(current, value);
   const disabled = barDisabled || tabDisabled;
   const hasBadge = badge !== undefined && badge !== null && badge !== false;
   const tabId = id ?? `${tabsId}-tab-${value}`;
@@ -302,7 +303,7 @@ export const TabPanel = forwardRef<HTMLDivElement, TabPanelProps>(function TabPa
   ref,
 ) {
   const { value: current, tabsId } = useTabs();
-  const active = String(current) === String(value);
+  const active = isSameOptionValue(current, value);
   if (!active && !keepMounted) return null;
   const panelId = id ?? `${tabsId}-panel-${value}`;
   const tabId = `${tabsId}-tab-${value}`;
