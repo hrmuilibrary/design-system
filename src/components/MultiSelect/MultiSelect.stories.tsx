@@ -159,6 +159,13 @@ export const Disabled: Story = {
 };
 
 export const Loading: Story = {
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<(string | number)[]>([]);
+      return <MultiSelect {...args} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
   args: { loading: true, label: 'Assignees' },
 };
 
