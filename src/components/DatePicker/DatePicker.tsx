@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useId, useRef, useState } from 'react';
+import { forwardRef, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { MouseEvent as ReactMouseEvent, KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { cn } from '../../lib/cn';
@@ -211,10 +211,15 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     }
   }
 
-  const resolvedLocale = resolveLocale(locale);
-  const firstDayOfWeek = getFirstDayOfWeek(resolvedLocale);
-  const monthNames = getMonthNames(resolvedLocale);
-  const weekdayNames = getWeekdayNames(resolvedLocale, firstDayOfWeek);
+  const { firstDayOfWeek, monthNames, weekdayNames } = useMemo(() => {
+    const resolvedLocale = resolveLocale(locale);
+    const firstDayOfWeek = getFirstDayOfWeek(resolvedLocale);
+    return {
+      firstDayOfWeek,
+      monthNames: getMonthNames(resolvedLocale),
+      weekdayNames: getWeekdayNames(resolvedLocale, firstDayOfWeek),
+    };
+  }, [locale]);
   const cells = buildGrid(view, firstDayOfWeek);
   const currentRange = rangeValue ?? { start: null, end: null };
   const rangeEnd = currentRange.end ?? hoverEnd;
