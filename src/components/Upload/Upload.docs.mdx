@@ -7,9 +7,11 @@ import * as UploadStories from './Upload.stories';
 
 A drag-and-drop file dropzone (`Upload`) paired with a row component for
 listing files as they're processed (`UploadItem`). Both live in a single
-`Upload.tsx` file since they're always used together — `Upload` never
-renders the list itself, it just hands files to `onFiles` and leaves
-tracking/rendering upload state to the consumer via `UploadItem`.
+`Upload.tsx` file since they're always used together. By default `Upload`
+doesn't render the list itself, just hands files to `onFiles` and leaves
+tracking/rendering to the consumer via `UploadItem` — but set
+`showFileList` to have `Upload` render `currentFiles` as `UploadItem`s
+itself, with removal wired through `onRemoveFile`.
 
 <Primary />
 
@@ -57,6 +59,16 @@ outcome rather than the control's overall validity.
   to a trash can.
 - `"error"` — tints the row red and shows `errorText`, with an optional
   "Try again" link when `onRetry` is passed.
+
+## View mode and opening files
+
+`mode="view"` renders neither a dropzone nor a picker button — just the
+label and, when `showFileList` is set, `currentFiles` rendered as
+`UploadItem`s with no remove affordance. Use it for a read-only
+"attachments" display where the consumer never expects to add or remove
+files through this control. `UploadItem`'s own `onOpen` prop is
+independent of `mode`: pass it to turn the file name into a button (e.g.
+to open or download the file) instead of static text.
 
 <Stories />
 
