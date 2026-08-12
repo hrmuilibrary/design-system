@@ -116,6 +116,8 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     locale = 'en',
     format = 'dd.MM.yyyy',
     label,
+    required = false,
+    helperText,
     placeholder = 'Select date',
     fullWidth = false,
     disabled = false,
@@ -138,7 +140,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   const [hoverEnd, setHoverEnd] = useState<Date | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hasError = error || !!errorText;
-  const describedBy = errorText ? `${triggerId}-error` : undefined;
+  const describedBy = errorText ? `${triggerId}-error` : helperText ? `${triggerId}-help` : undefined;
 
   useEffect(() => {
     if (disabled) setOpen(false);
@@ -205,8 +207,16 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
       className={cn('flex flex-col gap-1.5', fullWidth && 'w-full', wrapperClassName)}
     >
       {label && (
-        <label htmlFor={triggerId} className="text-p-std font-medium text-fg-default inline-flex">
+        <label
+          htmlFor={triggerId}
+          className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
+        >
           {label}
+          {required && (
+            <span className="text-red-600" aria-hidden>
+              *
+            </span>
+          )}
         </label>
       )}
       <div className="relative">
@@ -216,6 +226,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           type="button"
           disabled={disabled}
           aria-invalid={hasError || undefined}
+          aria-required={required || undefined}
           aria-describedby={describedBy}
           onClick={() => setOpen((v) => !v)}
           className={cn(
@@ -327,6 +338,10 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
       {errorText ? (
         <p id={`${triggerId}-error`} className="text-p-sm text-red-700">
           {errorText}
+        </p>
+      ) : helperText ? (
+        <p id={`${triggerId}-help`} className="text-p-sm text-fg-secondary">
+          {helperText}
         </p>
       ) : null}
     </div>

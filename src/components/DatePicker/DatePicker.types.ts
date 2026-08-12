@@ -25,6 +25,10 @@ export interface DatePickerProps extends BaseProps {
    *  endpoints in range mode. */
   format?: string;
   label?: ReactNode;
+  /** Renders a red asterisk next to the label and sets `aria-required` on the trigger. */
+  required?: boolean;
+  /** Neutral message rendered below the control, replaced by `errorText` when present. */
+  helperText?: ReactNode;
   placeholder?: string;
   /** Fill the parent's width (like Input/Select) instead of the intrinsic
    *  min-width. Use inside form grids so dates line up with other fields. */
