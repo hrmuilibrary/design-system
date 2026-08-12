@@ -31,6 +31,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
     orientation = 'vertical',
     children,
     className,
+    wrapperClassName,
     dataTestId,
   },
   ref,
@@ -65,7 +66,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
       value={{ name: groupName, value, defaultValue, onChange, disabled, size, error: hasError }}
     >
       {label || errorText || helperText ? (
-        <div className="flex flex-col gap-1.5">
+        <div className={cn('flex flex-col gap-1.5', wrapperClassName)}>
           {label && (
             <span
               id={labelId}
