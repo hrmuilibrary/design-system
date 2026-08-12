@@ -205,7 +205,7 @@ export const WithFileList: Story = {
   name: 'showFileList with removal',
   render: (args) => {
     function Controlled() {
-      const [files, setFiles] = useState<File[]>([
+      const [files, setFiles] = useState<File[]>(() => [
         new File(['x'], 'brand-guidelines.pdf', { type: 'application/pdf' }),
         new File(['x'.repeat(2_000_000)], 'hero-image.png', { type: 'image/png' }),
       ]);

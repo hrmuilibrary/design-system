@@ -30,16 +30,17 @@ function matchesAccept(file: File, accept: string): boolean {
   });
 }
 
+const FILE_SIZE_UNITS = ['KB', 'MB', 'GB'] as const;
+
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
-  const units = ['KB', 'MB', 'GB'];
   let value = bytes / 1024;
   let unitIndex = 0;
-  while (value >= 1024 && unitIndex < units.length - 1) {
+  while (value >= 1024 && unitIndex < FILE_SIZE_UNITS.length - 1) {
     value /= 1024;
     unitIndex += 1;
   }
-  return `${value.toFixed(1)} ${units[unitIndex]}`;
+  return `${value.toFixed(1)} ${FILE_SIZE_UNITS[unitIndex]}`;
 }
 
 export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
@@ -176,7 +177,7 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     <div className="flex flex-col gap-2">
       {currentFiles.map((file, i) => (
         <UploadItem
-          key={`${file.name}-${file.size}-${file.lastModified}`}
+          key={`${i}-${file.name}-${file.size}`}
           name={file.name}
           meta={formatFileSize(file.size)}
           status="completed"
@@ -339,7 +340,7 @@ export const UploadItem = forwardRef<HTMLDivElement, UploadItemProps>(function U
             <button
               type="button"
               onClick={onOpen}
-              className="truncate text-p-std font-medium text-fg-default text-left hover:underline focus-visible:outline-none focus-visible:underline min-w-0"
+              className="truncate text-p-std font-medium text-fg-default text-left rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 min-w-0"
             >
               {name}
             </button>
