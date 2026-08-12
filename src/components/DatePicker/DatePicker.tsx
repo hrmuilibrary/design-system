@@ -79,11 +79,18 @@ function startOfDay(date: Date) {
 // in both directions without a separate `endOfDay` boundary — a `minDate`
 // carrying today's wall-clock time (e.g. `new Date()`) still leaves today
 // itself selectable, since today's grid cell is also midnight.
-function isDayDisabled(date: Date, minDate?: Date, maxDate?: Date, excludeDates?: Date[]) {
+function isDayDisabled(
+  date: Date,
+  minDate?: Date,
+  maxDate?: Date,
+  excludeDates?: Date[],
+  filterDate?: (date: Date) => boolean,
+) {
   const time = startOfDay(date).getTime();
   if (minDate && time < startOfDay(minDate).getTime()) return true;
   if (maxDate && time > startOfDay(maxDate).getTime()) return true;
-  return !!excludeDates?.some((excluded) => sameDay(excluded, date));
+  if (excludeDates?.some((excluded) => sameDay(excluded, date))) return true;
+  return !!filterDate && !filterDate(date);
 }
 
 function formatDate(date: Date, format: string): string {
@@ -124,6 +131,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     minDate,
     maxDate,
     excludeDates,
+    filterDate,
     error = false,
     errorText,
     id,
@@ -302,7 +310,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
               ))}
               {cells.map((date, index) => {
                 if (!date) return <div key={index} />;
-                const dayDisabled = isDayDisabled(date, minDate, maxDate, excludeDates);
+                const dayDisabled = isDayDisabled(date, minDate, maxDate, excludeDates, filterDate);
                 const isSelected = !range && sameDay(date, value ?? null);
                 const isStart = range && sameDay(date, currentRange.start);
                 const isEnd = range && sameDay(date, rangeEnd);

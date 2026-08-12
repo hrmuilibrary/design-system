@@ -41,6 +41,8 @@ export interface DatePickerProps extends BaseProps {
   maxDate?: Date;
   /** Individual days that can't be picked. Matched by calendar day; time-of-day is ignored. */
   excludeDates?: Date[];
+  /** Arbitrary per-day predicate, evaluated alongside `minDate`/`maxDate`/`excludeDates`. Days it rejects render disabled. */
+  filterDate?: (date: Date) => boolean;
   /** Switch the trigger to the danger border/ring styles. */
   error?: boolean;
   /** Message rendered below the control; also switches the trigger to the danger styles. */
