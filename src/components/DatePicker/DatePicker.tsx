@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useId, useRef, useState } from 'react';
-import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import type { MouseEvent as ReactMouseEvent, KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import type { DatePickerProps, DatePickerSize } from './DatePicker.types';
 
@@ -107,6 +108,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   {
     value,
     onChange,
+    clearable = false,
     range = false,
     rangeValue,
     onChangeRange,
@@ -178,6 +180,15 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     setOpen(false);
   }
 
+  function handleClear(event: ReactMouseEvent | ReactKeyboardEvent) {
+    event.stopPropagation();
+    if (range) {
+      onChangeRange?.({ start: null, end: null });
+    } else {
+      onChange?.(null);
+    }
+  }
+
   const resolvedLocale = resolveLocale(locale);
   const firstDayOfWeek = getFirstDayOfWeek(resolvedLocale);
   const monthNames = getMonthNames(resolvedLocale);
@@ -227,7 +238,25 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           >
             {display || placeholder}
           </span>
-          <Calendar className={cn('w-4 h-4', disabled ? 'text-fg-disabled' : 'text-fg-secondary')} />
+          {clearable && display ? (
+            <span
+              role="button"
+              tabIndex={0}
+              aria-label="Clear date"
+              onClick={handleClear}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  handleClear(event);
+                }
+              }}
+              className="inline-flex items-center justify-center rounded-full p-0.5 hover:bg-bg-container"
+            >
+              <X className="w-4 h-4 text-fg-secondary" />
+            </span>
+          ) : (
+            <Calendar className={cn('w-4 h-4', disabled ? 'text-fg-disabled' : 'text-fg-secondary')} />
+          )}
         </button>
 
         {open && (

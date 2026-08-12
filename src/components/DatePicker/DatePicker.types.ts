@@ -10,7 +10,9 @@ export interface DateRange {
 
 export interface DatePickerProps extends BaseProps {
   value?: Date | null;
-  onChange?: (date: Date) => void;
+  onChange?: (date: Date | null) => void;
+  /** Renders a clear affordance in the trigger (in place of the calendar icon) when a value is selected. Fires `onChange(null)` (or `onChangeRange({ start: null, end: null })` in range mode). */
+  clearable?: boolean;
   /** Enable range-selection mode. */
   range?: boolean;
   rangeValue?: DateRange;
