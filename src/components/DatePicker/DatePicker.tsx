@@ -53,11 +53,22 @@ function getMonthNames(locale: string): string[] {
   return Array.from({ length: 12 }, (_, i) => formatter.format(new Date(2000, i, 1)));
 }
 
+// Bare 'en' must read identically to the old hardcoded 2-letter weekday
+// array — Intl.DateTimeFormat('en', { weekday: 'short' }) instead yields
+// 'Sun'/'Mon'/... (3-letter, capitalized), so it's special-cased here the
+// same way getFirstDayOfWeek special-cases bare 'en' above.
+const EN_WEEKDAY_NAMES_FROM_SUNDAY = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
 /** Jan 4, 1970 was a Sunday — a stable reference for enumerating Sun..Sat,
  *  then rotated so index 0 is `firstDayOfWeek`. */
 function getWeekdayNames(locale: string, firstDayOfWeek: number): string[] {
-  const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
-  const namesFromSunday = Array.from({ length: 7 }, (_, i) => formatter.format(new Date(1970, 0, 4 + i)));
+  const namesFromSunday =
+    locale.toLowerCase() === 'en'
+      ? EN_WEEKDAY_NAMES_FROM_SUNDAY
+      : (() => {
+          const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+          return Array.from({ length: 7 }, (_, i) => formatter.format(new Date(1970, 0, 4 + i)));
+        })();
   return [...namesFromSunday.slice(firstDayOfWeek), ...namesFromSunday.slice(0, firstDayOfWeek)];
 }
 
