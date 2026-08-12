@@ -53,11 +53,14 @@ if the default row layout doesn't fit.
 to reach into `formState.dirtyFields` yourself.
 
 `revalidateKey` re-runs validation on every field currently showing an
-error, but only once the form has already been submitted — pass your
-app's current locale as the key. When your `validationSchema` is rebuilt
-with translated messages after a language switch, `revalidateKey` changing
-is what makes the on-screen error text catch up, since react-hook-form
-doesn't re-validate automatically just because the resolver was swapped.
+error — pass your app's current locale as the key. When your
+`validationSchema` is rebuilt with translated messages after a language
+switch, `revalidateKey` changing is what makes the on-screen error text
+catch up, since react-hook-form doesn't re-validate automatically just
+because the resolver was swapped. Note: if a field's error was set via
+`setError` (e.g. a server-side error) rather than schema validation,
+revalidating it on a `revalidateKey` change will replace that message with
+whatever the schema resolves to.
 
 ## Context
 

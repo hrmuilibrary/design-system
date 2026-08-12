@@ -49,10 +49,9 @@ export const FormContainer = forwardRef<HTMLFormElement, FormContainerProps>(fun
   const { errors, isDirty, isSubmitted, isSubmitting, dirtyFields, isValid } = formState;
 
   useEffect(() => {
-    if (!isSubmitted) return;
     const fieldNames = Object.keys(errors).filter((key) => key !== 'root' && key !== 'form');
     if (fieldNames.length > 0) trigger(fieldNames);
-    // Deliberately keyed only on revalidateKey: including `errors`/`trigger`/`isSubmitted`
+    // Deliberately keyed only on revalidateKey: including `errors`/`trigger`
     // would re-fire this effect every time trigger() itself updates the error set.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revalidateKey]);
