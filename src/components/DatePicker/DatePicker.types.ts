@@ -18,6 +18,10 @@ export interface DatePickerProps extends BaseProps {
   size?: DatePickerSize;
   /** BCP-47 locale tag. Derives month names, weekday abbreviations, and the first day of the week. */
   locale?: string;
+  /** Trigger display format. Supports `dd`/`MM`/`yyyy` tokens plus a literal
+   *  separator. Defaults to the pre-existing `'dd.MM.yyyy'`. Applied to both
+   *  endpoints in range mode. */
+  format?: string;
   label?: ReactNode;
   placeholder?: string;
   /** Fill the parent's width (like Input/Select) instead of the intrinsic

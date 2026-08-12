@@ -85,8 +85,11 @@ function isDayDisabled(date: Date, minDate?: Date, maxDate?: Date, excludeDates?
   return !!excludeDates?.some((excluded) => sameDay(excluded, date));
 }
 
-function formatShort(date: Date) {
-  return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+function formatDate(date: Date, format: string): string {
+  const dd = String(date.getDate()).padStart(2, '0');
+  const MM = String(date.getMonth() + 1).padStart(2, '0');
+  const yyyy = String(date.getFullYear());
+  return format.replace(/dd/g, dd).replace(/MM/g, MM).replace(/yyyy/g, yyyy);
 }
 
 function buildGrid(view: Date, firstDayOfWeek: number) {
@@ -109,6 +112,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     onChangeRange,
     size = 'md',
     locale = 'en',
+    format = 'dd.MM.yyyy',
     label,
     placeholder = 'Select date',
     fullWidth = false,
@@ -149,10 +153,10 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
 
   const display = range
     ? rangeValue?.start
-      ? `${formatShort(rangeValue.start)}${rangeValue.end ? ` – ${formatShort(rangeValue.end)}` : ''}`
+      ? `${formatDate(rangeValue.start, format)}${rangeValue.end ? ` – ${formatDate(rangeValue.end, format)}` : ''}`
       : ''
     : value
-      ? formatShort(value)
+      ? formatDate(value, format)
       : '';
 
   function pick(date: Date) {
