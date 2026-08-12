@@ -13,17 +13,37 @@ const sizeStyles: Record<DatePickerSize, string> = {
 
 const SUNDAY_FIRST_REGIONS = new Set(['US', 'CA', 'MX', 'JP', 'BR', 'IL', 'PH', 'KR', 'TW']);
 
+/** Validates `locale` once via Intl.Locale's tag-parsing (shared with
+ *  Intl.DateTimeFormat) so a malformed tag (e.g. underscore-form `en_US`,
+ *  or an empty string) never reaches the unguarded Intl.DateTimeFormat
+ *  constructors in getMonthNames/getWeekdayNames — falls back to `'en'`. */
+function resolveLocale(locale: string): string {
+  try {
+    new Intl.Locale(locale);
+    return locale;
+  } catch {
+    return 'en';
+  }
+}
+
 /** 0 = Sunday .. 6 = Saturday. Prefers Intl.Locale's weekInfo (not yet in
  *  TypeScript's bundled lib types, and not universally shipped — notably
- *  absent in older Safari), falling back to a small region allowlist. */
+ *  absent in older Safari; Firefox exposes getWeekInfo() as a method
+ *  instead of the weekInfo getter, so both are checked), falling back to
+ *  a small region allowlist. */
 function getFirstDayOfWeek(locale: string): number {
   try {
-    const weekInfo = (new Intl.Locale(locale) as Intl.Locale & { weekInfo?: { firstDay: number } }).weekInfo;
+    const loc = new Intl.Locale(locale) as Intl.Locale & {
+      weekInfo?: { firstDay: number };
+      getWeekInfo?: () => { firstDay: number };
+    };
+    const weekInfo = loc.weekInfo ?? loc.getWeekInfo?.();
     if (weekInfo?.firstDay) return weekInfo.firstDay % 7; // spec: 1=Mon..7=Sun
   } catch {
-    // Intl.Locale or weekInfo unsupported in this runtime — fall through.
+    // Intl.Locale/weekInfo/getWeekInfo unsupported in this runtime — fall through.
   }
   const region = locale.split('-')[1]?.toUpperCase();
+  if (!region && locale.toLowerCase() === 'en') return 0; // matches en-US's real CLDR default
   return region && SUNDAY_FIRST_REGIONS.has(region) ? 0 : 1;
 }
 
@@ -154,9 +174,10 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     setOpen(false);
   }
 
-  const firstDayOfWeek = getFirstDayOfWeek(locale);
-  const monthNames = getMonthNames(locale);
-  const weekdayNames = getWeekdayNames(locale, firstDayOfWeek);
+  const resolvedLocale = resolveLocale(locale);
+  const firstDayOfWeek = getFirstDayOfWeek(resolvedLocale);
+  const monthNames = getMonthNames(resolvedLocale);
+  const weekdayNames = getWeekdayNames(resolvedLocale, firstDayOfWeek);
   const cells = buildGrid(view, firstDayOfWeek);
   const currentRange = rangeValue ?? { start: null, end: null };
   const rangeEnd = currentRange.end ?? hoverEnd;
