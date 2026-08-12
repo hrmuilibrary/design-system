@@ -92,6 +92,14 @@ whenever a value is selected. Clicking it fires `onChange(null)` (or
 opening the popover, then the icon reverts to the calendar glyph. It has
 no effect while `disabled` — the trigger stays inert either way.
 
+**Migration note**: `onChange`'s type widened from `(date: Date) => void`
+to `(date: Date | null) => void` to support `clearable`. Under TypeScript
+strict mode this is a compile-time breaking change — a handler typed to
+accept only `Date` no longer satisfies the prop, even if you never pass
+`clearable` — so on upgrade, widen your handler's parameter type to
+`Date | null` (and, if you're storing the value in state, switch to
+`useState<Date | null>`).
+
 ## Required & helper text
 
 `required` renders a red asterisk next to the label and sets
