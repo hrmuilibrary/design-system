@@ -184,6 +184,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     event.stopPropagation();
     if (range) {
       onChangeRange?.({ start: null, end: null });
+      setHoverEnd(null);
     } else {
       onChange?.(null);
     }
@@ -238,7 +239,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           >
             {display || placeholder}
           </span>
-          {clearable && display ? (
+          {clearable && display && !disabled ? (
             <span
               role="button"
               tabIndex={0}
