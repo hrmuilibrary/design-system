@@ -15,11 +15,25 @@ export interface AvatarProps extends HTMLAttributes<HTMLSpanElement>, BaseProps 
   fallback?: ReactNode;
   /** Renders an edit affordance in the bottom-right corner, scaled to `size`, that opens a file picker. */
   editable?: boolean;
-  /** Called with the picked file. `Avatar` shows an immediate local preview and revokes its own object URL on replacement/unmount. */
+  /**
+   * Called with the picked file. `Avatar` shows an immediate local preview
+   * (an object URL it creates and revokes itself on replacement/unmount)
+   * that takes precedence over `src` until `src` itself changes to a new
+   * value, at which point the new `src` wins and the local preview is
+   * dropped.
+   */
   onImageChange?: (file: File) => void;
-  /** Forwarded to the internal picker. Same semantics as `UploadProps.accept`. */
+  /**
+   * Forwarded to the internal picker. Same matching rules as
+   * `UploadProps.accept`, but always enforced here (unlike `Upload`, where
+   * enforcement is gated behind `validateFiles`).
+   */
   accept?: string;
-  /** Forwarded to the internal picker. Same semantics as `UploadProps.maxSizeMB`. */
+  /**
+   * Forwarded to the internal picker. Same matching rules as
+   * `UploadProps.maxSizeMB`, but always enforced here (unlike `Upload`,
+   * where enforcement is gated behind `validateFiles`).
+   */
   maxSizeMB?: number;
   /** Called when the picked file fails `accept`/`maxSizeMB` validation. */
   onReject?: (rejection: UploadRejection) => void;

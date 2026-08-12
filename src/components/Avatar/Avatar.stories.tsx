@@ -116,7 +116,7 @@ export const Editable: Story = {
   name: 'Editable (upload overlay)',
   render: () => (
     <div className="flex items-end gap-4">
-      {(['xs', 'md', '2xl'] as const).map((s) => (
+      {(['2xs', 'xs', 'md', '2xl'] as const).map((s) => (
         <Avatar
           key={s}
           size={s}

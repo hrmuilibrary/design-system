@@ -37,6 +37,10 @@ function matchesAccept(file: File, accept: string): boolean {
   });
 }
 
+/**
+ * Also used by `Avatar`'s `editable` picker — changing these semantics
+ * changes both components.
+ */
 export function validateSingleFile(
   file: File,
   { accept, maxSizeMB }: FileValidationOptions,

@@ -35,16 +35,25 @@ bottom-right spot.
 `editable` renders a small pencil-icon button in the bottom-right corner,
 scaled to `size`, that opens a native file picker. Picking a file shows an
 immediate local preview (an object URL `Avatar` creates and revokes itself
-on replacement or unmount) independent of the `src` prop, and calls
-`onImageChange` with the picked `File`.
+on replacement or unmount) and calls `onImageChange` with the picked
+`File`. The local preview takes precedence over `src` until `src` itself
+changes to a new value (e.g. once your upload completes and you pass back
+the real remote URL), at which point the new `src` wins and the local
+preview is dropped.
 
 `accept` and `maxSizeMB` validate the picked file before it's previewed —
-same semantics as `UploadProps.accept`/`maxSizeMB`, and validated through
-the same `validateSingleFile` helper `Upload` uses internally, so the two
-components can't drift on what counts as a valid file. A file that fails
-validation never updates the preview; `onReject` is called instead with the
-`UploadRejection` (a single object, not an array — `Avatar` only ever picks
-one file at a time).
+the same matching rules as `UploadProps.accept`/`maxSizeMB`, but always
+enforced here (unlike `Upload`, where enforcement is gated behind
+`validateFiles`) — validated through the same `validateSingleFile` helper
+`Upload` uses internally, so the two components can't drift on what counts
+as a valid file. A file that fails validation never updates the preview;
+`onReject` is called instead with the `UploadRejection` (a single object,
+not an array — `Avatar` only ever picks one file at a time).
+
+The edit button's touch target falls below the WCAG 2.5.8 24×24px minimum
+at `'2xs'`/`'xs'`/`'sm'`. `editable` is best suited to `'sm'` and above for
+touch accessibility; consumers using it at smaller sizes should be aware
+the target is below the recommended minimum.
 
 ```tsx
 <Avatar
