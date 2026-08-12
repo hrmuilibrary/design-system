@@ -1,7 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import type { BaseProps } from '../../types';
 
-export type UploadMode = 'dropzone' | 'button' | 'icon';
+export type UploadMode = 'dropzone' | 'button' | 'icon' | 'view';
 export type UploadRejectionReason = 'size' | 'type' | 'maxFiles' | 'duplicate';
 
 export interface UploadRejection {
@@ -44,7 +44,11 @@ export interface UploadProps
   currentFiles?: File[];
   /** Files that failed validation, with the reason. Only called when `validateFiles` is set. */
   onReject?: (rejections: UploadRejection[]) => void;
-  /** `'dropzone'` (default) is the drag-and-drop area. `'button'` renders a secondary Button trigger. `'icon'` renders a compact icon-only trigger. */
+  /** Renders `currentFiles` as `UploadItem`s below the trigger/dropzone. `Upload` stays stateless — `currentFiles` remains the source of truth. */
+  showFileList?: boolean;
+  /** Called when a self-rendered file-list item's remove button is clicked. Only reachable when `showFileList` is set and `mode` isn't `'view'`. */
+  onRemoveFile?: (file: File, index: number) => void;
+  /** `'dropzone'` (default) is the drag-and-drop area. `'button'` renders a secondary Button trigger. `'icon'` renders a compact icon-only trigger. `'view'` renders only the label and (with `showFileList`) the file list — no picker, no drag target, no remove affordance. */
   mode?: UploadMode;
   /** Label for the `'button'`-mode trigger. Ignored in other modes. */
   triggerLabel?: ReactNode;

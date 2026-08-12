@@ -30,6 +30,18 @@ function matchesAccept(file: File, accept: string): boolean {
   });
 }
 
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ['KB', 'MB', 'GB'];
+  let value = bytes / 1024;
+  let unitIndex = 0;
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024;
+    unitIndex += 1;
+  }
+  return `${value.toFixed(1)} ${units[unitIndex]}`;
+}
+
 export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
   {
     accept,
@@ -43,6 +55,8 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     dedupe = validateFiles,
     currentFiles = [],
     onReject,
+    showFileList = false,
+    onRemoveFile,
     mode = 'dropzone',
     triggerLabel,
     triggerIcon,
@@ -158,6 +172,30 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     </p>
   ) : null;
 
+  const fileListEl = showFileList && currentFiles.length > 0 && (
+    <div className="flex flex-col gap-2">
+      {currentFiles.map((file, i) => (
+        <UploadItem
+          key={`${file.name}-${file.size}-${file.lastModified}`}
+          name={file.name}
+          meta={formatFileSize(file.size)}
+          status="completed"
+          onRemove={mode !== 'view' && onRemoveFile ? () => onRemoveFile(file, i) : undefined}
+        />
+      ))}
+    </div>
+  );
+
+  if (mode === 'view') {
+    return (
+      <div ref={ref} data-test-id={dataTestId} className={cn('flex flex-col gap-1.5', className)} {...rest}>
+        {labelRow}
+        {fileListEl}
+        {errorRow}
+      </div>
+    );
+  }
+
   if (mode !== 'dropzone') {
     const isIcon = mode === 'icon';
     return (
@@ -175,6 +213,7 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
           {isIcon ? triggerIcon ?? <Pencil className="h-4 w-4" /> : (triggerLabel ?? 'Choose a file')}
         </Button>
         {fileInput}
+        {fileListEl}
         {errorRow}
       </div>
     );
@@ -232,12 +271,13 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     </div>
   );
 
-  if (!labelRow && !errorRow) return dropzone;
+  if (!labelRow && !errorRow && !fileListEl) return dropzone;
 
   return (
     <div className="flex flex-col gap-1.5">
       {labelRow}
       {dropzone}
+      {fileListEl}
       {errorRow}
     </div>
   );
