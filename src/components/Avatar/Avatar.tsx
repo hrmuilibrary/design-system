@@ -1,6 +1,7 @@
-import { forwardRef, useState, type ReactNode } from 'react';
-import { User } from 'lucide-react';
+import { forwardRef, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Pencil, User } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { validateSingleFile } from '../Upload';
 import type { AvatarGroupProps, AvatarProps, AvatarSize, AvatarStatus } from './Avatar.types';
 
 const sizeStyles: Record<AvatarSize, string> = {
@@ -40,6 +41,16 @@ const overlap: Record<AvatarSize, string> = {
   '2xl': '-ml-5',
 };
 
+const editButtonSize: Record<AvatarSize, string> = {
+  '2xs': 'h-3 w-3',
+  xs: 'h-4 w-4',
+  sm: 'h-5 w-5',
+  md: 'h-6 w-6',
+  lg: 'h-7 w-7',
+  xl: 'h-8 w-8',
+  '2xl': 'h-9 w-9',
+};
+
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
   if (parts.length === 0) return '';
@@ -58,11 +69,53 @@ function colorFromName(name: string): string {
 }
 
 export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
-  { src, alt, name, size = 'md', status, shape = 'circle', fallback, className, dataTestId, ...rest },
+  {
+    src,
+    alt,
+    name,
+    size = 'md',
+    status,
+    shape = 'circle',
+    fallback,
+    editable,
+    onImageChange,
+    accept,
+    maxSizeMB,
+    onReject,
+    className,
+    dataTestId,
+    ...rest
+  },
   ref,
 ) {
   const [errored, setErrored] = useState(false);
-  const showImage = !!src && !errored;
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const previewUrlRef = useRef<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    };
+  }, []);
+
+  const handleFileChange = (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+    const rejectionReason = validateSingleFile(file, { accept, maxSizeMB });
+    if (rejectionReason) {
+      onReject?.({ file, reason: rejectionReason });
+      return;
+    }
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+    const url = URL.createObjectURL(file);
+    previewUrlRef.current = url;
+    setPreviewUrl(url);
+    onImageChange?.(file);
+  };
+
+  const effectiveSrc = previewUrl ?? src;
+  const showImage = !!effectiveSrc && !errored;
   const initials = name ? getInitials(name) : '';
   const bgColor = name ? colorFromName(name) : 'bg-gray-300 dark:bg-gray-600';
 
@@ -83,7 +136,7 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
       >
         {showImage ? (
           <img
-            src={src}
+            src={effectiveSrc}
             alt={alt ?? name ?? ''}
             onError={() => setErrored(true)}
             className="h-full w-full object-cover"
@@ -98,11 +151,38 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
         <span
           aria-label={status}
           className={cn(
-            'absolute right-0 bottom-0 rounded-full ring-2 ring-white',
+            'absolute bottom-0 rounded-full ring-2 ring-white',
+            editable ? 'left-0' : 'right-0',
             statusSize[size],
             statusColor[status],
           )}
         />
+      )}
+      {editable && (
+        <>
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            aria-label="Change avatar image"
+            className={cn(
+              'absolute right-0 bottom-0 inline-flex items-center justify-center rounded-full ring-2 ring-white bg-brand-500 text-white hover:bg-brand-600 transition-colors',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-1',
+              editButtonSize[size],
+            )}
+          >
+            <Pencil className="h-1/2 w-1/2" />
+          </button>
+          <input
+            ref={inputRef}
+            type="file"
+            accept={accept}
+            onChange={(event) => {
+              handleFileChange(event.target.files);
+              event.target.value = '';
+            }}
+            className="sr-only"
+          />
+        </>
       )}
     </span>
   );
