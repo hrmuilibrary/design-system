@@ -41,6 +41,9 @@ const overlap: Record<AvatarSize, string> = {
   '2xl': '-ml-5',
 };
 
+// Mirrors the corner-overlay approach in NotificationBadge.tsx (opposite
+// corner) — no shared abstraction yet, but keep the two in sync if this
+// pattern changes.
 const editButtonSize: Record<AvatarSize, string> = {
   '2xs': 'h-3 w-3',
   xs: 'h-4 w-4',
@@ -92,16 +95,43 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const prevSrcRef = useRef(src);
+  // Tracks whatever object URL is currently "live" (i.e. the one the
+  // committed <img src> may be pointing at), independent of whether the
+  // effect below ever got to observe it. This lets a true unmount always
+  // revoke the right URL even if the parent tears Avatar down synchronously
+  // in response to onImageChange, before this render's effect had a chance
+  // to mount and register its own cleanup.
+  const liveUrlRef = useRef<string | null>(null);
 
+  // Replacement/unmount-while-mounted cleanup: relies on the closure
+  // capturing *this* effect instance's own previewUrl, not a ref read, so
+  // it stays correct even though handleFileChange also writes liveUrlRef
+  // synchronously on every pick (a ref-comparison approach would otherwise
+  // have its "stale" value clobbered by the very next pick before this
+  // effect gets a chance to read it).
   useEffect(() => {
+    liveUrlRef.current = previewUrl;
     if (!previewUrl) return;
     return () => URL.revokeObjectURL(previewUrl);
   }, [previewUrl]);
+
+  // Catch-all for a true unmount when a freshly created URL never got a
+  // chance to commit via the effect above (e.g. the parent unmounts/replaces
+  // Avatar synchronously in response to onImageChange). Revoking the same
+  // URL twice (once here, once via the effect above) is harmless — it's a
+  // no-op on an already-revoked URL.
+  useEffect(
+    () => () => {
+      if (liveUrlRef.current) URL.revokeObjectURL(liveUrlRef.current);
+    },
+    [],
+  );
 
   useEffect(() => {
     if (src !== prevSrcRef.current) {
       prevSrcRef.current = src;
       setPreviewUrl(null);
+      setErrored(false);
     }
   }, [src]);
 
@@ -114,6 +144,7 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
       return;
     }
     const url = URL.createObjectURL(file);
+    liveUrlRef.current = url;
     setPreviewUrl(url);
     setErrored(false);
     onImageChange?.(file);
@@ -167,7 +198,10 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
         <>
           <button
             type="button"
-            onClick={() => inputRef.current?.click()}
+            onClick={(event) => {
+              event.stopPropagation();
+              inputRef.current?.click();
+            }}
             aria-label="Change avatar image"
             className={cn(
               'absolute right-0 bottom-0 inline-flex items-center justify-center rounded-full ring-2 ring-white bg-brand-500 text-white hover:bg-brand-600 transition-colors',
@@ -182,6 +216,7 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
             type="file"
             accept={accept}
             onChange={(event) => {
+              event.stopPropagation();
               handleFileChange(event.target.files);
               event.target.value = '';
             }}
