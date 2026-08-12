@@ -90,14 +90,20 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
 ) {
   const [errored, setErrored] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const previewUrlRef = useRef<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const prevSrcRef = useRef(src);
 
   useEffect(() => {
-    return () => {
-      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-    };
-  }, []);
+    if (!previewUrl) return;
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
+
+  useEffect(() => {
+    if (src !== prevSrcRef.current) {
+      prevSrcRef.current = src;
+      setPreviewUrl(null);
+    }
+  }, [src]);
 
   const handleFileChange = (files: FileList | null) => {
     const file = files?.[0];
@@ -107,10 +113,9 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
       onReject?.({ file, reason: rejectionReason });
       return;
     }
-    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
     const url = URL.createObjectURL(file);
-    previewUrlRef.current = url;
     setPreviewUrl(url);
+    setErrored(false);
     onImageChange?.(file);
   };
 
