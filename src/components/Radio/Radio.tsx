@@ -10,6 +10,7 @@ interface RadioGroupContextValue {
   onChange?: (value: RadioValue) => void;
   disabled?: boolean;
   size: RadioSize;
+  error?: boolean;
 }
 
 const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
@@ -22,6 +23,10 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
     defaultValue,
     onChange,
     disabled,
+    required,
+    error,
+    errorText,
+    helperText,
     size = 'md',
     orientation = 'vertical',
     children,
@@ -33,6 +38,8 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
   const reactName = useId();
   const groupName = name ?? reactName;
   const labelId = `${reactName}-label`;
+  const hasError = error || !!errorText;
+  const describedBy = errorText ? `${reactName}-error` : helperText ? `${reactName}-help` : undefined;
 
   const groupEl = (
     <div
@@ -51,7 +58,9 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
   );
 
   return (
-    <RadioGroupContext.Provider value={{ name: groupName, value, defaultValue, onChange, disabled, size }}>
+    <RadioGroupContext.Provider
+      value={{ name: groupName, value, defaultValue, onChange, disabled, size, error: hasError }}
+    >
       {label ? (
         <div className="flex flex-col gap-1.5">
           <span id={labelId} className="text-p-std font-medium text-fg-default inline-flex">
