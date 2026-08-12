@@ -15,5 +15,11 @@ export interface FormContainerProps extends Omit<FormHTMLAttributes<HTMLFormElem
   shouldUnregister?: boolean;
   shouldFocusError?: boolean;
   formId?: string;
-  onSubmit?: (data: FieldValues, formState: FormState<FieldValues>) => void;
+  onSubmit?: (
+    data: FieldValues,
+    formState: FormState<FieldValues>,
+    dirtyFields: FormState<FieldValues>['dirtyFields'],
+  ) => void;
+  /** When this changes AND the form has already been submitted, re-validates every field currently holding an error — use to refresh translated validation messages after rebuilding `validationSchema` for a new locale. */
+  revalidateKey?: string | number;
 }

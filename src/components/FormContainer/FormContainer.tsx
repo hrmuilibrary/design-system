@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useEffect } from 'react';
 import { useForm, type FieldValues } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { cn } from '../../lib/cn';
@@ -18,6 +18,7 @@ export const FormContainer = forwardRef<HTMLFormElement, FormContainerProps>(fun
     shouldFocusError = true,
     formId,
     onSubmit,
+    revalidateKey,
     dataTestId,
     ...rest
   },
@@ -47,8 +48,17 @@ export const FormContainer = forwardRef<HTMLFormElement, FormContainerProps>(fun
 
   const { errors, isDirty, isSubmitted, isSubmitting, dirtyFields, isValid } = formState;
 
+  useEffect(() => {
+    if (!isSubmitted) return;
+    const fieldNames = Object.keys(errors).filter((key) => key !== 'root' && key !== 'form');
+    if (fieldNames.length > 0) trigger(fieldNames);
+    // Deliberately keyed only on revalidateKey: including `errors`/`trigger`/`isSubmitted`
+    // would re-fire this effect every time trigger() itself updates the error set.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revalidateKey]);
+
   const submit = handleSubmit((data) => {
-    onSubmit?.(data, formState);
+    onSubmit?.(data, formState, dirtyFields);
   });
 
   const contextValue: FormContextValue = {
