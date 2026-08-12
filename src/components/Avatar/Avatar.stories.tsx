@@ -13,7 +13,7 @@ const meta = {
   argTypes: {
     size: {
       control: 'select',
-      options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'],
+      options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'],
     },
     status: {
       control: 'select',
@@ -88,7 +88,7 @@ export const AllStatuses: Story = {
   ),
 };
 
-const SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const;
+const SIZES = ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const;
 
 export const AllSizes: Story = {
   render: (args) => (

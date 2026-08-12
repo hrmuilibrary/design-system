@@ -4,6 +4,7 @@ import { cn } from '../../lib/cn';
 import type { AvatarGroupProps, AvatarProps, AvatarSize, AvatarStatus } from './Avatar.types';
 
 const sizeStyles: Record<AvatarSize, string> = {
+  '2xs': 'h-5 w-5 text-p-xs',
   xs: 'h-6 w-6 text-p-xs',
   sm: 'h-8 w-8 text-p-sm',
   md: 'h-10 w-10 text-p-std',
@@ -13,6 +14,7 @@ const sizeStyles: Record<AvatarSize, string> = {
 };
 
 const statusSize: Record<AvatarSize, string> = {
+  '2xs': 'h-1 w-1',
   xs: 'h-1.5 w-1.5',
   sm: 'h-2 w-2',
   md: 'h-2.5 w-2.5',
@@ -29,6 +31,7 @@ const statusColor: Record<AvatarStatus, string> = {
 };
 
 const overlap: Record<AvatarSize, string> = {
+  '2xs': '-ml-1',
   xs: '-ml-1.5',
   sm: '-ml-2',
   md: '-ml-2.5',
