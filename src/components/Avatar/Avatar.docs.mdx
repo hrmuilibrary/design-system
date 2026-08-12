@@ -20,13 +20,45 @@ name so the same person always gets the same color.
 
 ## Sizes
 
-`size` scales both the avatar and its status dot together, from `xs` through
-`2xl`.
+`size` scales the avatar, its status dot, and its edit button together,
+from `2xs` through `2xl`.
 
 ## Status indicator
 
 `status` renders a small ring-bordered dot (`online` / `offline` / `away` /
-`busy`) anchored to the bottom-right corner.
+`busy`) anchored to the bottom-right corner — or the bottom-left corner
+when `editable` is also set, since the edit button then takes the
+bottom-right spot.
+
+## Editable (upload overlay)
+
+`editable` renders a small pencil-icon button in the bottom-right corner,
+scaled to `size`, that opens a native file picker. Picking a file shows an
+immediate local preview (an object URL `Avatar` creates and revokes itself
+on replacement or unmount) independent of the `src` prop, and calls
+`onImageChange` with the picked `File`.
+
+`accept` and `maxSizeMB` validate the picked file before it's previewed —
+same semantics as `UploadProps.accept`/`maxSizeMB`, and validated through
+the same `validateSingleFile` helper `Upload` uses internally, so the two
+components can't drift on what counts as a valid file. A file that fails
+validation never updates the preview; `onReject` is called instead with the
+`UploadRejection` (a single object, not an array — `Avatar` only ever picks
+one file at a time).
+
+```tsx
+<Avatar
+  name="Ada Lovelace"
+  editable
+  accept="image/*"
+  maxSizeMB={5}
+  onImageChange={(file) => uploadAvatar(file)}
+  onReject={(rejection) => showError(rejection.reason)}
+/>
+```
+
+`editable` is fully opt-in: when it's unset, none of this preview state or
+markup activates, so existing uncontrolled `src` usage is unaffected.
 
 ## Fallback order
 
