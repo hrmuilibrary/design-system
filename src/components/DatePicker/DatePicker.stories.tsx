@@ -175,6 +175,15 @@ export const Clearable: Story = {
   args: { label: 'Date' },
 };
 
+export const RequiredWithHelper: Story = {
+  name: 'Required + helper text',
+  args: {
+    label: 'Start date',
+    required: true,
+    helperText: 'Choose the first day of your stay.',
+  },
+};
+
 export const WeekdaysOnly: Story = {
   name: 'filterDate (weekdays only)',
   args: {
