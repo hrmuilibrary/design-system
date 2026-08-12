@@ -178,43 +178,40 @@ export const GroupWithLabel: Story = {
 
 export const GroupRequired: Story = {
   name: 'Group required',
-  render: () => {
-    function GroupDemo() {
-      const [value, setValue] = useState<RadioValue | undefined>(undefined);
-      return (
-        <RadioGroup name="required-density" label="Density" required value={value} onChange={setValue}>
-          <Radio value="compact" label="Compact" />
-          <Radio value="comfortable" label="Comfortable" />
-          <Radio value="spacious" label="Spacious" />
-        </RadioGroup>
-      );
-    }
-    return <GroupDemo />;
-  },
+  render: () => (
+    <RadioGroup name="required-density" label="Density" required>
+      <Radio value="compact" label="Compact" />
+      <Radio value="comfortable" label="Comfortable" />
+      <Radio value="spacious" label="Spacious" />
+    </RadioGroup>
+  ),
+};
+
+export const GroupHelperText: Story = {
+  name: 'Group with helper text',
+  render: () => (
+    <RadioGroup name="helper-density" label="Density" helperText="Choose the layout density for your workspace.">
+      <Radio value="compact" label="Compact" />
+      <Radio value="comfortable" label="Comfortable" />
+      <Radio value="spacious" label="Spacious" />
+    </RadioGroup>
+  ),
 };
 
 export const GroupError: Story = {
   name: 'Group error state',
-  render: () => {
-    function GroupDemo() {
-      const [value, setValue] = useState<RadioValue | undefined>(undefined);
-      return (
-        <RadioGroup
-          name="error-density"
-          label="Density"
-          required
-          value={value}
-          onChange={setValue}
-          errorText="Choose a density to continue."
-        >
-          <Radio value="compact" label="Compact" />
-          <Radio value="comfortable" label="Comfortable" />
-          <Radio value="spacious" label="Spacious" />
-        </RadioGroup>
-      );
-    }
-    return <GroupDemo />;
-  },
+  render: () => (
+    <RadioGroup
+      name="error-density"
+      label="Density"
+      required
+      errorText="Choose a density to continue."
+    >
+      <Radio value="compact" label="Compact" />
+      <Radio value="comfortable" label="Comfortable" />
+      <Radio value="spacious" label="Spacious" />
+    </RadioGroup>
+  ),
 };
 
 export const GroupNumericValues: Story = {
