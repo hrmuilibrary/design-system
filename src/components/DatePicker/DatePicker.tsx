@@ -11,8 +11,34 @@ const sizeStyles: Record<DatePickerSize, string> = {
   sm: 'h-8 text-p-sm px-2.5',
 };
 
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const DAY_NAMES = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+const SUNDAY_FIRST_REGIONS = new Set(['US', 'CA', 'MX', 'JP', 'BR', 'IL', 'PH', 'KR', 'TW']);
+
+/** 0 = Sunday .. 6 = Saturday. Prefers Intl.Locale's weekInfo (not yet in
+ *  TypeScript's bundled lib types, and not universally shipped — notably
+ *  absent in older Safari), falling back to a small region allowlist. */
+function getFirstDayOfWeek(locale: string): number {
+  try {
+    const weekInfo = (new Intl.Locale(locale) as Intl.Locale & { weekInfo?: { firstDay: number } }).weekInfo;
+    if (weekInfo?.firstDay) return weekInfo.firstDay % 7; // spec: 1=Mon..7=Sun
+  } catch {
+    // Intl.Locale or weekInfo unsupported in this runtime — fall through.
+  }
+  const region = locale.split('-')[1]?.toUpperCase();
+  return region && SUNDAY_FIRST_REGIONS.has(region) ? 0 : 1;
+}
+
+function getMonthNames(locale: string): string[] {
+  const formatter = new Intl.DateTimeFormat(locale, { month: 'short' });
+  return Array.from({ length: 12 }, (_, i) => formatter.format(new Date(2000, i, 1)));
+}
+
+/** Jan 4, 1970 was a Sunday — a stable reference for enumerating Sun..Sat,
+ *  then rotated so index 0 is `firstDayOfWeek`. */
+function getWeekdayNames(locale: string, firstDayOfWeek: number): string[] {
+  const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+  const namesFromSunday = Array.from({ length: 7 }, (_, i) => formatter.format(new Date(1970, 0, 4 + i)));
+  return [...namesFromSunday.slice(firstDayOfWeek), ...namesFromSunday.slice(0, firstDayOfWeek)];
+}
 
 function startOfMonth(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), 1);
@@ -43,9 +69,9 @@ function formatShort(date: Date) {
   return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
 }
 
-function buildGrid(view: Date) {
+function buildGrid(view: Date, firstDayOfWeek: number) {
   const first = startOfMonth(view);
-  const offset = (first.getDay() + 6) % 7; // Mon-first
+  const offset = (first.getDay() - firstDayOfWeek + 7) % 7;
   const daysInMonth = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
   const cells: (Date | null)[] = [];
   for (let i = 0; i < offset; i++) cells.push(null);
@@ -62,6 +88,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     rangeValue,
     onChangeRange,
     size = 'md',
+    locale = 'en',
     label,
     placeholder = 'Select date',
     fullWidth = false,
@@ -127,7 +154,10 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     setOpen(false);
   }
 
-  const cells = buildGrid(view);
+  const firstDayOfWeek = getFirstDayOfWeek(locale);
+  const monthNames = getMonthNames(locale);
+  const weekdayNames = getWeekdayNames(locale, firstDayOfWeek);
+  const cells = buildGrid(view, firstDayOfWeek);
   const currentRange = rangeValue ?? { start: null, end: null };
   const rangeEnd = currentRange.end ?? hoverEnd;
 
@@ -187,7 +217,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <div className="text-p-md font-semibold text-fg-default">
-                {MONTH_NAMES[view.getMonth()]} {view.getFullYear()}
+                {monthNames[view.getMonth()]} {view.getFullYear()}
               </div>
               <button
                 type="button"
@@ -199,8 +229,8 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
               </button>
             </div>
             <div className="grid grid-cols-7 gap-1 text-center">
-              {DAY_NAMES.map((day) => (
-                <div key={day} className="text-p-xs text-fg-tertiary py-1">
+              {weekdayNames.map((day, i) => (
+                <div key={i} className="text-p-xs text-fg-tertiary py-1">
                   {day}
                 </div>
               ))}
