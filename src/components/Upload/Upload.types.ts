@@ -77,4 +77,6 @@ export interface UploadItemProps extends HTMLAttributes<HTMLDivElement>, BasePro
   onRemove?: () => void;
   /** Image thumbnail URL, rendered in place of the file-type icon. The consumer owns the URL's lifetime (e.g. call `URL.revokeObjectURL` on unmount). Falls back to the file icon on load failure. */
   previewSrc?: string;
+  /** Makes the item's name a button, for viewing/downloading the file. */
+  onOpen?: () => void;
 }
