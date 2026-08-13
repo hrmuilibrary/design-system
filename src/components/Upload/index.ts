@@ -1,5 +1,6 @@
-export { Upload, UploadItem } from './Upload';
+export { Upload, UploadItem, validateSingleFile } from './Upload';
 export type {
+  FileValidationOptions,
   UploadItemProps,
   UploadItemStatus,
   UploadMode,

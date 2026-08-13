@@ -88,7 +88,13 @@ who already position it themselves via `className`.
 
 `DropdownMenu` also accepts an `anchorRef` prop to anchor the panel to an
 element other than `DropdownTrigger`'s child — useful when the visual
-trigger and the positioning anchor need to differ.
+trigger and the positioning anchor need to differ. It accepts either a
+ref object or the element itself directly, so a consumer holding the
+anchor as plain `useState<HTMLElement | null>` state (e.g. via a callback
+`ref` prop) can pass that state value straight through instead of
+wrapping it in a `{ current: el }` object. If the resolved anchor element
+is `null` — the anchor hasn't mounted yet, or was unmounted while the
+menu is open — the panel falls back to positioning against the trigger.
 
 ## Keyboard navigation
 

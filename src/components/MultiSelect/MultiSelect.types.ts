@@ -1,13 +1,20 @@
 import type { ReactNode } from 'react';
-import type { BaseProps } from '../../types';
+import type { BaseProps, OptionValue } from '../../types';
 
 export type MultiSelectSize = 'sm' | 'md' | 'lg';
 
 export interface MultiSelectOption {
-  value: string;
-  label: string;
+  value: OptionValue;
+  label: ReactNode;
+  /** Text used for search matching when `label` isn't a plain string. Options where neither this nor a string `label` is available are excluded from `searchable` matching. */
+  searchText?: string;
   /** Optional second line under the label in the dropdown. */
   description?: string;
+  /** Group heading this option belongs under. Options sharing a group MUST be
+   *  contiguous in the (filtered) list — the heading is emitted whenever this
+   *  value changes between consecutive visible options, so a non-contiguous
+   *  group renders its heading more than once. */
+  group?: string;
   /** Optional avatar image — shown on the chip and the dropdown row. */
   avatarSrc?: string;
   /** Non-selectable option (shown dimmed in the list). */
@@ -19,12 +26,12 @@ export interface MultiSelectOption {
 export interface MultiSelectProps extends BaseProps {
   options: MultiSelectOption[];
   /** Selected option values (controlled). */
-  value: string[];
-  onChange: (values: string[]) => void;
+  value: OptionValue[];
+  onChange: (values: OptionValue[]) => void;
   /** Called with the option that was just added, alongside `onChange` (never instead of it). */
   onAdd?: (option: MultiSelectOption) => void;
   /** Called with the value that was just removed, alongside `onChange` (never instead of it). */
-  onRemove?: (value: string) => void;
+  onRemove?: (value: OptionValue) => void;
   size?: MultiSelectSize;
   placeholder?: string;
   /** Placeholder once at least one chip exists. Defaults to "Add another…". */
@@ -38,7 +45,7 @@ export interface MultiSelectProps extends BaseProps {
   errorText?: ReactNode;
   required?: boolean;
   /** Values whose chips can't be removed. */
-  lockedValues?: string[];
+  lockedValues?: OptionValue[];
   /** Cap on how many can be selected (default: unlimited). */
   max?: number;
   /** Renders an Avatar on every chip and dropdown row, falling back to initials derived from the option's `label` when it has no `avatarSrc`. Default `false` — avatars still render for options that already set `avatarSrc` regardless. */
@@ -52,4 +59,7 @@ export interface MultiSelectProps extends BaseProps {
   id?: string;
   className?: string;
   wrapperClassName?: string;
+  /** Shows a spinner in the trailing edge of the chip row and blocks opening the dropdown. Does not set the native `disabled` attribute. */
+  loading?: boolean;
+  language?: string
 }

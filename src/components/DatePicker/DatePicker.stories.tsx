@@ -22,6 +22,8 @@ const meta = {
     size: 'md',
     fullWidth: false,
     range: false,
+    disabled: false,
+    error: false,
   },
 } satisfies Meta<typeof DatePicker>;
 
@@ -72,6 +74,122 @@ export const FullWidth: Story = {
       </div>
     ),
   ],
+};
+
+export const Disabled: Story = {
+  args: { disabled: true, label: 'Start date' },
+};
+
+export const WithError: Story = {
+  args: { label: 'Start date', error: true, errorText: 'Please select a valid date.' },
+};
+
+export const MinMaxDates: Story = {
+  name: 'Min/max dates',
+  render: (args) => {
+    function MinMaxDemo() {
+      const [value, setValue] = useState<Date | null>(null);
+      const today = new Date();
+      const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14);
+      return <DatePicker {...args} value={value} onChange={setValue} minDate={minDate} maxDate={maxDate} />;
+    }
+    return <MinMaxDemo />;
+  },
+  args: {
+    label: 'Appointment date',
+  },
+};
+
+export const ExcludedDates: Story = {
+  name: 'Excluded dates',
+  render: (args) => {
+    function ExcludedDemo() {
+      const [value, setValue] = useState<Date | null>(null);
+      const today = new Date();
+      const excludeDates = [
+        new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3),
+        new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4),
+      ];
+      return <DatePicker {...args} value={value} onChange={setValue} excludeDates={excludeDates} />;
+    }
+    return <ExcludedDemo />;
+  },
+  args: {
+    label: 'Delivery date',
+  },
+};
+
+export const RangeWithMinMax: Story = {
+  name: 'Range with min/max',
+  render: (args) => {
+    function RangeMinMaxDemo() {
+      const [range, setRange] = useState<DateRange>({ start: null, end: null });
+      const today = new Date();
+      const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 30);
+      return (
+        <DatePicker
+          {...args}
+          range
+          rangeValue={range}
+          onChangeRange={setRange}
+          minDate={minDate}
+          maxDate={maxDate}
+        />
+      );
+    }
+    return <RangeMinMaxDemo />;
+  },
+  args: {
+    label: 'Trip dates',
+    placeholder: 'Select date range',
+  },
+};
+
+export const RussianLocale: Story = {
+  name: 'Locale (ru-RU, Monday-first)',
+  args: { locale: 'ru-RU', label: 'Date' },
+};
+
+export const CustomFormat: Story = {
+  name: 'Custom format (yyyy/MM/dd)',
+  render: (args) => {
+    function CustomFormatDatePicker() {
+      const [value, setValue] = useState<Date | null>(null);
+      return <DatePicker {...args} value={value} onChange={setValue} />;
+    }
+    return <CustomFormatDatePicker />;
+  },
+  args: { format: 'yyyy/MM/dd', label: 'Date' },
+};
+
+export const Clearable: Story = {
+  render: (args) => {
+    function ClearableDatePicker() {
+      const [value, setValue] = useState<Date | null>(new Date());
+      return <DatePicker {...args} clearable value={value} onChange={setValue} />;
+    }
+    return <ClearableDatePicker />;
+  },
+  args: { label: 'Date' },
+};
+
+export const RequiredWithHelper: Story = {
+  name: 'Required + helper text',
+  args: {
+    label: 'Start date',
+    required: true,
+    helperText: 'Choose the first day of your stay.',
+  },
+};
+
+export const WeekdaysOnly: Story = {
+  name: 'filterDate (weekdays only)',
+  args: {
+    label: 'Business day',
+    filterDate: (date: Date) => date.getDay() !== 0 && date.getDay() !== 6,
+  },
 };
 
 const SIZES = ['sm', 'md', 'lg'] as const;

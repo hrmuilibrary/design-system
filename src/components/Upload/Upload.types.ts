@@ -9,6 +9,13 @@ export interface UploadRejection {
   reason: UploadRejectionReason;
 }
 
+export interface FileValidationOptions {
+  /** Forwarded to `matchesAccept` — same semantics as `UploadProps.accept`. */
+  accept?: string;
+  /** Same semantics as `UploadProps.maxSizeMB`. */
+  maxSizeMB?: number;
+}
+
 export interface UploadProps
   extends Omit<
       HTMLAttributes<HTMLDivElement>,
@@ -21,6 +28,7 @@ export interface UploadProps
       | 'role'
       | 'tabIndex'
       | 'aria-disabled'
+      | 'aria-invalid'
     >,
     BaseProps {
   /** Forwarded to the hidden native `<input type="file">`, e.g. `"image/png,image/jpeg"`. */
@@ -51,6 +59,10 @@ export interface UploadProps
   triggerIcon?: ReactNode;
   label?: ReactNode;
   required?: boolean;
+  /** Switches the dropzone (or, in `button`/`icon` mode, just the message below) to the danger styles. */
+  error?: boolean;
+  /** Message rendered below the control; also switches dropzone mode to the danger styles. */
+  errorText?: ReactNode;
   /** Content rendered on the label row, right of the label text and required marker — e.g. an info tooltip trigger. */
   labelAddons?: ReactNode;
 }

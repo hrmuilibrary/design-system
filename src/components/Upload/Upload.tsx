@@ -1,4 +1,4 @@
-import { forwardRef, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
+import { forwardRef, useId, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
 import {
   UploadCloud,
   File as FileIcon,
@@ -11,7 +11,14 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { Button } from '../Button';
-import type { UploadItemProps, UploadItemStatus, UploadProps, UploadRejection } from './Upload.types';
+import type {
+  FileValidationOptions,
+  UploadItemProps,
+  UploadItemStatus,
+  UploadProps,
+  UploadRejection,
+  UploadRejectionReason,
+} from './Upload.types';
 
 function matchesAccept(file: File, accept: string): boolean {
   const patterns = accept
@@ -28,6 +35,19 @@ function matchesAccept(file: File, accept: string): boolean {
     if (pattern.startsWith('.')) return fileName.endsWith(pattern);
     return fileType === pattern;
   });
+}
+
+/**
+ * Also used by `Avatar`'s `editable` picker — changing these semantics
+ * changes both components.
+ */
+export function validateSingleFile(
+  file: File,
+  { accept, maxSizeMB }: FileValidationOptions,
+): UploadRejectionReason | null {
+  if (accept && !matchesAccept(file, accept)) return 'type';
+  if (maxSizeMB !== undefined && file.size > maxSizeMB * 1024 * 1024) return 'size';
+  return null;
 }
 
 export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
@@ -48,6 +68,8 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     triggerIcon,
     label,
     required,
+    error = false,
+    errorText,
     labelAddons,
     className,
     dataTestId,
@@ -62,6 +84,9 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
   // on as the user drags across the inner icon/text. Track nesting depth
   // instead and only clear once the pointer has left every descendant too.
   const dragDepth = useRef(0);
+  const hasError = error || !!errorText;
+  const reactId = useId();
+  const describedBy = errorText ? `${reactId}-error` : undefined;
 
   const processFiles = (incoming: File[]) => {
     if (!incoming.length) return;
@@ -81,12 +106,9 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
         rejections.push({ file, reason: 'duplicate' });
         continue;
       }
-      if (accept && !matchesAccept(file, accept)) {
-        rejections.push({ file, reason: 'type' });
-        continue;
-      }
-      if (maxSizeMB !== undefined && file.size > maxSizeMB * 1024 * 1024) {
-        rejections.push({ file, reason: 'size' });
+      const rejectionReason = validateSingleFile(file, { accept, maxSizeMB });
+      if (rejectionReason) {
+        rejections.push({ file, reason: rejectionReason });
         continue;
       }
       if (remainingSlots <= 0) {
@@ -147,6 +169,12 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     </div>
   );
 
+  const errorRow = errorText ? (
+    <p id={`${reactId}-error`} className="text-p-sm text-red-700">
+      {errorText}
+    </p>
+  ) : null;
+
   if (mode !== 'dropzone') {
     const isIcon = mode === 'icon';
     return (
@@ -164,6 +192,7 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
           {isIcon ? triggerIcon ?? <Pencil className="h-4 w-4" /> : (triggerLabel ?? 'Choose a file')}
         </Button>
         {fileInput}
+        {errorRow}
       </div>
     );
   }
@@ -191,10 +220,16 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
         }
       }}
       aria-disabled={disabled || undefined}
+      aria-invalid={hasError || undefined}
+      aria-describedby={describedBy}
       data-test-id={dataTestId}
       className={cn(
         'flex flex-col items-center justify-center text-center gap-2 px-6 py-8 rounded-lg border-2 border-dashed cursor-pointer transition-colors outline-none',
-        dragOver ? 'border-brand-500 bg-brand-20' : 'border-border-default bg-bg-container hover:bg-bg-subtle',
+        hasError
+          ? 'border-red-300 bg-bg-danger-lighter'
+          : dragOver
+            ? 'border-brand-500 bg-brand-20'
+            : 'border-border-default bg-bg-container hover:bg-bg-subtle',
         'focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-1',
         disabled && 'opacity-50 cursor-not-allowed',
         className,
@@ -214,12 +249,13 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     </div>
   );
 
-  if (!labelRow) return dropzone;
+  if (!labelRow && !errorRow) return dropzone;
 
   return (
     <div className="flex flex-col gap-1.5">
       {labelRow}
       {dropzone}
+      {errorRow}
     </div>
   );
 });

@@ -44,6 +44,69 @@ are swapped automatically if the second click lands before `start`), and
 the popover closes once both ends are picked. Hovering a day after `start`
 is chosen previews the in-between range before `end` is committed.
 
+## Disabled
+
+`disabled` blocks the trigger natively — both mouse and keyboard activation
+are prevented, and the popover closes immediately if `disabled` becomes
+`true` while it's already open.
+
+## Validation state
+
+`error` switches the trigger to the danger border/ring styles; `errorText`
+does the same and also renders below the control.
+
+## Limiting selectable days
+
+`minDate`/`maxDate` (inclusive) and `excludeDates` disable individual days
+in the calendar grid — time-of-day is ignored on all three, so passing
+`new Date()` as `minDate` still leaves today itself selectable. In range
+mode, only the two endpoints are validated against these constraints; a
+committed range may still span an excluded day in the middle. `filterDate`
+joins the same set of constraints — an arbitrary per-day predicate that
+disables any day it rejects, evaluated alongside `minDate`/`maxDate`/
+`excludeDates` rather than instead of them.
+
+## Locale
+
+`locale` takes a BCP-47 tag (e.g. `'ru-RU'`, `'fr-FR'`) and derives the
+month names, weekday abbreviations, and first day of the week from it via
+the platform's `Intl` APIs — no date library required. **The default
+changed from Monday-first to Sunday-first**: earlier versions hard-coded a
+Monday-first grid, but the new default locale (`'en'`) starts the week on
+Sunday. This is intentional, not a regression — pass a Monday-first locale
+(e.g. `'en-GB'`) if you need the old grid shape.
+
+## Custom format
+
+`format` controls how the selected date renders in the trigger. It
+supports `dd`/`MM`/`yyyy` tokens plus a literal separator (e.g.
+`'yyyy/MM/dd'`, `'MM-dd-yyyy'`) and defaults to the pre-existing
+`'dd.MM.yyyy'`. In range mode the same format is applied to both
+endpoints.
+
+## Clearing a value
+
+`clearable` swaps the trigger's calendar icon for a clear (X) affordance
+whenever a value is selected. Clicking it fires `onChange(null)` (or
+`onChangeRange({ start: null, end: null })` in range mode) without also
+opening the popover, then the icon reverts to the calendar glyph. It has
+no effect while `disabled` — the trigger stays inert either way.
+
+**Migration note**: `onChange`'s type widened from `(date: Date) => void`
+to `(date: Date | null) => void` to support `clearable`. Under TypeScript
+strict mode this is a compile-time breaking change — a handler typed to
+accept only `Date` no longer satisfies the prop, even if you never pass
+`clearable` — so on upgrade, widen your handler's parameter type to
+`Date | null` (and, if you're storing the value in state, switch to
+`useState<Date | null>`).
+
+## Required & helper text
+
+`required` renders a red asterisk next to the label and sets
+`aria-required` on the trigger. `helperText` renders a neutral message
+below the control; if `errorText` is also present, it takes over that
+same slot and switches the control to the danger styles instead.
+
 ## Composition
 
 `DatePicker` forwards its ref to the trigger `<button>` element. Its root

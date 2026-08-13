@@ -50,6 +50,53 @@ const peopleOptions: MultiSelectOption[] = [
   },
 ];
 
+const groupedSkillOptions: MultiSelectOption[] = [
+  { value: 'js', label: 'JavaScript' },
+  { value: 'ts', label: 'TypeScript', group: 'Languages' },
+  { value: 'python', label: 'Python', group: 'Languages' },
+  { value: 'react', label: 'React', group: 'Frameworks' },
+  { value: 'vue', label: 'Vue', group: 'Frameworks' },
+];
+
+const idOptions: MultiSelectOption[] = [
+  { value: 101, label: 'Ticket #101' },
+  { value: 102, label: 'Ticket #102' },
+  { value: 103, label: 'Ticket #103' },
+];
+
+const richLabelOptions: MultiSelectOption[] = [
+  {
+    value: 'urgent',
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-red-600" />
+        Urgent
+      </span>
+    ),
+    searchText: 'urgent',
+  },
+  {
+    value: 'normal',
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-brand-500" />
+        Normal
+      </span>
+    ),
+    searchText: 'normal',
+  },
+  {
+    value: 'low',
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-gray-400" />
+        Low priority
+      </span>
+    ),
+    searchText: 'low priority',
+  },
+];
+
 const meta = {
   title: 'Components/MultiSelect',
   component: MultiSelect,
@@ -69,6 +116,7 @@ const meta = {
     placeholder: 'Select teams…',
     size: 'md',
     disabled: false,
+    loading: false,
     error: false,
     searchable: true,
   },
@@ -87,7 +135,7 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>(['design']);
+      const [value, setValue] = useState<(string | number)[]>(['design']);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -97,7 +145,7 @@ export const Primary: Story = {
 export const WithLabel: Story = {
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>([]);
+      const [value, setValue] = useState<(string | number)[]>([]);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -111,7 +159,7 @@ export const WithLabel: Story = {
 export const WithHelperText: Story = {
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>(['engineering']);
+      const [value, setValue] = useState<(string | number)[]>(['engineering']);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -125,7 +173,7 @@ export const WithHelperText: Story = {
 export const WithError: Story = {
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>([]);
+      const [value, setValue] = useState<(string | number)[]>([]);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -140,7 +188,7 @@ export const WithError: Story = {
 export const Disabled: Story = {
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>(['design', 'product']);
+      const [value, setValue] = useState<(string | number)[]>(['design', 'product']);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -151,11 +199,22 @@ export const Disabled: Story = {
   },
 };
 
+export const Loading: Story = {
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<(string | number)[]>([]);
+      return <MultiSelect {...args} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: { loading: true, label: 'Assignees' },
+};
+
 export const WithAvatarsAndBadges: Story = {
   name: 'People picker (avatars, descriptions, badges)',
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>(['grace']);
+      const [value, setValue] = useState<(string | number)[]>(['grace']);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -171,7 +230,7 @@ export const WithAvatarsAndBadges: Story = {
 export const LockedValues: Story = {
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>(['grace', 'ada']);
+      const [value, setValue] = useState<(string | number)[]>(['grace', 'ada']);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -187,7 +246,7 @@ export const LockedValues: Story = {
 export const MaxReached: Story = {
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>(['design', 'engineering']);
+      const [value, setValue] = useState<(string | number)[]>(['design', 'engineering']);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -203,7 +262,7 @@ export const NotSearchable: Story = {
   name: 'Click-to-open (searchable=false)',
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>([]);
+      const [value, setValue] = useState<(string | number)[]>([]);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -217,7 +276,7 @@ export const NotSearchable: Story = {
 export const Empty: Story = {
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>([]);
+      const [value, setValue] = useState<(string | number)[]>([]);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -232,7 +291,7 @@ export const WithLabelAddons: Story = {
   name: 'With label addons',
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>([]);
+      const [value, setValue] = useState<(string | number)[]>([]);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -253,7 +312,7 @@ export const WithInitialsAvatars: Story = {
   name: 'With initials avatars',
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>(['design']);
+      const [value, setValue] = useState<(string | number)[]>(['design']);
       return <MultiSelect {...args} value={value} onChange={setValue} />;
     }
     return <Controlled />;
@@ -268,8 +327,8 @@ export const GranularCallbacks: Story = {
   name: 'Granular add/remove callbacks',
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>(['design']);
-      const [log, setLog] = useState<string[]>([]);
+      const [value, setValue] = useState<(string | number)[]>(['design']);
+      const [log, setLog] = useState<(string | number)[]>([]);
       return (
         <div className="flex flex-col gap-3">
           <MultiSelect
@@ -294,12 +353,30 @@ export const GranularCallbacks: Story = {
   },
 };
 
+export const NumericValues: Story = {
+  name: 'Numeric values (round-trip through onChange)',
+  render: (args) => {
+    function NumericMultiSelect() {
+      const [value, setValue] = useState<(string | number)[]>([101]);
+      return (
+        <MultiSelect
+          {...args}
+          options={idOptions}
+          value={value}
+          onChange={(vals) => setValue(vals)}
+        />
+      );
+    }
+    return <NumericMultiSelect />;
+  },
+};
+
 const SIZES = ['sm', 'md', 'lg'] as const;
 
 export const AllSizes: Story = {
   render: (args) => {
     function Controlled() {
-      const [value, setValue] = useState<string[]>(['design']);
+      const [value, setValue] = useState<(string | number)[]>(['design']);
       return (
         <div className="flex flex-col gap-4">
           {SIZES.map((size) => (
@@ -310,4 +387,27 @@ export const AllSizes: Story = {
     }
     return <Controlled />;
   },
+};
+
+export const Grouped: Story = {
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<(string | number)[]>([]);
+      return <MultiSelect {...args} options={groupedSkillOptions} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Skills' },
+};
+
+export const RichLabels: Story = {
+  name: 'Rich ReactNode labels with searchText',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<(string | number)[]>([]);
+      return <MultiSelect {...args} options={richLabelOptions} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Priority tags' },
 };

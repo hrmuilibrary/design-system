@@ -184,6 +184,10 @@ export const WithLabelAndRequired: Story = {
   args: { label: 'Attachment', required: true },
 };
 
+export const WithError: Story = {
+  args: { label: 'Attachment', error: true, errorText: 'This file type is not supported.' },
+};
+
 export const ItemWithThumbnail: Story = {
   name: 'UploadItem — image thumbnail',
   render: () => (

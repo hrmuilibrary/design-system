@@ -1,12 +1,13 @@
 import { createContext, forwardRef, useContext, useId, type ChangeEvent } from 'react';
 import { cn } from '../../lib/cn';
-import type { RadioGroupProps, RadioProps, RadioSize } from './Radio.types';
+import { isSameOptionValue } from '../../lib/optionValue';
+import type { RadioGroupProps, RadioProps, RadioSize, RadioValue } from './Radio.types';
 
 interface RadioGroupContextValue {
   name: string;
-  value?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
+  value?: RadioValue;
+  defaultValue?: RadioValue;
+  onChange?: (value: RadioValue) => void;
   disabled?: boolean;
   size: RadioSize;
 }
@@ -16,6 +17,7 @@ const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
 export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function RadioGroup(
   {
     name,
+    label,
     value,
     defaultValue,
     onChange,
@@ -30,23 +32,36 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
 ) {
   const reactName = useId();
   const groupName = name ?? reactName;
+  const labelId = `${reactName}-label`;
+
+  const groupEl = (
+    <div
+      ref={ref}
+      role="radiogroup"
+      aria-labelledby={label ? labelId : undefined}
+      data-test-id={dataTestId}
+      className={cn(
+        'flex gap-3',
+        orientation === 'vertical' ? 'flex-col' : 'flex-row flex-wrap items-center gap-4',
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
 
   return (
-    <RadioGroupContext.Provider
-      value={{ name: groupName, value, defaultValue, onChange, disabled, size }}
-    >
-      <div
-        ref={ref}
-        role="radiogroup"
-        data-test-id={dataTestId}
-        className={cn(
-          'flex gap-3',
-          orientation === 'vertical' ? 'flex-col' : 'flex-row flex-wrap items-center gap-4',
-          className,
-        )}
-      >
-        {children}
-      </div>
+    <RadioGroupContext.Provider value={{ name: groupName, value, defaultValue, onChange, disabled, size }}>
+      {label ? (
+        <div className="flex flex-col gap-1.5">
+          <span id={labelId} className="text-p-std font-medium text-fg-default inline-flex">
+            {label}
+          </span>
+          {groupEl}
+        </div>
+      ) : (
+        groupEl
+      )}
     </RadioGroupContext.Provider>
   );
 });
@@ -86,9 +101,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   const effectiveDisabled = disabled ?? group?.disabled;
 
   const inGroup = group !== null;
-  const groupChecked = inGroup && group.value !== undefined ? group.value === value : undefined;
+  const groupChecked =
+    inGroup && group.value !== undefined ? isSameOptionValue(group.value, value) : undefined;
   const groupDefaultChecked =
-    inGroup && group.defaultValue !== undefined ? group.defaultValue === value : undefined;
+    inGroup && group.defaultValue !== undefined
+      ? isSameOptionValue(group.defaultValue, value)
+      : undefined;
 
   const isChecked = inGroup ? groupChecked : checked;
   const isDefaultChecked = inGroup ? groupDefaultChecked : defaultChecked;
@@ -114,7 +132,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
           id={inputId}
           type="radio"
           name={group?.name}
-          value={value}
+          value={String(value)}
           checked={isChecked}
           defaultChecked={isDefaultChecked}
           disabled={effectiveDisabled}

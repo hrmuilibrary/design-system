@@ -1,28 +1,57 @@
-import { useEffect, type RefObject } from 'react';
+import { useEffect } from 'react'
 
-/** Fires `handler` on any `mousedown`/`touchstart` outside `ref.current`.
- *  No effect while `ref.current` is null or `enabled` is false — callers
- *  don't need to guard call sites where the ref isn't attached yet (e.g.
- *  before a portal mounts). */
-export function useOnOutsideClick(
-  ref: RefObject<HTMLElement | null> | null | undefined,
-  handler: (event: MouseEvent | TouchEvent) => void,
-  enabled = true,
-): void {
+type TProps = {
+  ref: HTMLElement
+  callback: (event: MouseEvent) => void
+  uid: string
+  shouldRemoveCallback: boolean
+}
+
+const callbackStack: TProps[] = []
+
+function handleMouseDownEvent(event: MouseEvent) {
+  const callbackObject = callbackStack[callbackStack.length - 1]
+  if (!callbackObject) {
+    return
+  }
+  const { ref, callback, shouldRemoveCallback } = callbackObject
+  // @ts-ignore
+  if (ref && !ref.contains(event.target)) {
+    if (shouldRemoveCallback) {
+      callbackStack.splice(callbackStack.length - 1, 1)
+    }
+    callback(event)
+  }
+}
+
+export const useOnOutsideClick = (
+    ref: HTMLElement | null,
+    callback: (event: MouseEvent) => void,
+    state: boolean,
+    uid: string,
+    shouldRemoveCallback = true
+): void => {
   useEffect(() => {
-    if (!enabled) return;
+    if (ref && state && uid) {
+      callbackStack.push({ ref, callback, uid, shouldRemoveCallback })
+      if (callbackStack.length === 1) {
+        document.addEventListener('mousedown', handleMouseDownEvent)
+      }
 
-    const listener = (event: MouseEvent | TouchEvent) => {
-      const el = ref?.current;
-      if (!el || el.contains(event.target as Node)) return;
-      handler(event);
-    };
+      return () => {
+        if (callbackStack.length === 0) {
+          document.removeEventListener('mousedown', handleMouseDownEvent)
+        }
+      }
+    }
+  }, [ref, state, uid])
 
-    document.addEventListener('mousedown', listener);
-    document.addEventListener('touchstart', listener);
-    return () => {
-      document.removeEventListener('mousedown', listener);
-      document.removeEventListener('touchstart', listener);
-    };
-  }, [ref, handler, enabled]);
+  useEffect(() => {
+    if (!state && callbackStack.length > 0) {
+      const activeElementIndex = callbackStack.findIndex((stack) => stack.uid === uid)
+      if (activeElementIndex >= 0) {
+        callbackStack.splice(activeElementIndex, 1)
+      }
+    }
+  }, [state])
 }

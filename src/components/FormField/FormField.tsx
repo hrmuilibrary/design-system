@@ -26,6 +26,14 @@ export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(function For
             error: !!fieldState.error,
             errorText: fieldState.error?.message,
             dataTestId,
+            setFieldValue: (value, options) =>
+              context.setValue(name, value, {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true,
+                ...options,
+              }),
+            isValid: fieldState.isTouched && fieldState.isDirty && !fieldState.invalid,
           })
         }
       />
