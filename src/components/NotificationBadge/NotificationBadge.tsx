@@ -14,6 +14,9 @@ const variantStyles: Record<NotificationBadgeVariant, string> = {
   info: 'bg-blue-600 text-white',
 };
 
+// Avatar.tsx's `editButtonSize` table implements a sibling corner-overlay
+// pattern (opposite corner, same idea) — no shared abstraction yet, but
+// keep the two in sync if this pattern changes.
 const countSize: Record<NotificationBadgeSize, string> = {
   lg: 'min-w-[18px] h-[18px] px-1 text-[11px]',
   sm: 'min-w-[14px] h-[14px] px-0.5 text-[10px]',
