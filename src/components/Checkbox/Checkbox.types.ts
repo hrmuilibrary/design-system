@@ -12,4 +12,8 @@ export interface CheckboxProps
   /** Renders the mixed/"some selected" visual state (`aria-checked="mixed"`). */
   indeterminate?: boolean;
   error?: boolean;
+  /** Message rendered below the control in the danger style; also implies `error`. Replaces `description` when set. */
+  errorText?: ReactNode;
+  /** Renders a red asterisk next to `label` and sets `aria-required` on the input, in addition to the native `required` attribute. */
+  required?: boolean;
 }
