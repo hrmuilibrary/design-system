@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
-import { Info } from 'lucide-react';
+import { Cloud, Info, Sun } from 'lucide-react';
 import { Select } from './Select';
 import { Tooltip } from '../Tooltip';
 import type { SelectOption } from './Select.types';
@@ -25,6 +25,13 @@ const priorityOptions: SelectOption[] = [
   { value: 1, label: 'Low' },
   { value: 2, label: 'Medium' },
   { value: 3, label: 'High' },
+];
+
+const weatherOptions: SelectOption[] = [
+  { value: 'sunny', label: 'Sunny', icon: <Sun className="text-yellow-500" /> },
+  { value: 'cloudy', label: 'Cloudy', icon: <Cloud className="text-fg-secondary" /> },
+  { value: 'calm', label: 'Calm (no icon)' },
+  { value: 'windy', label: 'Windy', rightIcon: <span className="text-p-xs text-fg-tertiary">32 km/h</span> },
 ];
 
 const meta = {
@@ -183,6 +190,18 @@ export const SearchableGroupedLoading: Story = {
     options: groupedFruitOptions,
     searchable: true,
   },
+};
+
+export const WithIcons: Story = {
+  name: 'Per-option icons',
+  render: (args) => {
+    function ControlledIcons() {
+      const [value, setValue] = useState<string | number>('sunny');
+      return <Select {...args} options={weatherOptions} value={value} onChange={setValue} />;
+    }
+    return <ControlledIcons />;
+  },
+  args: { label: 'Weather' },
 };
 
 const SIZES = ['sm', 'md', 'lg'] as const;
