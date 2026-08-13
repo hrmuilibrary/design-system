@@ -28,7 +28,7 @@ of option values, `string | number`) and `onChange` are both required:
 
 ```tsx
 const [value, setValue] = useState<(string | number)[]>([]);
-<MultiSelect options={options} value={value} onChange={setValue} />
+<MultiSelect options={options} value={value} onChange={setValue} />;
 ```
 
 ## Options
@@ -38,11 +38,13 @@ Each `MultiSelectOption` is data-agnostic:
 ```tsx
 interface MultiSelectOption {
   value: string | number;
-  label: string;
+  label: ReactNode;
+  searchText?: string; // matched against when label isn't a plain string
   description?: string; // second line in the dropdown row
-  avatarSrc?: string;    // shown on the chip and the dropdown row
-  disabled?: boolean;    // non-selectable, dimmed
-  badge?: ReactNode;     // small tag on the chip, e.g. "You"
+  avatarSrc?: string; // shown on the chip and the dropdown row
+  disabled?: boolean; // non-selectable, dimmed
+  badge?: ReactNode; // small tag on the chip, e.g. "You"
+  group?: string; // heading this option renders under
 }
 ```
 
@@ -65,6 +67,28 @@ input disables and the placeholder switches to `Limit {max} reached`.
 Set `searchable={false}` for a click-to-open picker with no text filter —
 the input becomes read-only and the dropdown always shows the full
 remaining option list under `suggestionsLabel`.
+
+## Rich labels
+
+`label` accepts any `ReactNode` — an icon, a two-line layout, translated
+rich text — not just plain strings. When `label` isn't a plain string, give
+the option a `searchText` so type-to-filter still has something to match
+against; without one, that option is excluded from search results rather
+than matched against its stringified value. Chips and dropdown rows always
+render the full `label` node, not a coerced string form.
+
+## Grouped options
+
+Give any `MultiSelectOption` a `group: string` to render it under a
+heading in the dropdown. Options sharing a group must be contiguous in the
+(filtered) list — the heading is emitted whenever `group` changes between
+consecutive visible options, so a non-contiguous group renders its heading
+more than once.
+
+## Loading
+
+`loading` shows a spinner in the trailing edge of the chip row and blocks
+opening the dropdown — it does not set the native `disabled` attribute.
 
 ## Validation state
 
@@ -100,8 +124,10 @@ log) without diffing the array themselves.
 
 Options with an `avatarSrc` always show an avatar. Set `showAvatars` to
 render one for every option, even those without an image — `Avatar`
-already falls back to initials derived from the option's `label` (with a
-color hashed from the name) when there's no `src`.
+falls back to initials (with a color hashed from the name) derived from
+`searchText` when present, or from `label` when it's a plain string.
+A rich (non-string) `label` with no `searchText` has no string to derive
+initials from, so it gets `Avatar`'s generic fallback icon instead.
 
 ## Composition
 

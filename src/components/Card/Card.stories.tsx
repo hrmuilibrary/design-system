@@ -23,11 +23,7 @@ const meta = {
     variant: 'outlined',
     padding: 'md',
     interactive: false,
-    children: (
-      <p className="text-p-md text-fg-default">
-        This is the card body content.
-      </p>
-    ),
+    children: <p className="text-p-md text-fg-default">This is the card body content.</p>,
   },
   render: (args) => (
     <div className="w-80">
@@ -56,22 +52,14 @@ export const Interactive: Story = {
 export const WithHeaderAndFooter: Story = {
   args: {
     header: <h3 className="text-h-xl text-fg-default">Card title</h3>,
-    footer: (
-      <p className="text-label-md text-fg-secondary">Last updated 2 days ago</p>
-    ),
+    footer: <p className="text-label-md text-fg-secondary">Last updated 2 days ago</p>,
   },
 };
 
 export const NoPadding: Story = {
   args: {
     padding: 'none',
-    children: (
-      <img
-        src="https://placehold.co/320x160"
-        alt=""
-        className="block w-full"
-      />
-    ),
+    children: <img src="https://placehold.co/320x160" alt="" className="block w-full" />,
   },
 };
 

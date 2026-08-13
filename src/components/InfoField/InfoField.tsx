@@ -13,10 +13,17 @@ export const InfoField = forwardRef<HTMLDivElement, InfoFieldProps>(function Inf
   ref,
 ) {
   return (
-    <div ref={ref} data-test-id={dataTestId} className={cn('flex items-start gap-3', className)} {...rest}>
+    <div
+      ref={ref}
+      data-test-id={dataTestId}
+      className={cn('flex items-start gap-3', className)}
+      {...rest}
+    >
       <IconTile icon={icon} tone={iconTone} size="md" />
       <div className="min-w-0 flex-1">
-        <div className="text-p-xs font-medium uppercase tracking-widest text-fg-tertiary">{label}</div>
+        <div className="text-p-xs font-medium uppercase tracking-widest text-fg-tertiary">
+          {label}
+        </div>
         <div className="text-p-std font-semibold text-fg-default mt-1 break-words">{value}</div>
       </div>
       {action && <div className="shrink-0 flex items-center">{action}</div>}

@@ -64,7 +64,19 @@ const defaultAs: Record<TextVariant, ElementType> = {
 };
 
 export const Text = forwardRef<HTMLElement, TextProps>(function Text(
-  { variant = 'p-std', weight, color = 'default', as, truncate, clamp, style, className, children, dataTestId, ...rest },
+  {
+    variant = 'p-std',
+    weight,
+    color = 'default',
+    as,
+    truncate,
+    clamp,
+    style,
+    className,
+    children,
+    dataTestId,
+    ...rest
+  },
   ref,
 ) {
   const Component = as ?? defaultAs[variant];

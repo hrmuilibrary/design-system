@@ -1,4 +1,13 @@
-import { forwardRef, useEffect, useId, useMemo, useRef, useState, Fragment, type KeyboardEvent } from 'react';
+import {
+  forwardRef,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  Fragment,
+  type KeyboardEvent,
+} from 'react';
 import { ChevronDown, Check, Loader2, Search } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
@@ -11,6 +20,11 @@ const sizeStyles: Record<SelectSize, string> = {
   md: 'h-10 text-p-std px-3',
   sm: 'h-8 text-p-sm px-2.5',
 };
+
+// Shared sizing so any icon a consumer passes (whatever its native size) renders
+// consistently next to the 16px Check mark and other icon slots.
+const ICON_SVG_SIZE = '[&_svg]:h-4 [&_svg]:w-4';
+const ICON_SLOT = cn('shrink-0 flex items-center justify-center', ICON_SVG_SIZE);
 
 function firstEnabledIndex(list: SelectOption[]) {
   return list.findIndex((o) => !o.disabled);
@@ -55,9 +69,17 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const [activeIndex, setActiveIndex] = useState(-1);
   const [query, setQuery] = useState('');
   const hasError = error || !!errorText;
-  const describedBy = errorText ? `${triggerId}-error` : helperText ? `${triggerId}-help` : undefined;
+  const describedBy = errorText
+    ? `${triggerId}-error`
+    : helperText
+      ? `${triggerId}-help`
+      : undefined;
 
   const selectedOption = options.find((o) => isSameOptionValue(o.value, selected));
+
+  // Gated on the full `options` array (not `visibleOptions`) so the reserved
+  // column doesn't appear/disappear and reflow the list while searching.
+  const anyOptionHasIcon = useMemo(() => options.some((o) => o.icon != null), [options]);
 
   const visibleOptions = useMemo(() => {
     const q = searchable ? query.trim().toLowerCase() : '';
@@ -92,7 +114,9 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       return;
     }
     const selIdx = visibleOptions.findIndex((o) => isSameOptionValue(o.value, selected));
-    setActiveIndex(selIdx >= 0 && !visibleOptions[selIdx]?.disabled ? selIdx : firstEnabledIndex(visibleOptions));
+    setActiveIndex(
+      selIdx >= 0 && !visibleOptions[selIdx]?.disabled ? selIdx : firstEnabledIndex(visibleOptions),
+    );
   }, [open, selected, visibleOptions]);
 
   useEffect(() => {
@@ -211,14 +235,22 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           className,
         )}
       >
-        <span className={cn('truncate', !selectedOption && 'text-fg-tertiary')}>
-          {selectedOption ? selectedOption.label : placeholder}
+        <span className="flex items-center gap-1.5 min-w-0">
+          {anyOptionHasIcon && selectedOption?.icon && (
+            <span className={ICON_SLOT}>{selectedOption.icon}</span>
+          )}
+          <span className={cn('truncate', !selectedOption && 'text-fg-tertiary')}>
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
         </span>
         {loading ? (
           <Loader2 className="h-4 w-4 ml-2 shrink-0 text-fg-secondary animate-spin" aria-hidden />
         ) : (
           <ChevronDown
-            className={cn('h-4 w-4 ml-2 shrink-0 text-fg-secondary transition-transform', open && 'rotate-180')}
+            className={cn(
+              'h-4 w-4 ml-2 shrink-0 text-fg-secondary transition-transform',
+              open && 'rotate-180',
+            )}
             aria-hidden
           />
         )}
@@ -235,7 +267,9 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                 aria-expanded
                 aria-controls={visibleOptions.length > 0 ? listId : undefined}
                 aria-autocomplete="list"
-                aria-activedescendant={activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined}
+                aria-activedescendant={
+                  activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined
+                }
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={onSearchKeyDown}
@@ -276,8 +310,23 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                         isSel && 'font-medium',
                       )}
                     >
-                      <span className="truncate">{opt.label}</span>
-                      {isSel && <Check className="h-4 w-4 text-brand-500 shrink-0" />}
+                      <span className="flex items-center gap-2 min-w-0">
+                        {anyOptionHasIcon && (
+                          // Reserved only when the array actually uses icons, so
+                          // icon-less Selects keep their original row width — see
+                          // MultiSelect.tsx's per-row conditional-avatar approach
+                          // for contrast (that one doesn't guarantee alignment;
+                          // this one does, but only within an icon-using Select).
+                          <span className={cn(ICON_SLOT, 'w-4')}>{opt.icon}</span>
+                        )}
+                        <span className="truncate">{opt.label}</span>
+                      </span>
+                      {(opt.rightIcon || isSel) && (
+                        <span className={cn('flex items-center gap-1.5 shrink-0', ICON_SVG_SIZE)}>
+                          {opt.rightIcon}
+                          {isSel && <Check className="h-4 w-4 text-brand-500 shrink-0" />}
+                        </span>
+                      )}
                     </li>
                   </Fragment>
                 );

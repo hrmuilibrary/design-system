@@ -20,12 +20,23 @@ export interface RadioGroupProps extends BaseProps {
   disabled?: boolean;
   size?: RadioSize;
   orientation?: 'horizontal' | 'vertical';
+  /** Renders a red asterisk next to `label` and sets `aria-required` on the group. */
+  required?: boolean;
+  /** Cascades to every child `Radio`, OR'd with each `Radio`'s own `error` — unlike `disabled`/`size`, a child cannot opt out with `error={false}`. Implied by `errorText`. */
+  error?: boolean;
+  /** Message rendered below the group in the danger style; implies `error`. Replaces `helperText` when set. */
+  errorText?: ReactNode;
+  /** Neutral message rendered below the group, replaced by `errorText` when present. */
+  helperText?: ReactNode;
   children: ReactNode;
   className?: string;
+  /** Applied to the outermost wrapper, for layout purposes (e.g. grid positioning) — use `className` to target the radiogroup container itself. */
+  wrapperClassName?: string;
 }
 
 export interface RadioProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'name' | 'onChange' | 'value'>,
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'name' | 'onChange' | 'value'>,
     BaseProps {
   value: RadioValue;
   size?: RadioSize;

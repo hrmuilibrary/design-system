@@ -89,7 +89,10 @@ export const tailwindFontFamily = {
   sans: 'var(--font-sans)',
 } as const;
 
-const textStyle = (name: string) => [`var(--text-${name})`, { lineHeight: `var(--text-${name}--line-height)` }];
+const textStyle = (name: string) => [
+  `var(--text-${name})`,
+  { lineHeight: `var(--text-${name}--line-height)` },
+];
 
 export const tailwindFontSize = {
   'h-xl': textStyle('h-xl'),

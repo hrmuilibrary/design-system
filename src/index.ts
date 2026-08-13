@@ -41,6 +41,7 @@ export * from './components/Status';
 export * from './components/StepIndicator';
 export * from './components/Switch';
 export * from './components/Table';
+export * from './components/TableV2';
 export * from './components/Tabs';
 export * from './components/Text';
 export * from './components/TextArea';
@@ -60,5 +61,3 @@ export * from './tokens';
 
 // Shared types
 export * from './types';
-
-export { useFieldArray } from 'react-hook-form'

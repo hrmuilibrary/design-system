@@ -2,14 +2,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import type { BaseProps } from '../../types';
 
 export type StatusVariant =
-  | 'general'
-  | 'info'
-  | 'brand'
-  | 'danger'
-  | 'warning'
-  | 'success'
-  | 'discovery'
-  | 'disabled';
+  'general' | 'info' | 'brand' | 'danger' | 'warning' | 'success' | 'discovery' | 'disabled';
 
 export type StatusSize = 'lg' | 'md' | 'sm';
 

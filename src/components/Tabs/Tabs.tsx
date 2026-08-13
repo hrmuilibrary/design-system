@@ -78,7 +78,9 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
   },
   ref,
 ) {
-  const [internal, setInternal] = useState<OptionValue>(() => defaultValue ?? findFirstValue(children));
+  const [internal, setInternal] = useState<OptionValue>(
+    () => defaultValue ?? findFirstValue(children),
+  );
   const controlled = value !== undefined;
   const current = controlled ? value : internal;
   const tabsId = useId();
@@ -211,7 +213,9 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab(
     if (variant === 'underline') {
       return cn(
         'rounded-t-lg',
-        active ? 'text-fg-default' : 'text-fg-secondary hover:text-fg-default hover:bg-bg-subtle/60',
+        active
+          ? 'text-fg-default'
+          : 'text-fg-secondary hover:text-fg-default hover:bg-bg-subtle/60',
       );
     }
     if (variant === 'pills') {
@@ -224,7 +228,9 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab(
     }
     return cn(
       'border-r border-border-default last:border-r-0',
-      active ? 'bg-bg-default text-fg-default' : 'bg-transparent text-fg-secondary hover:bg-bg-subtle',
+      active
+        ? 'bg-bg-default text-fg-default'
+        : 'bg-transparent text-fg-secondary hover:bg-bg-subtle',
     );
   })();
 

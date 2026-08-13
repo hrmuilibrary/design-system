@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StepIndicator } from './StepIndicator';
 import type { StepIndicatorItem } from './StepIndicator.types';
+import type { OptionValue } from '../../types';
 
 const BASE_STEPS: StepIndicatorItem[] = [
   { value: 'account', label: 'Account details', status: 'completed' },
@@ -112,10 +113,36 @@ export const Interactive: Story = {
   name: 'Interactive (onStepSelect)',
   render: (args) => {
     function InteractiveExample() {
-      const [active, setActive] = useState('preferences');
+      const [active, setActive] = useState<OptionValue>('preferences');
       return <StepIndicator {...args} activeValue={active} onStepSelect={setActive} />;
     }
     return <InteractiveExample />;
+  },
+};
+
+export const NumericValues: Story = {
+  name: 'Numeric values (round-trip through onStepSelect)',
+  render: (args) => {
+    function NumericExample() {
+      const [active, setActive] = useState<OptionValue>(1);
+      return (
+        <StepIndicator
+          {...args}
+          steps={[
+            { value: 1, label: 'Step 1', status: active === 1 ? 'active' : 'completed' },
+            {
+              value: 2,
+              label: 'Step 2',
+              status: active === 2 ? 'active' : active > 2 ? 'completed' : 'upcoming',
+            },
+            { value: 3, label: 'Step 3', status: active === 3 ? 'active' : 'upcoming' },
+          ]}
+          activeValue={active}
+          onStepSelect={(v) => setActive(v as number)}
+        />
+      );
+    }
+    return <NumericExample />;
   },
 };
 

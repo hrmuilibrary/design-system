@@ -5,9 +5,16 @@ export type MultiSelectSize = 'sm' | 'md' | 'lg';
 
 export interface MultiSelectOption {
   value: OptionValue;
-  label: string;
+  label: ReactNode;
+  /** Text used for search matching when `label` isn't a plain string. Options where neither this nor a string `label` is available are excluded from `searchable` matching. */
+  searchText?: string;
   /** Optional second line under the label in the dropdown. */
   description?: string;
+  /** Group heading this option belongs under. Options sharing a group MUST be
+   *  contiguous in the (filtered) list — the heading is emitted whenever this
+   *  value changes between consecutive visible options, so a non-contiguous
+   *  group renders its heading more than once. */
+  group?: string;
   /** Optional avatar image — shown on the chip and the dropdown row. */
   avatarSrc?: string;
   /** Non-selectable option (shown dimmed in the list). */
@@ -52,6 +59,7 @@ export interface MultiSelectProps extends BaseProps {
   id?: string;
   className?: string;
   wrapperClassName?: string;
-  isLoading?: boolean;
-  language?: string
+  /** Shows a spinner in the trailing edge of the chip row and blocks opening the dropdown. Does not set the native `disabled` attribute. */
+  loading?: boolean;
+  language?: string;
 }

@@ -18,6 +18,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
     size = 'md',
     label,
     description,
+    errorText,
+    required,
     indeterminate = false,
     error = false,
     id,
@@ -32,6 +34,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
 ) {
   const reactId = useId();
   const inputId = id ?? reactId;
+  const hasError = error || !!errorText;
+  const describedBy = errorText ? `${inputId}-error` : undefined;
 
   return (
     <label
@@ -51,8 +55,11 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           checked={checked}
           defaultChecked={defaultChecked}
           disabled={disabled}
+          required={required}
           className="peer sr-only"
-          aria-invalid={error || undefined}
+          aria-invalid={hasError || undefined}
+          aria-required={required || undefined}
+          aria-describedby={describedBy}
           aria-checked={indeterminate ? 'mixed' : undefined}
           {...rest}
         />
@@ -63,11 +70,15 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
             // base (not checked, not indeterminate)
             !indeterminate && 'bg-bg-default',
             // border color
-            error ? 'border-red-600' : indeterminate ? 'border-brand-500' : 'border-border-strong',
+            hasError
+              ? 'border-red-600'
+              : indeterminate
+                ? 'border-brand-500'
+                : 'border-border-strong',
             // hover
             !disabled &&
               !indeterminate &&
-              (error ? 'peer-hover:border-red-700' : 'peer-hover:border-fg-tertiary'),
+              (hasError ? 'peer-hover:border-red-700' : 'peer-hover:border-fg-tertiary'),
             // focus ring
             'peer-focus-visible:ring-2 peer-focus-visible:ring-brand-300 peer-focus-visible:ring-offset-1',
             // checked (controlled or uncontrolled via peer)
@@ -90,13 +101,26 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           )}
         </span>
       </span>
-      {(label || description) && (
+      {(label || description || errorText) && (
         <span className="flex flex-col gap-0.5">
           {label && (
-            <span className="text-p-std font-medium text-fg-default leading-tight">{label}</span>
+            <span className="text-p-std font-medium text-fg-default leading-tight inline-flex items-center gap-1">
+              {label}
+              {required && (
+                <span className="text-red-600" aria-hidden>
+                  *
+                </span>
+              )}
+            </span>
           )}
-          {description && (
-            <span className="text-p-sm text-fg-secondary leading-snug">{description}</span>
+          {errorText ? (
+            <span id={`${inputId}-error`} className="text-p-sm text-red-700 leading-snug">
+              {errorText}
+            </span>
+          ) : (
+            description && (
+              <span className="text-p-sm text-fg-secondary leading-snug">{description}</span>
+            )
           )}
         </span>
       )}

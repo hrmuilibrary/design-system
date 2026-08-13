@@ -1,20 +1,14 @@
 import { useContext } from 'react';
 import { FormContext, type FormContextValue } from '../lib/FormContext';
 
-const noop = (() => undefined) as any;
+const noop = () => undefined;
 
 const DEFAULT_FORM_CONTEXT: FormContextValue = {
-  control: noop,
-  register: noop,
   errors: {},
   setValue: noop,
-  getValues: noop,
-  watch: noop,
   reset: noop,
-  trigger: noop,
   clearErrors: noop,
   setError: noop,
-  getFieldState: noop,
   unregister: noop,
   isDirty: false,
   isSubmitted: false,

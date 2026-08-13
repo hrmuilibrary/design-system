@@ -1,5 +1,15 @@
-import { forwardRef, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type MutableRefObject } from 'react';
-import { X, Search, Users } from 'lucide-react';
+import {
+  forwardRef,
+  Fragment,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type MutableRefObject,
+} from 'react';
+import { Loader2, Search, Users, X } from 'lucide-react';
 import { Avatar } from '../Avatar';
 import { cn } from '../../lib/cn';
 import { includesOptionValue, isSameOptionValue } from '../../lib/optionValue';
@@ -19,13 +29,35 @@ import type { OptionValue } from '../../types';
  * removable chip, Esc closes. Data-agnostic — feed it any options.
  * =========================================================================== */
 
+function optionSearchText(o: MultiSelectOption): string | undefined {
+  return o.searchText ?? (typeof o.label === 'string' ? o.label : undefined);
+}
+
 const SIZES: Record<
   MultiSelectSize,
   { box: string; chip: string; chipText: string; input: string; avatar: 'xs' | 'sm' }
 > = {
-  sm: { box: 'px-1.5 py-1.5 gap-1', chip: 'h-6 pl-0.5 pr-1.5', chipText: 'text-p-xs', input: 'h-6 text-p-sm min-w-[100px]', avatar: 'xs' },
-  md: { box: 'px-2 py-2 gap-1.5', chip: 'h-7 pl-1 pr-2', chipText: 'text-p-sm', input: 'h-7 text-p-std min-w-[120px]', avatar: 'xs' },
-  lg: { box: 'px-2.5 py-2.5 gap-2', chip: 'h-8 pl-1 pr-2.5', chipText: 'text-p-std', input: 'h-8 text-p-md min-w-[140px]', avatar: 'sm' },
+  sm: {
+    box: 'px-1.5 py-1.5 gap-1',
+    chip: 'h-6 pl-0.5 pr-1.5',
+    chipText: 'text-p-xs',
+    input: 'h-6 text-p-sm min-w-[100px]',
+    avatar: 'xs',
+  },
+  md: {
+    box: 'px-2 py-2 gap-1.5',
+    chip: 'h-7 pl-1 pr-2',
+    chipText: 'text-p-sm',
+    input: 'h-7 text-p-std min-w-[120px]',
+    avatar: 'xs',
+  },
+  lg: {
+    box: 'px-2.5 py-2.5 gap-2',
+    chip: 'h-8 pl-1 pr-2.5',
+    chipText: 'text-p-std',
+    input: 'h-8 text-p-md min-w-[140px]',
+    avatar: 'sm',
+  },
 };
 
 export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(function MultiSelect(
@@ -39,6 +71,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     placeholder = 'Select…',
     addMorePlaceholder = 'Add another…',
     disabled = false,
+    loading = false,
     error = false,
     label,
     labelAddons,
@@ -74,10 +107,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     else if (ref) (ref as MutableRefObject<HTMLInputElement | null>).current = node;
   };
 
-  const byValue = useMemo(
-    () => new Map(options.map((o) => [String(o.value), o])),
-    [options],
-  );
+  const byValue = useMemo(() => new Map(options.map((o) => [String(o.value), o])), [options]);
   const selected = useMemo(
     () => value.map((v) => byValue.get(String(v))).filter((o): o is MultiSelectOption => !!o),
     [value, byValue],
@@ -85,13 +115,15 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return options.filter(
-      (o) =>
-        !includesOptionValue(value, o.value) &&
-        (q === '' ||
-          o.label.toLowerCase().includes(q) ||
-          (o.description ?? '').toLowerCase().includes(q)),
-    );
+    return options.filter((o) => {
+      if (includesOptionValue(value, o.value)) return false;
+      if (q === '') return true;
+      const text = optionSearchText(o);
+      return (
+        (text !== undefined && text.toLowerCase().includes(q)) ||
+        (o.description ?? '').toLowerCase().includes(q)
+      );
+    });
   }, [options, value, query]);
 
   const reached = max !== undefined && value.length >= max;
@@ -110,6 +142,10 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
   useEffect(() => {
     setActive((a) => Math.min(a, Math.max(0, matches.length - 1)));
   }, [matches.length]);
+
+  useEffect(() => {
+    if (loading) setOpen(false);
+  }, [loading]);
 
   const add = (v: OptionValue) => {
     const opt = byValue.get(String(v));
@@ -140,8 +176,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      if (!open) setOpen(true);
-      else moveActive(1);
+      if (!open) {
+        if (!loading) setOpen(true);
+      } else moveActive(1);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       moveActive(-1);
@@ -158,11 +195,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     }
   };
 
-  const describedBy = errorText
-    ? `${inputId}-error`
-    : helperText
-    ? `${inputId}-help`
-    : undefined;
+  const describedBy = errorText ? `${inputId}-error` : helperText ? `${inputId}-help` : undefined;
 
   return (
     <div data-test-id={dataTestId} className={cn('flex flex-col gap-1.5 w-full', wrapperClassName)}>
@@ -194,11 +227,12 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
             disabled
               ? 'opacity-60 cursor-not-allowed border-border-default'
               : hasError
-              ? 'border-red-500 focus-within:ring-2 focus-within:ring-red-300 focus-within:ring-offset-1 cursor-text'
-              : 'border-border-default hover:border-border-strong focus-within:border-fg-tertiary focus-within:ring-2 focus-within:ring-brand-300 focus-within:ring-offset-1 cursor-text',
+                ? 'border-red-500 focus-within:ring-2 focus-within:ring-red-300 focus-within:ring-offset-1 cursor-text'
+                : 'border-border-default hover:border-border-strong focus-within:border-fg-tertiary focus-within:ring-2 focus-within:ring-brand-300 focus-within:ring-offset-1 cursor-text',
+            loading && 'cursor-wait',
             className,
           )}
-          onClick={() => !disabled && innerInputRef.current?.focus()}
+          onClick={() => !disabled && !loading && innerInputRef.current?.focus()}
         >
           {selected.map((o) => {
             const locked = includesOptionValue(lockedValues, o.value);
@@ -213,11 +247,13 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                 title={o.description}
               >
                 {(showAvatars || o.avatarSrc) && (
-                  <Avatar src={o.avatarSrc} name={o.label} size={SIZES[size].avatar} />
+                  <Avatar src={o.avatarSrc} name={optionSearchText(o)} size={SIZES[size].avatar} />
                 )}
                 <span className="font-medium">{o.label}</span>
                 {o.badge && (
-                  <span className="text-label-xxs uppercase tracking-wider opacity-70">{o.badge}</span>
+                  <span className="text-label-xxs uppercase tracking-wider opacity-70">
+                    {o.badge}
+                  </span>
                 )}
                 {!locked && !disabled && (
                   <button
@@ -226,7 +262,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                       e.stopPropagation();
                       remove(o.value);
                     }}
-                    aria-label={`Remove ${o.label}`}
+                    aria-label={`Remove ${optionSearchText(o) ?? String(o.value)}`}
                     className="-mr-0.5 ml-0.5 text-fg-tertiary hover:text-fg-default p-0.5 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300"
                   >
                     <X className="w-3 h-3" />
@@ -247,30 +283,43 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
             aria-activedescendant={open && matches[active] ? `${listId}-opt-${active}` : undefined}
             aria-invalid={hasError || undefined}
             aria-describedby={describedBy}
+            aria-busy={loading || undefined}
             value={query}
             readOnly={!searchable}
             disabled={disabled || reached}
             onChange={(e) => {
               setQuery(e.target.value);
-              setOpen(true);
+              if (!loading) setOpen(true);
             }}
-            onFocus={() => setOpen(true)}
+            onFocus={() => !loading && setOpen(true)}
             onKeyDown={onKeyDown}
-            placeholder={selected.length === 0 ? placeholder : reached ? `Limit ${max} reached` : addMorePlaceholder}
+            placeholder={
+              selected.length === 0
+                ? placeholder
+                : reached
+                  ? `Limit ${max} reached`
+                  : addMorePlaceholder
+            }
             className={cn(
               'flex-1 bg-transparent outline-none text-fg-default placeholder:text-fg-tertiary disabled:cursor-not-allowed',
               !searchable && 'cursor-pointer',
               SIZES[size].input,
             )}
           />
+
+          {loading && (
+            <Loader2 className="h-4 w-4 shrink-0 text-fg-secondary animate-spin" aria-hidden />
+          )}
         </div>
 
         {/* Dropdown */}
-        {open && !disabled && !reached && (
+        {open && !disabled && !loading && !reached && (
           <div className="absolute top-full left-0 right-0 mt-1 z-20 max-h-80 overflow-y-auto rounded-lg border border-border-default bg-bg-default shadow-z4">
             <div className="px-3 py-2 border-b border-border-subtle flex items-center gap-2 text-p-sm text-fg-tertiary">
               <Search className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">{query ? `Matches for "${query}"` : suggestionsLabel}</span>
+              <span className="truncate">
+                {query ? `Matches for "${query}"` : suggestionsLabel}
+              </span>
             </div>
             {matches.length === 0 ? (
               <div className="px-3 py-6 text-center">
@@ -279,35 +328,59 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
               </div>
             ) : (
               <ul role="listbox" id={listId} className="py-1">
-                {matches.map((o, i) => (
-                  <li key={String(o.value)} role="option" id={`${listId}-opt-${i}`} aria-selected={i === active} aria-disabled={o.disabled || undefined}>
-                    <button
-                      type="button"
-                      disabled={o.disabled}
-                      onMouseEnter={() => setActive(i)}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        add(o.value);
-                      }}
-                      className={cn(
-                        'w-full px-3 py-2 flex items-center gap-3 text-left transition',
-                        o.disabled
-                          ? 'opacity-50 cursor-not-allowed'
-                          : i === active
-                          ? 'bg-bg-subtle'
-                          : 'hover:bg-bg-subtle',
+                {matches.map((o, i) => {
+                  const showGroupHeader = !!o.group && o.group !== matches[i - 1]?.group;
+                  return (
+                    <Fragment key={String(o.value)}>
+                      {showGroupHeader && (
+                        <li
+                          role="presentation"
+                          className="px-3 pt-2 pb-1 text-label-sm font-medium uppercase tracking-wide text-fg-tertiary select-none"
+                        >
+                          {o.group}
+                        </li>
                       )}
-                    >
-                      {(showAvatars || o.avatarSrc) && <Avatar src={o.avatarSrc} name={o.label} size="sm" />}
-                      <span className="flex-1 min-w-0">
-                        <span className="block text-p-std font-medium text-fg-default truncate">{o.label}</span>
-                        {o.description && (
-                          <span className="block text-p-sm text-fg-secondary truncate">{o.description}</span>
-                        )}
-                      </span>
-                    </button>
-                  </li>
-                ))}
+                      <li
+                        role="option"
+                        id={`${listId}-opt-${i}`}
+                        aria-selected={i === active}
+                        aria-disabled={o.disabled || undefined}
+                      >
+                        <button
+                          type="button"
+                          disabled={o.disabled}
+                          onMouseEnter={() => setActive(i)}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            add(o.value);
+                          }}
+                          className={cn(
+                            'w-full px-3 py-2 flex items-center gap-3 text-left transition',
+                            o.disabled
+                              ? 'opacity-50 cursor-not-allowed'
+                              : i === active
+                                ? 'bg-bg-subtle'
+                                : 'hover:bg-bg-subtle',
+                          )}
+                        >
+                          {(showAvatars || o.avatarSrc) && (
+                            <Avatar src={o.avatarSrc} name={optionSearchText(o)} size="sm" />
+                          )}
+                          <span className="flex-1 min-w-0">
+                            <span className="block text-p-std font-medium text-fg-default truncate">
+                              {o.label}
+                            </span>
+                            {o.description && (
+                              <span className="block text-p-sm text-fg-secondary truncate">
+                                {o.description}
+                              </span>
+                            )}
+                          </span>
+                        </button>
+                      </li>
+                    </Fragment>
+                  );
+                })}
               </ul>
             )}
           </div>

@@ -92,7 +92,15 @@ export const MinMaxDates: Story = {
       const today = new Date();
       const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14);
-      return <DatePicker {...args} value={value} onChange={setValue} minDate={minDate} maxDate={maxDate} />;
+      return (
+        <DatePicker
+          {...args}
+          value={value}
+          onChange={setValue}
+          minDate={minDate}
+          maxDate={maxDate}
+        />
+      );
     }
     return <MinMaxDemo />;
   },
@@ -144,6 +152,51 @@ export const RangeWithMinMax: Story = {
   args: {
     label: 'Trip dates',
     placeholder: 'Select date range',
+  },
+};
+
+export const RussianLocale: Story = {
+  name: 'Locale (ru-RU, Monday-first)',
+  args: { locale: 'ru-RU', label: 'Date' },
+};
+
+export const CustomFormat: Story = {
+  name: 'Custom format (yyyy/MM/dd)',
+  render: (args) => {
+    function CustomFormatDatePicker() {
+      const [value, setValue] = useState<Date | null>(null);
+      return <DatePicker {...args} value={value} onChange={setValue} />;
+    }
+    return <CustomFormatDatePicker />;
+  },
+  args: { format: 'yyyy/MM/dd', label: 'Date' },
+};
+
+export const Clearable: Story = {
+  render: (args) => {
+    function ClearableDatePicker() {
+      const [value, setValue] = useState<Date | null>(new Date());
+      return <DatePicker {...args} clearable value={value} onChange={setValue} />;
+    }
+    return <ClearableDatePicker />;
+  },
+  args: { label: 'Date' },
+};
+
+export const RequiredWithHelper: Story = {
+  name: 'Required + helper text',
+  args: {
+    label: 'Start date',
+    required: true,
+    helperText: 'Choose the first day of your stay.',
+  },
+};
+
+export const WeekdaysOnly: Story = {
+  name: 'filterDate (weekdays only)',
+  args: {
+    label: 'Business day',
+    filterDate: (date: Date) => date.getDay() !== 0 && date.getDay() !== 6,
   },
 };
 

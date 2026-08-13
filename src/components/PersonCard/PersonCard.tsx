@@ -42,7 +42,9 @@ export const PersonCard = forwardRef<HTMLDivElement, PersonCardProps>(function P
     <>
       <Avatar src={avatar} name={name} size={s.avatar} />
       <div className="min-w-0 flex-1">
-        <div className="text-p-std font-semibold text-fg-default truncate leading-tight">{name}</div>
+        <div className="text-p-std font-semibold text-fg-default truncate leading-tight">
+          {name}
+        </div>
         {role && (
           <div className="text-p-sm text-fg-secondary truncate mt-0.5 leading-tight">{role}</div>
         )}

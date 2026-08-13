@@ -32,9 +32,14 @@ export const ReadMore = forwardRef<HTMLDivElement, ReadMoreProps>(function ReadM
   };
 
   return (
-    <div ref={ref} data-test-id={dataTestId} className={cn('flex flex-col gap-1', className)} {...rest}>
+    <div
+      ref={ref}
+      data-test-id={dataTestId}
+      className={cn('flex flex-col gap-1', className)}
+      {...rest}
+    >
       <Text id={contentId} clamp={isExpanded ? undefined : clamp} {...textProps}>
-        {isExpanded ? children : collapsedContent ?? children}
+        {isExpanded ? children : (collapsedContent ?? children)}
       </Text>
       <button
         type="button"

@@ -21,7 +21,8 @@ export const Copy = forwardRef<HTMLButtonElement, CopyProps>(function Copy(
 ) {
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const canCopy = typeof navigator !== 'undefined' && typeof navigator.clipboard?.writeText === 'function';
+  const canCopy =
+    typeof navigator !== 'undefined' && typeof navigator.clipboard?.writeText === 'function';
 
   useEffect(() => {
     return () => {
@@ -57,7 +58,7 @@ export const Copy = forwardRef<HTMLButtonElement, CopyProps>(function Copy(
           dataTestId={dataTestId}
           {...rest}
         >
-          {copied ? <Check className="size-4" /> : icon ?? <CopyIcon className="size-4" />}
+          {copied ? <Check className="size-4" /> : (icon ?? <CopyIcon className="size-4" />)}
         </Button>
       </Popover>
       <span role="status" aria-live="polite" className="sr-only">

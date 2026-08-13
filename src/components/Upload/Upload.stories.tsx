@@ -93,12 +93,7 @@ export const ItemProcessing: Story = {
 export const ItemCompleted: Story = {
   name: 'UploadItem — completed',
   render: () => (
-    <UploadItem
-      name="quarterly-report.pdf"
-      meta="2.4 MB"
-      status="completed"
-      onRemove={() => {}}
-    />
+    <UploadItem name="quarterly-report.pdf" meta="2.4 MB" status="completed" onRemove={() => {}} />
   ),
 };
 
@@ -201,14 +196,72 @@ export const ItemWithThumbnail: Story = {
   ),
 };
 
+export const WithFileList: Story = {
+  name: 'showFileList with removal',
+  render: (args) => {
+    function Controlled() {
+      const [files, setFiles] = useState<File[]>(() => [
+        new File(['x'], 'brand-guidelines.pdf', { type: 'application/pdf' }),
+        new File(['x'.repeat(2_000_000)], 'hero-image.png', { type: 'image/png' }),
+      ]);
+      return (
+        <Upload
+          {...args}
+          showFileList
+          currentFiles={files}
+          onFiles={(added) => setFiles((prev) => [...prev, ...added])}
+          onRemoveFile={(_file, index) => setFiles((prev) => prev.filter((_, i) => i !== index))}
+        />
+      );
+    }
+    return <Controlled />;
+  },
+};
+
+export const ViewMode: Story = {
+  name: 'mode="view"',
+  args: {
+    mode: 'view',
+    showFileList: true,
+    label: 'Attachments',
+    currentFiles: [
+      new File(['x'], 'brand-guidelines.pdf', { type: 'application/pdf' }),
+      new File(['x'.repeat(500_000)], 'dataset.csv', { type: 'text/csv' }),
+    ],
+  },
+};
+
+export const ItemWithOpen: Story = {
+  name: 'UploadItem — onOpen',
+  render: () => (
+    <UploadItem
+      name="brand-guidelines.pdf"
+      meta="1.1 MB"
+      status="completed"
+      onOpen={() => window.alert('Opening brand-guidelines.pdf')}
+    />
+  ),
+};
+
 export const ItemList: Story = {
   name: 'Upload + UploadItem list',
   render: (args) => (
     <div className="flex flex-col gap-3">
       <Upload {...args} />
       <div className="flex flex-col gap-2">
-        <UploadItem name="brand-guidelines.pdf" meta="1.1 MB" status="completed" onRemove={() => {}} />
-        <UploadItem name="hero-image.png" meta="4.8 MB" status="processing" progress={35} onRemove={() => {}} />
+        <UploadItem
+          name="brand-guidelines.pdf"
+          meta="1.1 MB"
+          status="completed"
+          onRemove={() => {}}
+        />
+        <UploadItem
+          name="hero-image.png"
+          meta="4.8 MB"
+          status="processing"
+          progress={35}
+          onRemove={() => {}}
+        />
         <UploadItem
           name="dataset.csv"
           meta="18 MB"

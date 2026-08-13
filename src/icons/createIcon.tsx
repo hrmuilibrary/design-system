@@ -3,7 +3,12 @@ import type { LucideIcon, LucideProps } from 'lucide-react';
 
 type IconRenderer = (uid: string) => ReactNode;
 
-function buildIcon(name: string, render: IconRenderer, viewBox: string, applyColor: boolean): LucideIcon {
+function buildIcon(
+  name: string,
+  render: IconRenderer,
+  viewBox: string,
+  applyColor: boolean,
+): LucideIcon {
   const Icon = forwardRef<SVGSVGElement, LucideProps>(function Icon(
     { size = 24, color = 'currentColor', className, ...rest },
     ref,
@@ -45,7 +50,11 @@ function buildIcon(name: string, render: IconRenderer, viewBox: string, applyCol
  *  ids (e.g. `clip0_697_1766`), which collide (`url(#...)` resolves to
  *  whichever instance rendered first) the moment the same icon renders
  *  twice on one page. */
-export function createIcon(name: string, content: ReactNode | IconRenderer, viewBox = '0 0 24 24'): LucideIcon {
+export function createIcon(
+  name: string,
+  content: ReactNode | IconRenderer,
+  viewBox = '0 0 24 24',
+): LucideIcon {
   const render: IconRenderer = typeof content === 'function' ? content : () => content;
   return buildIcon(name, render, viewBox, true);
 }
@@ -55,6 +64,10 @@ export function createIcon(name: string, content: ReactNode | IconRenderer, view
  *  already carries its own literal `fill`, since a flag's colors aren't
  *  theme-able. `renderShapes` receives a fresh-per-instance mask id, same
  *  rationale as `createIcon`'s clip id. */
-export function createFlagIcon(name: string, renderShapes: IconRenderer, viewBox = '0 0 24 24'): LucideIcon {
+export function createFlagIcon(
+  name: string,
+  renderShapes: IconRenderer,
+  viewBox = '0 0 24 24',
+): LucideIcon {
   return buildIcon(name, renderShapes, viewBox, false);
 }

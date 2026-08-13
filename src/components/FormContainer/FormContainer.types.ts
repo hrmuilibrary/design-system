@@ -4,7 +4,8 @@ import type { ObjectSchema } from 'yup';
 import type { BaseProps } from '../../types';
 import type { ButtonProps } from '../Button';
 
-export interface FormContainerProps extends Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>, BaseProps {
+export interface FormContainerProps
+  extends Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>, BaseProps {
   children?: ReactNode;
   /** A yup object schema — resolved via `@hookform/resolvers/yup`. */
   validationSchema: ObjectSchema<FieldValues>;
@@ -15,5 +16,11 @@ export interface FormContainerProps extends Omit<FormHTMLAttributes<HTMLFormElem
   shouldUnregister?: boolean;
   shouldFocusError?: boolean;
   formId?: string;
-  onSubmit?: (data: FieldValues, formState: FormState<FieldValues>) => void;
+  onSubmit?: (
+    data: FieldValues,
+    formState: FormState<FieldValues>,
+    dirtyFields: FormState<FieldValues>['dirtyFields'],
+  ) => void;
+  /** When this changes, re-validates every field currently holding an error — use to refresh translated validation messages after rebuilding `validationSchema` for a new locale. */
+  revalidateKey?: string | number;
 }

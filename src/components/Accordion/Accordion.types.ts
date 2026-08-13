@@ -5,8 +5,7 @@ export type AccordionType = 'single' | 'multiple';
 
 export interface AccordionProps
   // HTMLAttributes.defaultValue (string | number | readonly string[]) collides with the widened OptionValue-based defaultValue below
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'>,
-    BaseProps {
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'>, BaseProps {
   /** `'single'` keeps at most one item open at a time; `'multiple'` allows any number. */
   type?: AccordionType;
   /** Uncontrolled initial open value(s) — a single value for `'single'`, an array for `'multiple'`. */

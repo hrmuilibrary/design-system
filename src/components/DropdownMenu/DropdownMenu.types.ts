@@ -1,4 +1,10 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactElement, ReactNode, RefObject } from 'react';
+import type {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  ReactElement,
+  ReactNode,
+  RefObject,
+} from 'react';
 import type { BaseProps } from '../../types';
 import type { AnchoredAlign, AnchoredSide } from '../../lib/useAnchoredPosition';
 
@@ -13,8 +19,13 @@ export interface DropdownMenuProps extends HTMLAttributes<HTMLDivElement>, BaseP
   /** Controlled open state. Pass alongside `onOpenChange` to fully control the menu. */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** Anchor the panel to an element the consumer owns instead of `<DropdownTrigger>`'s child. */
-  anchorRef?: RefObject<HTMLElement | null>;
+  /** Anchor the panel to an element the consumer owns instead of `<DropdownTrigger>`'s child.
+   *  Accepts either a ref object or the element itself, so consumers holding the anchor as
+   *  plain `useState<HTMLElement | null>` state don't have to fabricate a `{ current: el }`
+   *  wrapper every render. If the resolved anchor element is `null` (e.g. it hasn't mounted
+   *  yet, or was unmounted while the menu is open), the panel positions against the trigger
+   *  instead of staying un-positioned. */
+  anchorRef?: RefObject<HTMLElement | null> | HTMLElement | null;
 }
 
 export interface DropdownTriggerProps {

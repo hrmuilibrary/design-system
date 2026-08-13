@@ -51,7 +51,11 @@ export const Skeleton = forwardRef<HTMLSpanElement, SkeletonProps>(function Skel
     ...style,
   };
 
-  const itemClassName = cn('block bg-bg-subtle leading-none', variantStyles[variant], animationStyles[animation]);
+  const itemClassName = cn(
+    'block bg-bg-subtle leading-none',
+    variantStyles[variant],
+    animationStyles[animation],
+  );
 
   if (hasChildren) {
     return (

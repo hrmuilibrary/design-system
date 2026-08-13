@@ -45,12 +45,18 @@ export const CardGroup = forwardRef<HTMLDivElement, CardGroupProps>(function Car
       className={className}
       {...rest}
     >
-      <div className={cn('flex', isVertical ? (placement === 'right' ? 'flex-row-reverse' : 'flex-row') : 'flex-col')}>
+      <div
+        className={cn(
+          'flex',
+          isVertical ? (placement === 'right' ? 'flex-row-reverse' : 'flex-row') : 'flex-col',
+        )}
+      >
         {titleRail}
         <div
           className={cn(
             'min-w-0 flex-1',
-            !noDivider && '[&>*:not(:last-child)]:border-b [&>*:not(:last-child)]:border-border-default',
+            !noDivider &&
+              '[&>*:not(:last-child)]:border-b [&>*:not(:last-child)]:border-border-default',
           )}
         >
           {header}

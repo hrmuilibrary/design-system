@@ -100,7 +100,11 @@ export const WithLabelAddons: Story = {
     label: 'API key',
     labelAddons: (
       <Tooltip content="Found in Settings → Developer → API keys.">
-        <button type="button" aria-label="More info" className="text-fg-tertiary hover:text-fg-default">
+        <button
+          type="button"
+          aria-label="More info"
+          className="text-fg-tertiary hover:text-fg-default"
+        >
           <Info className="h-3.5 w-3.5" />
         </button>
       </Tooltip>

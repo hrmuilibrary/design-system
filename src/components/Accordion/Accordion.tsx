@@ -50,9 +50,7 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
     if (type === 'single') {
       next = isOpen ? [] : [val];
     } else {
-      next = isOpen
-        ? openValues.filter((v) => !isSameOptionValue(v, val))
-        : [...openValues, val];
+      next = isOpen ? openValues.filter((v) => !isSameOptionValue(v, val)) : [...openValues, val];
     }
     if (!isControlled) setInternal(next);
     onValueChange?.(type === 'single' ? next[0] : next);

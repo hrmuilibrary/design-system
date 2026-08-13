@@ -23,7 +23,9 @@ export const Primary: Story = {
   render: (args) => {
     function Uncontrolled() {
       const [checked, setChecked] = useState(false);
-      return <ThemeSwitch {...args} checked={checked} onChange={(e) => setChecked(e.target.checked)} />;
+      return (
+        <ThemeSwitch {...args} checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+      );
     }
     return <Uncontrolled />;
   },

@@ -67,7 +67,11 @@ export const RawPalette: Story = {
   ),
 };
 
-type SemanticToken = { name: string; cssVar: string; kind: 'fill' | 'border' | 'text' | 'text-inverse' };
+type SemanticToken = {
+  name: string;
+  cssVar: string;
+  kind: 'fill' | 'border' | 'text' | 'text-inverse';
+};
 
 const SURFACES: SemanticToken[] = [
   { name: 'bg-default', cssVar: '--color-bg-default', kind: 'fill' },

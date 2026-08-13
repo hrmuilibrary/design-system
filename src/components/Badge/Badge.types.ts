@@ -1,7 +1,8 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import type { BaseProps } from '../../types';
 
-export type BadgeVariant = 'neutral' | 'brand' | 'success' | 'warning' | 'danger' | 'info' | 'privacy';
+export type BadgeVariant =
+  'neutral' | 'brand' | 'success' | 'warning' | 'danger' | 'info' | 'privacy';
 export type BadgeStyle = 'filled' | 'outline' | 'accent';
 export type BadgeSize = 'lg' | 'md' | 'sm' | 'xs';
 export type BadgeShape = 'rounded' | 'pill';

@@ -13,20 +13,26 @@ const illustrationSize: Record<UnderConstructionSize, 'lg' | 'xl'> = {
   sm: 'lg',
 };
 
-export const UnderConstruction = forwardRef<HTMLDivElement, UnderConstructionProps>(function UnderConstruction(
-  { size = 'lg', title, description, illustration, ...rest },
-  ref,
-) {
-  return (
-    <Empty
-      ref={ref}
-      size={size}
-      title={title ?? DEFAULT_TITLE}
-      description={description ?? DEFAULT_DESCRIPTION}
-      illustration={
-        illustration ?? <IconTile icon={Construction} tone="brand" shape="circle" size={illustrationSize[size]} />
-      }
-      {...rest}
-    />
-  );
-});
+export const UnderConstruction = forwardRef<HTMLDivElement, UnderConstructionProps>(
+  function UnderConstruction({ size = 'lg', title, description, illustration, ...rest }, ref) {
+    return (
+      <Empty
+        ref={ref}
+        size={size}
+        title={title ?? DEFAULT_TITLE}
+        description={description ?? DEFAULT_DESCRIPTION}
+        illustration={
+          illustration ?? (
+            <IconTile
+              icon={Construction}
+              tone="brand"
+              shape="circle"
+              size={illustrationSize[size]}
+            />
+          )
+        }
+        {...rest}
+      />
+    );
+  },
+);

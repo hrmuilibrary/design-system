@@ -10,6 +10,7 @@ interface RadioGroupContextValue {
   onChange?: (value: RadioValue) => void;
   disabled?: boolean;
   size: RadioSize;
+  error?: boolean;
 }
 
 const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
@@ -22,10 +23,15 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
     defaultValue,
     onChange,
     disabled,
+    required,
+    error,
+    errorText,
+    helperText,
     size = 'md',
     orientation = 'vertical',
     children,
     className,
+    wrapperClassName,
     dataTestId,
   },
   ref,
@@ -33,12 +39,21 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
   const reactName = useId();
   const groupName = name ?? reactName;
   const labelId = `${reactName}-label`;
+  const hasError = error || !!errorText;
+  const describedBy = errorText
+    ? `${reactName}-error`
+    : helperText
+      ? `${reactName}-help`
+      : undefined;
 
   const groupEl = (
     <div
       ref={ref}
       role="radiogroup"
       aria-labelledby={label ? labelId : undefined}
+      aria-required={required || undefined}
+      aria-invalid={hasError || undefined}
+      aria-describedby={describedBy}
       data-test-id={dataTestId}
       className={cn(
         'flex gap-3',
@@ -51,13 +66,34 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
   );
 
   return (
-    <RadioGroupContext.Provider value={{ name: groupName, value, defaultValue, onChange, disabled, size }}>
-      {label ? (
-        <div className="flex flex-col gap-1.5">
-          <span id={labelId} className="text-p-std font-medium text-fg-default inline-flex">
-            {label}
-          </span>
+    <RadioGroupContext.Provider
+      value={{ name: groupName, value, defaultValue, onChange, disabled, size, error: hasError }}
+    >
+      {label || errorText || helperText ? (
+        <div className={cn('flex flex-col gap-1.5', wrapperClassName)}>
+          {label && (
+            <span
+              id={labelId}
+              className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
+            >
+              {label}
+              {required && (
+                <span className="text-red-600" aria-hidden>
+                  *
+                </span>
+              )}
+            </span>
+          )}
           {groupEl}
+          {errorText ? (
+            <p id={`${reactName}-error`} className="text-p-sm text-red-700">
+              {errorText}
+            </p>
+          ) : helperText ? (
+            <p id={`${reactName}-help`} className="text-p-sm text-fg-secondary">
+              {helperText}
+            </p>
+          ) : null}
         </div>
       ) : (
         groupEl
@@ -99,6 +135,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   const inputId = id ?? reactId;
   const effectiveSize = size ?? group?.size ?? 'md';
   const effectiveDisabled = disabled ?? group?.disabled;
+  const effectiveError = error || !!group?.error;
 
   const inGroup = group !== null;
   const groupChecked =
@@ -138,15 +175,15 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
           disabled={effectiveDisabled}
           onChange={handleChange}
           className="peer sr-only"
-          aria-invalid={error || undefined}
+          aria-invalid={effectiveError || undefined}
           {...rest}
         />
         <span
           className={cn(
             'flex items-center justify-center rounded-full border bg-bg-default transition-colors',
             outerSize[effectiveSize],
-            error ? 'border-red-600' : 'border-border-strong',
-            !effectiveDisabled && !error && 'peer-hover:border-fg-tertiary',
+            effectiveError ? 'border-red-600' : 'border-border-strong',
+            !effectiveDisabled && !effectiveError && 'peer-hover:border-fg-tertiary',
             'peer-focus-visible:ring-2 peer-focus-visible:ring-brand-300 peer-focus-visible:ring-offset-1',
             'peer-checked:border-brand-500',
             effectiveDisabled && '!bg-bg-subtle !border-border-default',

@@ -225,7 +225,9 @@ export const DynamicContent: Story = {
           <AccordionItem value="notes" title="Meeting notes">
             <div className="flex flex-col gap-2">
               {Array.from({ length: lines }, (_, i) => (
-                <p key={i}>Note {i + 1}: the panel height follows this content with no JS measurement.</p>
+                <p key={i}>
+                  Note {i + 1}: the panel height follows this content with no JS measurement.
+                </p>
               ))}
               <button
                 type="button"

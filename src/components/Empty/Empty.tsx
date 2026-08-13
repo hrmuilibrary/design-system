@@ -23,10 +23,16 @@ export const Empty = forwardRef<HTMLDivElement, EmptyProps>(function Empty(
     <div
       ref={ref}
       data-test-id={dataTestId}
-      className={cn('flex flex-col items-center justify-center text-center', containerStyles[size], className)}
+      className={cn(
+        'flex flex-col items-center justify-center text-center',
+        containerStyles[size],
+        className,
+      )}
       {...rest}
     >
-      {illustration ?? <IconTile icon={SearchX} tone="gray" shape="circle" size={illustrationSize[size]} />}
+      {illustration ?? (
+        <IconTile icon={SearchX} tone="gray" shape="circle" size={illustrationSize[size]} />
+      )}
       {title && (
         <Text as="h3" variant={size === 'lg' ? 'h-sm' : 'h-xs'} weight="semibold" className="mt-2">
           {title}

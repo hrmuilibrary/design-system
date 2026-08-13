@@ -43,9 +43,7 @@ export const WithClearButton: Story = {
   render: (args) => {
     function Demo() {
       const [value, setValue] = useState<string | undefined>('Active');
-      return (
-        <Filter {...args} value={value} onClear={() => setValue(undefined)} />
-      );
+      return <Filter {...args} value={value} onClear={() => setValue(undefined)} />;
     }
     return <Demo />;
   },

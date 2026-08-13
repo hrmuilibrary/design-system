@@ -13,8 +13,7 @@ export interface SidebarProps extends Omit<HTMLAttributes<HTMLElement>, 'title'>
   subtitle?: ReactNode;
 }
 
-export interface SidebarItemProps
-  extends Omit<HTMLAttributes<HTMLElement>, 'onClick'>, BaseProps {
+export interface SidebarItemProps extends Omit<HTMLAttributes<HTMLElement>, 'onClick'>, BaseProps {
   icon?: ReactNode;
   label: ReactNode;
   /** Marks the item as the current selection and, when it has `children`, defaults its group open. */

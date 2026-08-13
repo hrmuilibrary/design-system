@@ -7,9 +7,11 @@ import * as UploadStories from './Upload.stories';
 
 A drag-and-drop file dropzone (`Upload`) paired with a row component for
 listing files as they're processed (`UploadItem`). Both live in a single
-`Upload.tsx` file since they're always used together — `Upload` never
-renders the list itself, it just hands files to `onFiles` and leaves
-tracking/rendering upload state to the consumer via `UploadItem`.
+`Upload.tsx` file since they're always used together. By default `Upload`
+doesn't render the list itself, just hands files to `onFiles` and leaves
+tracking/rendering to the consumer via `UploadItem` — but set
+`showFileList` to have `Upload` render `currentFiles` as `UploadItem`s
+itself, with removal wired through `onRemoveFile`.
 
 <Primary />
 
@@ -20,8 +22,9 @@ tracking/rendering upload state to the consumer via `UploadItem`.
 ## Choosing a file
 
 Clicking or dragging a file onto the dropzone calls `onFiles(files: File[])`.
-There's no internal file list — `Upload` is a pure trigger. Pair it with
-your own state (or a list of `UploadItem`s) to track what's in flight:
+By default there's no internal file list — `Upload` is a pure trigger —
+but `showFileList` renders one; see below. Pair it with your own state (or
+a list of `UploadItem`s) to track what's in flight:
 
 ```tsx
 const [fileNames, setFileNames] = useState<string[]>([]);
@@ -30,7 +33,7 @@ const [fileNames, setFileNames] = useState<string[]>([]);
   accept=".png,.jpg"
   maxSizeMB={10}
   onFiles={(files) => setFileNames(files.map((f) => f.name))}
-/>
+/>;
 ```
 
 ## Hint text
@@ -46,7 +49,11 @@ and surface it via `UploadItem`'s `error` status.
 `error`/`errorText` on `Upload` itself switch the dropzone to the danger
 styles and render a message below it — separate from `UploadItem`'s own
 per-file `error` status below, which is about an individual file's upload
-outcome rather than the control's overall validity.
+outcome rather than the control's overall validity. `error`'s visual
+effect (the red border/background) is `'dropzone'`-mode-only — in
+`'button'`/`'icon'`/`'view'` mode there's no dropzone to tint, so `error`
+alone has no visible effect. `errorText` still always renders its message
+row regardless of mode.
 
 ## UploadItem statuses
 
@@ -57,6 +64,33 @@ outcome rather than the control's overall validity.
   to a trash can.
 - `"error"` — tints the row red and shows `errorText`, with an optional
   "Try again" link when `onRetry` is passed.
+
+## View mode and opening files
+
+`mode="view"` renders neither a dropzone nor a picker button — just the
+label and, when `showFileList` is set, `currentFiles` rendered as
+`UploadItem`s with no remove affordance. Use it for a read-only
+"attachments" display where the consumer never expects to add or remove
+files through this control. Trigger- and validation-related props
+(`disabled`, `accept`, `multiple`, `hint`, `maxSizeMB`, `validateFiles`,
+`maxFiles`, `dedupe`, `onFiles`, `onReject`, `triggerLabel`,
+`triggerIcon`) have no effect in `'view'` mode, since there's no picker to
+disable or validate against. `required` is the one exception worth
+knowing about: it still renders its asterisk on the label even in view
+mode, which may look unusual on a read-only display — that's intentional,
+not a bug.
+
+`showFileList`'s self-rendered list always shows every file with status
+`"completed"` and no thumbnail, progress bar, error/retry affordance, or
+`onOpen` button — it's built for "already-attached, healthy files," not
+for tracking in-flight uploads. For that, render your own list of
+`UploadItem`s instead (see the `ItemList` story below for the pattern).
+`UploadItem`'s own `onOpen` prop is independent of `mode`, but it is a
+prop on `UploadItem` itself — `showFileList`'s self-rendered list does
+**not** wire it up. So combining `mode="view"` with `showFileList` to
+build a clickable/downloadable read-only attachment display won't make
+the names clickable; for that, render your own `UploadItem`s with `onOpen`
+rather than relying on `showFileList`.
 
 <Stories />
 
@@ -72,10 +106,11 @@ override always wins over the component defaults:
 
 ## Composition
 
-`Upload` forwards its ref to the dropzone `<div>` and `UploadItem` forwards
-its ref to its own row `<div>`; both spread the remaining native `<div>`
-attributes, so they compose with the rest of the library without a
-separate "as child" API. The dropzone's own interactive attributes
-(`role`, `tabIndex`, click/drag/keyboard handlers) are owned internally and
-excluded from the prop type — pass `id`, `aria-label`, `style`, etc. as
-usual.
+`Upload` forwards its ref to the dropzone in `'dropzone'` mode, or the
+outer wrapper `<div>` in `'button'`/`'icon'`/`'view'` mode, and
+`UploadItem` forwards its ref to its own row `<div>`; both spread the
+remaining native `<div>` attributes, so they compose with the rest of the
+library without a separate "as child" API. The dropzone's own interactive
+attributes (`role`, `tabIndex`, click/drag/keyboard handlers) are owned
+internally and excluded from the prop type — pass `id`, `aria-label`,
+`style`, etc. as usual.

@@ -3,7 +3,8 @@ import type { BaseProps } from '../../types';
 
 export type UnderConstructionSize = 'lg' | 'sm';
 
-export interface UnderConstructionProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'>, BaseProps {
+export interface UnderConstructionProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'title'>, BaseProps {
   size?: UnderConstructionSize;
   /** Defaults to "We'll be back soon" — pass a translated string for other locales. */
   title?: ReactNode;
