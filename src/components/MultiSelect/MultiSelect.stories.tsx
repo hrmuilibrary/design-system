@@ -50,10 +50,51 @@ const peopleOptions: MultiSelectOption[] = [
   },
 ];
 
+const groupedSkillOptions: MultiSelectOption[] = [
+  { value: 'js', label: 'JavaScript' },
+  { value: 'ts', label: 'TypeScript', group: 'Languages' },
+  { value: 'python', label: 'Python', group: 'Languages' },
+  { value: 'react', label: 'React', group: 'Frameworks' },
+  { value: 'vue', label: 'Vue', group: 'Frameworks' },
+];
+
 const idOptions: MultiSelectOption[] = [
   { value: 101, label: 'Ticket #101' },
   { value: 102, label: 'Ticket #102' },
   { value: 103, label: 'Ticket #103' },
+];
+
+const richLabelOptions: MultiSelectOption[] = [
+  {
+    value: 'urgent',
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-red-600" />
+        Urgent
+      </span>
+    ),
+    searchText: 'urgent',
+  },
+  {
+    value: 'normal',
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-brand-500" />
+        Normal
+      </span>
+    ),
+    searchText: 'normal',
+  },
+  {
+    value: 'low',
+    label: (
+      <span className="inline-flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-gray-400" />
+        Low priority
+      </span>
+    ),
+    searchText: 'low priority',
+  },
 ];
 
 const meta = {
@@ -75,6 +116,7 @@ const meta = {
     placeholder: 'Select teams…',
     size: 'md',
     disabled: false,
+    loading: false,
     error: false,
     searchable: true,
   },
@@ -155,6 +197,17 @@ export const Disabled: Story = {
     label: 'Teams',
     disabled: true,
   },
+};
+
+export const Loading: Story = {
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<(string | number)[]>([]);
+      return <MultiSelect {...args} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: { loading: true, label: 'Assignees' },
 };
 
 export const WithAvatarsAndBadges: Story = {
@@ -334,4 +387,27 @@ export const AllSizes: Story = {
     }
     return <Controlled />;
   },
+};
+
+export const Grouped: Story = {
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<(string | number)[]>([]);
+      return <MultiSelect {...args} options={groupedSkillOptions} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Skills' },
+};
+
+export const RichLabels: Story = {
+  name: 'Rich ReactNode labels with searchText',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<(string | number)[]>([]);
+      return <MultiSelect {...args} options={richLabelOptions} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Priority tags' },
 };

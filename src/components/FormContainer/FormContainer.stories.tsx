@@ -1,12 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import * as yup from 'yup';
 import { FormContainer } from './FormContainer';
 import { FormField } from '../FormField';
 import { Input } from '../Input';
+import { Button } from '../Button';
 
 const signInSchema = yup.object({
   email: yup.string().email('Enter a valid email address').required('Email is required'),
   password: yup.string().min(8, 'Must be at least 8 characters').required('Password is required'),
+});
+
+const emailSchemaEn = yup.object({
+  email: yup.string().email('Enter a valid email').required('Email is required'),
+});
+const emailSchemaEs = yup.object({
+  email: yup.string().email('Introduce un correo válido').required('El correo es obligatorio'),
 });
 
 const meta = {
@@ -39,4 +48,43 @@ export const SignIn: Story = {
       </FormContainer>
     </div>
   ),
+};
+
+export const RevalidateOnLocaleChange: Story = {
+  name: 'Revalidate on locale change',
+  render: () => {
+    function LocaleDemo() {
+      const [locale, setLocale] = useState<'en' | 'es'>('en');
+      return (
+        <div className="flex w-80 flex-col gap-3">
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant={locale === 'en' ? 'primary' : 'secondary'}
+              onClick={() => setLocale('en')}
+            >
+              EN
+            </Button>
+            <Button
+              size="sm"
+              variant={locale === 'es' ? 'primary' : 'secondary'}
+              onClick={() => setLocale('es')}
+            >
+              ES
+            </Button>
+          </div>
+          <FormContainer
+            validationSchema={locale === 'en' ? emailSchemaEn : emailSchemaEs}
+            defaultValues={{ email: '' }}
+            revalidateKey={locale}
+            onSubmit={() => {}}
+            buttons={[{ children: 'Submit', type: 'submit', variant: 'primary' }]}
+          >
+            <FormField name="email" render={(props) => <Input {...props} label="Email" />} />
+          </FormContainer>
+        </div>
+      );
+    }
+    return <LocaleDemo />;
+  },
 };

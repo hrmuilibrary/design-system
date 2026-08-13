@@ -23,9 +23,10 @@ keyboard/form/a11y behavior while looking however the design wants.
 ## RadioGroup
 
 `Radio` is almost always used inside a `RadioGroup`, which renders a
-`role="radiogroup"` container and provides `name`, `size`, and `disabled` to
-every `Radio` descendant via context — so those don't need to be repeated on
-each `Radio`. The group also owns the controlled/uncontrolled selection:
+`role="radiogroup"` container and provides `name`, `size`, `disabled`, and
+`error` to every `Radio` descendant via context — so those don't need to be
+repeated on each `Radio`. The group also owns the controlled/uncontrolled
+selection:
 pass `value`/`onChange` for a controlled group, or `defaultValue` for an
 uncontrolled one, and compare against each `Radio`'s own `value` prop.
 `value` accepts a `string`, `number`, or `boolean` — `boolean` is intended
@@ -42,8 +43,16 @@ const [value, setValue] = useState('comfortable');
 ```
 
 Pass `label` to render a heading above the group. It's additive-only — a
-`RadioGroup` without `label` renders exactly as before, with no extra
-wrapper element.
+`RadioGroup` without `label`, `errorText`, or `helperText` renders exactly
+as before, with no extra wrapper element.
+
+`required` adds a red asterisk next to `label` and sets `aria-required` on
+the group. `error`/`errorText` mark the group invalid and cascade to every
+child `Radio` — OR'd with each `Radio`'s own `error`, so an
+individually-errored `Radio` stays errored even in a valid group, and every
+`Radio` shows as errored when the group itself is. `errorText` renders below
+the group in the danger style and implies `error`; `helperText` renders the
+same way in a neutral style when there's no `errorText`.
 
 `orientation` (`'vertical'` default, or `'horizontal'`) controls the layout
 of the group's children. A `Radio` rendered outside any `RadioGroup` falls

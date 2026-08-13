@@ -1,9 +1,11 @@
-import { forwardRef, useState, type ReactNode } from 'react';
-import { User } from 'lucide-react';
+import { forwardRef, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Pencil, User } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { validateSingleFile } from '../Upload';
 import type { AvatarGroupProps, AvatarProps, AvatarSize, AvatarStatus } from './Avatar.types';
 
 const sizeStyles: Record<AvatarSize, string> = {
+  '2xs': 'h-5 w-5 text-p-xs',
   xs: 'h-6 w-6 text-p-xs',
   sm: 'h-8 w-8 text-p-sm',
   md: 'h-10 w-10 text-p-std',
@@ -13,6 +15,7 @@ const sizeStyles: Record<AvatarSize, string> = {
 };
 
 const statusSize: Record<AvatarSize, string> = {
+  '2xs': 'h-1 w-1',
   xs: 'h-1.5 w-1.5',
   sm: 'h-2 w-2',
   md: 'h-2.5 w-2.5',
@@ -29,12 +32,26 @@ const statusColor: Record<AvatarStatus, string> = {
 };
 
 const overlap: Record<AvatarSize, string> = {
+  '2xs': '-ml-1',
   xs: '-ml-1.5',
   sm: '-ml-2',
   md: '-ml-2.5',
   lg: '-ml-3',
   xl: '-ml-4',
   '2xl': '-ml-5',
+};
+
+// Mirrors the corner-overlay approach in NotificationBadge.tsx (opposite
+// corner) — no shared abstraction yet, but keep the two in sync if this
+// pattern changes.
+const editButtonSize: Record<AvatarSize, string> = {
+  '2xs': 'h-3 w-3',
+  xs: 'h-4 w-4',
+  sm: 'h-5 w-5',
+  md: 'h-6 w-6',
+  lg: 'h-7 w-7',
+  xl: 'h-8 w-8',
+  '2xl': 'h-9 w-9',
 };
 
 function getInitials(name: string): string {
@@ -55,11 +72,86 @@ function colorFromName(name: string): string {
 }
 
 export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
-  { src, alt, name, size = 'md', status, shape = 'circle', fallback, className, dataTestId, ...rest },
+  {
+    src,
+    alt,
+    name,
+    size = 'md',
+    status,
+    shape = 'circle',
+    fallback,
+    editable,
+    onImageChange,
+    accept,
+    maxSizeMB,
+    onReject,
+    className,
+    dataTestId,
+    ...rest
+  },
   ref,
 ) {
   const [errored, setErrored] = useState(false);
-  const showImage = !!src && !errored;
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const prevSrcRef = useRef(src);
+  // Tracks whatever object URL is currently "live" (i.e. the one the
+  // committed <img src> may be pointing at), independent of whether the
+  // effect below ever got to observe it. This lets a true unmount always
+  // revoke the right URL even if the parent tears Avatar down synchronously
+  // in response to onImageChange, before this render's effect had a chance
+  // to mount and register its own cleanup.
+  const liveUrlRef = useRef<string | null>(null);
+
+  // Replacement/unmount-while-mounted cleanup: relies on the closure
+  // capturing *this* effect instance's own previewUrl, not a ref read, so
+  // it stays correct even though handleFileChange also writes liveUrlRef
+  // synchronously on every pick (a ref-comparison approach would otherwise
+  // have its "stale" value clobbered by the very next pick before this
+  // effect gets a chance to read it).
+  useEffect(() => {
+    liveUrlRef.current = previewUrl;
+    if (!previewUrl) return;
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
+
+  // Catch-all for a true unmount when a freshly created URL never got a
+  // chance to commit via the effect above (e.g. the parent unmounts/replaces
+  // Avatar synchronously in response to onImageChange). Revoking the same
+  // URL twice (once here, once via the effect above) is harmless — it's a
+  // no-op on an already-revoked URL.
+  useEffect(
+    () => () => {
+      if (liveUrlRef.current) URL.revokeObjectURL(liveUrlRef.current);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (src !== prevSrcRef.current) {
+      prevSrcRef.current = src;
+      setPreviewUrl(null);
+      setErrored(false);
+    }
+  }, [src]);
+
+  const handleFileChange = (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+    const rejectionReason = validateSingleFile(file, { accept, maxSizeMB });
+    if (rejectionReason) {
+      onReject?.({ file, reason: rejectionReason });
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    liveUrlRef.current = url;
+    setPreviewUrl(url);
+    setErrored(false);
+    onImageChange?.(file);
+  };
+
+  const effectiveSrc = previewUrl ?? src;
+  const showImage = !!effectiveSrc && !errored;
   const initials = name ? getInitials(name) : '';
   const bgColor = name ? colorFromName(name) : 'bg-gray-300 dark:bg-gray-600';
 
@@ -80,7 +172,7 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
       >
         {showImage ? (
           <img
-            src={src}
+            src={effectiveSrc}
             alt={alt ?? name ?? ''}
             onError={() => setErrored(true)}
             className="h-full w-full object-cover"
@@ -95,11 +187,42 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
         <span
           aria-label={status}
           className={cn(
-            'absolute right-0 bottom-0 rounded-full ring-2 ring-white',
+            'absolute bottom-0 rounded-full ring-2 ring-white',
+            editable ? 'left-0' : 'right-0',
             statusSize[size],
             statusColor[status],
           )}
         />
+      )}
+      {editable && (
+        <>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              inputRef.current?.click();
+            }}
+            aria-label="Change avatar image"
+            className={cn(
+              'absolute right-0 bottom-0 inline-flex items-center justify-center rounded-full ring-2 ring-white bg-brand-500 text-white hover:bg-brand-600 transition-colors',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-1',
+              editButtonSize[size],
+            )}
+          >
+            <Pencil className="h-1/2 w-1/2" />
+          </button>
+          <input
+            ref={inputRef}
+            type="file"
+            accept={accept}
+            onChange={(event) => {
+              event.stopPropagation();
+              handleFileChange(event.target.files);
+              event.target.value = '';
+            }}
+            className="sr-only"
+          />
+        </>
       )}
     </span>
   );

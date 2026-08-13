@@ -60,6 +60,18 @@ export const Error: Story = {
   args: { error: true, label: 'You must accept the terms' },
 };
 
+export const Required: Story = {
+  args: { required: true, label: 'Accept terms and conditions' },
+};
+
+export const WithErrorText: Story = {
+  args: {
+    required: true,
+    label: 'Accept terms and conditions',
+    errorText: 'You must accept the terms to continue.',
+  },
+};
+
 export const NoLabel: Story = {
   args: { label: undefined, 'aria-label': 'Select row' },
 };

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Ghost } from 'lucide-react';
+import { useState } from 'react';
 import { Avatar, AvatarGroup } from './Avatar';
 
 const meta = {
@@ -13,7 +14,7 @@ const meta = {
   argTypes: {
     size: {
       control: 'select',
-      options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'],
+      options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'],
     },
     status: {
       control: 'select',
@@ -88,7 +89,7 @@ export const AllStatuses: Story = {
   ),
 };
 
-const SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const;
+const SIZES = ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const;
 
 export const AllSizes: Story = {
   render: (args) => (
@@ -108,6 +109,48 @@ export const CustomClassName: Story = {
   args: {
     name: 'Ada Lovelace',
     className: 'ring-2 ring-brand-500 ring-offset-2 rounded-full',
+  },
+};
+
+export const Editable: Story = {
+  name: 'Editable (upload overlay)',
+  render: () => (
+    <div className="flex items-end gap-4">
+      {(['2xs', 'xs', 'md', '2xl'] as const).map((s) => (
+        <Avatar
+          key={s}
+          size={s}
+          name="Ada Lovelace"
+          editable
+          onImageChange={(file) => window.alert(`Picked: ${file.name}`)}
+        />
+      ))}
+    </div>
+  ),
+};
+
+// `maxSizeMB={1}` needs a real file over 1 MB to see the rejection path —
+// there's no way to construct a synthetic oversized `File` here the way a
+// unit test could, so exercising this in the browser means manually
+// picking a file larger than 1 MB through the OS file dialog.
+export const EditableRejected: Story = {
+  name: 'Editable — oversized file rejected',
+  render: () => {
+    function EditableRejectedDemo() {
+      const [rejection, setRejection] = useState<string | null>(null);
+      return (
+        <div className="flex flex-col items-start gap-2">
+          <Avatar
+            name="Ada Lovelace"
+            editable
+            maxSizeMB={1}
+            onReject={(r) => setRejection(`Rejected "${r.file.name}" (${r.reason})`)}
+          />
+          {rejection && <p className="text-p-sm text-red-700">{rejection}</p>}
+        </div>
+      );
+    }
+    return <EditableRejectedDemo />;
   },
 };
 

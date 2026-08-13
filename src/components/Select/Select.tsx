@@ -12,6 +12,11 @@ const sizeStyles: Record<SelectSize, string> = {
   sm: 'h-8 text-p-sm px-2.5',
 };
 
+// Shared sizing so any icon a consumer passes (whatever its native size) renders
+// consistently next to the 16px Check mark and other icon slots.
+const ICON_SVG_SIZE = '[&_svg]:h-4 [&_svg]:w-4';
+const ICON_SLOT = cn('shrink-0 flex items-center justify-center', ICON_SVG_SIZE);
+
 function firstEnabledIndex(list: SelectOption[]) {
   return list.findIndex((o) => !o.disabled);
 }
@@ -58,6 +63,10 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const describedBy = errorText ? `${triggerId}-error` : helperText ? `${triggerId}-help` : undefined;
 
   const selectedOption = options.find((o) => isSameOptionValue(o.value, selected));
+
+  // Gated on the full `options` array (not `visibleOptions`) so the reserved
+  // column doesn't appear/disappear and reflow the list while searching.
+  const anyOptionHasIcon = useMemo(() => options.some((o) => o.icon != null), [options]);
 
   const visibleOptions = useMemo(() => {
     const q = searchable ? query.trim().toLowerCase() : '';
@@ -211,8 +220,13 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           className,
         )}
       >
-        <span className={cn('truncate', !selectedOption && 'text-fg-tertiary')}>
-          {selectedOption ? selectedOption.label : placeholder}
+        <span className="flex items-center gap-1.5 min-w-0">
+          {anyOptionHasIcon && selectedOption?.icon && (
+            <span className={ICON_SLOT}>{selectedOption.icon}</span>
+          )}
+          <span className={cn('truncate', !selectedOption && 'text-fg-tertiary')}>
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
         </span>
         {loading ? (
           <Loader2 className="h-4 w-4 ml-2 shrink-0 text-fg-secondary animate-spin" aria-hidden />
@@ -276,8 +290,23 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                         isSel && 'font-medium',
                       )}
                     >
-                      <span className="truncate">{opt.label}</span>
-                      {isSel && <Check className="h-4 w-4 text-brand-500 shrink-0" />}
+                      <span className="flex items-center gap-2 min-w-0">
+                        {anyOptionHasIcon && (
+                          // Reserved only when the array actually uses icons, so
+                          // icon-less Selects keep their original row width — see
+                          // MultiSelect.tsx's per-row conditional-avatar approach
+                          // for contrast (that one doesn't guarantee alignment;
+                          // this one does, but only within an icon-using Select).
+                          <span className={cn(ICON_SLOT, 'w-4')}>{opt.icon}</span>
+                        )}
+                        <span className="truncate">{opt.label}</span>
+                      </span>
+                      {(opt.rightIcon || isSel) && (
+                        <span className={cn('flex items-center gap-1.5 shrink-0', ICON_SVG_SIZE)}>
+                          {opt.rightIcon}
+                          {isSel && <Check className="h-4 w-4 text-brand-500 shrink-0" />}
+                        </span>
+                      )}
                     </li>
                   </Fragment>
                 );

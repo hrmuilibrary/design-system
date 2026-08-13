@@ -9,6 +9,13 @@ export interface UploadRejection {
   reason: UploadRejectionReason;
 }
 
+export interface FileValidationOptions {
+  /** Forwarded to `matchesAccept` — same semantics as `UploadProps.accept`. */
+  accept?: string;
+  /** Same semantics as `UploadProps.maxSizeMB`. */
+  maxSizeMB?: number;
+}
+
 export interface UploadProps
   extends Omit<
       HTMLAttributes<HTMLDivElement>,

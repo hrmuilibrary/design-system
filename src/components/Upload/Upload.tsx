@@ -11,7 +11,14 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { Button } from '../Button';
-import type { UploadItemProps, UploadItemStatus, UploadProps, UploadRejection } from './Upload.types';
+import type {
+  FileValidationOptions,
+  UploadItemProps,
+  UploadItemStatus,
+  UploadProps,
+  UploadRejection,
+  UploadRejectionReason,
+} from './Upload.types';
 
 function matchesAccept(file: File, accept: string): boolean {
   const patterns = accept
@@ -101,12 +108,9 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
         rejections.push({ file, reason: 'duplicate' });
         continue;
       }
-      if (accept && !matchesAccept(file, accept)) {
-        rejections.push({ file, reason: 'type' });
-        continue;
-      }
-      if (maxSizeMB !== undefined && file.size > maxSizeMB * 1024 * 1024) {
-        rejections.push({ file, reason: 'size' });
+      const rejectionReason = validateSingleFile(file, { accept, maxSizeMB });
+      if (rejectionReason) {
+        rejections.push({ file, reason: rejectionReason });
         continue;
       }
       if (remainingSlots <= 0) {

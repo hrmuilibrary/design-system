@@ -270,6 +270,38 @@ export const ExternalAnchor: Story = {
   },
 };
 
+export const ExternalAnchorState: Story = {
+  name: 'External anchor (useState)',
+  render: () => {
+    function ExternalAnchorStateExample() {
+      const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+      const [open, setOpen] = useState(false);
+      return (
+        <div className="flex items-center gap-3">
+          <div
+            ref={setAnchorEl}
+            className="rounded-lg border border-dashed border-border-strong px-3 py-2 text-p-sm text-fg-secondary"
+          >
+            Anchor element
+          </div>
+          <DropdownMenu open={open} onOpenChange={setOpen} anchorRef={anchorEl}>
+            <DropdownTrigger>
+              <Button variant="secondary" onClick={() => setOpen((v) => !v)}>
+                Toggle menu
+              </Button>
+            </DropdownTrigger>
+            <DropdownContent>
+              <DropdownItem onSelect={() => setOpen(false)}>Edit</DropdownItem>
+              <DropdownItem onSelect={() => setOpen(false)}>Duplicate</DropdownItem>
+            </DropdownContent>
+          </DropdownMenu>
+        </div>
+      );
+    }
+    return <ExternalAnchorStateExample />;
+  },
+};
+
 export const ItemsWithMeta: Story = {
   name: 'Items with meta',
   render: () => (

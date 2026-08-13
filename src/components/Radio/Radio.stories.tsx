@@ -176,6 +176,44 @@ export const GroupWithLabel: Story = {
   },
 };
 
+export const GroupRequired: Story = {
+  name: 'Group required',
+  render: () => (
+    <RadioGroup name="required-density" label="Density" required>
+      <Radio value="compact" label="Compact" />
+      <Radio value="comfortable" label="Comfortable" />
+      <Radio value="spacious" label="Spacious" />
+    </RadioGroup>
+  ),
+};
+
+export const GroupHelperText: Story = {
+  name: 'Group with helper text',
+  render: () => (
+    <RadioGroup name="helper-density" label="Density" helperText="Choose the layout density for your workspace.">
+      <Radio value="compact" label="Compact" />
+      <Radio value="comfortable" label="Comfortable" />
+      <Radio value="spacious" label="Spacious" />
+    </RadioGroup>
+  ),
+};
+
+export const GroupError: Story = {
+  name: 'Group error state',
+  render: () => (
+    <RadioGroup
+      name="error-density"
+      label="Density"
+      required
+      errorText="Choose a density to continue."
+    >
+      <Radio value="compact" label="Compact" />
+      <Radio value="comfortable" label="Comfortable" />
+      <Radio value="spacious" label="Spacious" />
+    </RadioGroup>
+  ),
+};
+
 export const GroupNumericValues: Story = {
   name: 'Group with numeric values',
   render: () => {
