@@ -190,7 +190,11 @@ export const GroupRequired: Story = {
 export const GroupHelperText: Story = {
   name: 'Group with helper text',
   render: () => (
-    <RadioGroup name="helper-density" label="Density" helperText="Choose the layout density for your workspace.">
+    <RadioGroup
+      name="helper-density"
+      label="Density"
+      helperText="Choose the layout density for your workspace."
+    >
       <Radio value="compact" label="Compact" />
       <Radio value="comfortable" label="Comfortable" />
       <Radio value="spacious" label="Spacious" />

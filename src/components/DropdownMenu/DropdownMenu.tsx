@@ -178,7 +178,9 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
     useEffect(() => {
       if (!open) return;
       const raf = requestAnimationFrame(() => {
-        const first = contentRef.current?.querySelector<HTMLElement>('[role="menuitem"]:not(:disabled)');
+        const first = contentRef.current?.querySelector<HTMLElement>(
+          '[role="menuitem"]:not(:disabled)',
+        );
         first?.focus();
       });
       return () => cancelAnimationFrame(raf);
@@ -219,7 +221,8 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
         style={strategy === 'fixed' ? style : undefined}
         className={cn(
           panelBaseClass,
-          strategy === 'absolute' && cn('absolute top-full mt-1', align === 'end' ? 'right-0' : 'left-0'),
+          strategy === 'absolute' &&
+            cn('absolute top-full mt-1', align === 'end' ? 'right-0' : 'left-0'),
           className,
         )}
         {...rest}
@@ -273,14 +276,18 @@ export const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(fun
       {...rest}
     >
       {checked !== undefined && (
-        <span className="w-4 shrink-0">{checked && <Check className="h-4 w-4 text-brand-500" />}</span>
+        <span className="w-4 shrink-0">
+          {checked && <Check className="h-4 w-4 text-brand-500" />}
+        </span>
       )}
       {icon && <span className="inline-flex shrink-0 text-fg-secondary">{icon}</span>}
       <span className="flex-1 min-w-0 text-left">
         <span className="block truncate">{children}</span>
         {meta && <span className="block truncate text-p-sm text-fg-tertiary">{meta}</span>}
       </span>
-      {shortcut && <span className="text-p-sm text-fg-tertiary shrink-0 tabular-nums">{shortcut}</span>}
+      {shortcut && (
+        <span className="text-p-sm text-fg-tertiary shrink-0 tabular-nums">{shortcut}</span>
+      )}
     </button>
   );
 });

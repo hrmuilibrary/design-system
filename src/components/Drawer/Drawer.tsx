@@ -116,7 +116,8 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
           sideClasses[side],
           isHorizontal ? `${sizeCls} h-full max-w-full` : `${sizeCls} w-full max-h-full`,
           'border-border-default',
-          animated && 'transition-transform duration-300 ease-out motion-reduce:transition-none will-change-transform',
+          animated &&
+            'transition-transform duration-300 ease-out motion-reduce:transition-none will-change-transform',
           shown ? 'translate-x-0 translate-y-0' : offscreenClasses[side],
           className,
         )}

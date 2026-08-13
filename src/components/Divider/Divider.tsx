@@ -25,7 +25,14 @@ const colorStyles: Record<DividerColor, string> = {
 };
 
 export const Divider = forwardRef<HTMLDivElement, DividerProps>(function Divider(
-  { orientation = 'horizontal', variant = 'solid', color = 'default', className, dataTestId, ...rest },
+  {
+    orientation = 'horizontal',
+    variant = 'solid',
+    color = 'default',
+    className,
+    dataTestId,
+    ...rest
+  },
   ref,
 ) {
   return (

@@ -7,3 +7,4 @@ export { useIsMobile } from './useIsMobile';
 export { useFormContext } from './useFormContext';
 export { useFormProps } from './useFormProps';
 export type { FormContextValue } from '../lib/FormContext';
+export { useFieldArray } from 'react-hook-form';

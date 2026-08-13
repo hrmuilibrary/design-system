@@ -18,7 +18,7 @@ parallel representations that **must be kept in sync by hand**:
 1. **CSS custom properties** — `src/styles/tokens.css` and
    `src/styles/theme.css`, both using Tailwind v4's `@theme { ... }`
    directive. Declaring a variable inside `@theme` both registers the CSS
-   custom property *and* auto-generates the matching utility class (e.g.
+   custom property _and_ auto-generates the matching utility class (e.g.
    `--color-brand-500` inside `@theme` gives you `bg-brand-500`,
    `text-brand-500`, etc. for free) — no extra `@theme inline` mapping layer
    needed.
@@ -27,12 +27,12 @@ parallel representations that **must be kept in sync by hand**:
      one `@theme` block.
    - `theme.css` — semantic aliases (`bg-default`, `fg-secondary`,
      `border-brand`, `icon-danger`, ...) inside `@theme`, plus a `.dark {
-     ... }` block that reassigns the same custom property names. Dark mode
+... }` block that reassigns the same custom property names. Dark mode
      works because Tailwind utilities always read the variable at point of
      use, not at declaration time.
    - `globals.css` — the entry point. Imports Tailwind, then `tokens.css`,
      then `theme.css`, declares `@custom-variant dark (&:where(.dark, .dark
-     *));` (class-based dark mode, not `prefers-color-scheme`), and a
+*));` (class-based dark mode, not `prefers-color-scheme`), and a
      minimal `@layer base` for `border-color`/`background`/`color`/
      `font-family` defaults.
 2. **JS/TS token objects** — `src/tokens/*.ts` (`colors`, `typography`,
@@ -142,7 +142,7 @@ Tailwind v4's utility generation from `@theme` blocks can fail silently on
 a malformed variable name, so a clean CSS build is not optional
 verification.
 
-Note: Tailwind is *not* run over component source during the library
+Note: Tailwind is _not_ run over component source during the library
 build — `vite.lib.config.ts` ships raw utility class strings so consumer
 apps can override them freely. Only `build:css` (a separate Tailwind CLI
 invocation over `globals.css`) produces the distributable `dist/styles.css`

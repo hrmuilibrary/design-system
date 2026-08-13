@@ -31,7 +31,11 @@ const weatherOptions: SelectOption[] = [
   { value: 'sunny', label: 'Sunny', icon: <Sun className="text-yellow-500" /> },
   { value: 'cloudy', label: 'Cloudy', icon: <Cloud className="text-fg-secondary" /> },
   { value: 'calm', label: 'Calm (no icon)' },
-  { value: 'windy', label: 'Windy', rightIcon: <span className="text-p-xs text-fg-tertiary">32 km/h</span> },
+  {
+    value: 'windy',
+    label: 'Windy',
+    rightIcon: <span className="text-p-xs text-fg-tertiary">32 km/h</span>,
+  },
 ];
 
 const meta = {
@@ -148,7 +152,11 @@ export const WithLabelAddons: Story = {
     label: 'Favorite fruit',
     labelAddons: (
       <Tooltip content="This affects the suggestions on your dashboard.">
-        <button type="button" aria-label="More info" className="text-fg-tertiary hover:text-fg-default">
+        <button
+          type="button"
+          aria-label="More info"
+          className="text-fg-tertiary hover:text-fg-default"
+        >
           <Info className="h-3.5 w-3.5" />
         </button>
       </Tooltip>

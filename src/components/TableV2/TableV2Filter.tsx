@@ -11,7 +11,9 @@ export interface TableV2ColumnFilterProps<TData, TValue> {
  * `column.columnDef.meta.filterVariant`. Columns without a `filterVariant`
  * render nothing, leaving their filter cell empty.
  */
-export function TableV2ColumnFilter<TData, TValue>({ column }: TableV2ColumnFilterProps<TData, TValue>) {
+export function TableV2ColumnFilter<TData, TValue>({
+  column,
+}: TableV2ColumnFilterProps<TData, TValue>) {
   const variant = column.columnDef.meta?.filterVariant;
   if (!variant) return null;
 

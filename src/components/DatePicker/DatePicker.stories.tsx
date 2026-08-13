@@ -92,7 +92,15 @@ export const MinMaxDates: Story = {
       const today = new Date();
       const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14);
-      return <DatePicker {...args} value={value} onChange={setValue} minDate={minDate} maxDate={maxDate} />;
+      return (
+        <DatePicker
+          {...args}
+          value={value}
+          onChange={setValue}
+          minDate={minDate}
+          maxDate={maxDate}
+        />
+      );
     }
     return <MinMaxDemo />;
   },

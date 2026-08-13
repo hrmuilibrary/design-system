@@ -42,11 +42,19 @@ export const Breadcrumb = forwardRef<HTMLElement, BreadcrumbProps>(function Brea
                 ) : item.disabled ? (
                   <span className="cursor-not-allowed text-fg-disabled">{item.label}</span>
                 ) : item.href ? (
-                  <a href={item.href} onClick={() => onSelect?.(item.value)} className={crumbLinkClass}>
+                  <a
+                    href={item.href}
+                    onClick={() => onSelect?.(item.value)}
+                    className={crumbLinkClass}
+                  >
                     {item.label}
                   </a>
                 ) : (
-                  <button type="button" onClick={() => onSelect?.(item.value)} className={crumbLinkClass}>
+                  <button
+                    type="button"
+                    onClick={() => onSelect?.(item.value)}
+                    className={crumbLinkClass}
+                  >
                     {item.label}
                   </button>
                 )}

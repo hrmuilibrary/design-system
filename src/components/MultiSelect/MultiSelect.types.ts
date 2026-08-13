@@ -61,5 +61,5 @@ export interface MultiSelectProps extends BaseProps {
   wrapperClassName?: string;
   /** Shows a spinner in the trailing edge of the chip row and blocks opening the dropdown. Does not set the native `disabled` attribute. */
   loading?: boolean;
-  language?: string
+  language?: string;
 }

@@ -52,7 +52,7 @@ const [value, setValue] = useState('profile');
   </TabList>
   <TabPanel value="profile">...</TabPanel>
   <TabPanel value="billing">...</TabPanel>
-</Tabs>
+</Tabs>;
 ```
 
 ## Variants
@@ -77,13 +77,17 @@ render it through `Badge` instead with full styling control.
 
 `rightIcon` renders a second, independent button after the label — e.g. a
 close (X) button — with its own `onRightIconClick(value)` handler and
-`rightIconLabel` accessible name. It's rendered as a *sibling* of the tab
+`rightIconLabel` accessible name. It's rendered as a _sibling_ of the tab
 button rather than nested inside it (nesting a `<button>` inside another
 `<button>` is invalid HTML), so clicking it never also activates the tab.
 
 ```tsx
-<Tab value="report-1" rightIcon={<X className="size-3.5" />} rightIconLabel="Close"
-  onRightIconClick={(value) => closeTab(value)}>
+<Tab
+  value="report-1"
+  rightIcon={<X className="size-3.5" />}
+  rightIconLabel="Close"
+  onRightIconClick={(value) => closeTab(value)}
+>
   Q1 Report
 </Tab>
 ```

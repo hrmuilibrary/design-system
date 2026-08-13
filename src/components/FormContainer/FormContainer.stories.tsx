@@ -42,9 +42,14 @@ export const SignIn: Story = {
       >
         <FormField
           name="email"
-          render={(props) => <Input {...props} label="Email" type="email" placeholder="you@example.com" />}
+          render={(props) => (
+            <Input {...props} label="Email" type="email" placeholder="you@example.com" />
+          )}
         />
-        <FormField name="password" render={(props) => <Input {...props} label="Password" type="password" />} />
+        <FormField
+          name="password"
+          render={(props) => <Input {...props} label="Password" type="password" />}
+        />
       </FormContainer>
     </div>
   ),

@@ -51,7 +51,12 @@ export function TableV2Toolbar<TData>({
           />
         )}
         {onExport && (
-          <Button variant="secondary" size="sm" leftIcon={<Download className="h-4 w-4" />} onClick={onExport}>
+          <Button
+            variant="secondary"
+            size="sm"
+            leftIcon={<Download className="h-4 w-4" />}
+            onClick={onExport}
+          >
             Export
           </Button>
         )}

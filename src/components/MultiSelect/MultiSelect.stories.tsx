@@ -300,7 +300,11 @@ export const WithLabelAddons: Story = {
     label: 'Teams',
     labelAddons: (
       <Tooltip content="Teams determine who gets notified about this project.">
-        <button type="button" aria-label="More info" className="text-fg-tertiary hover:text-fg-default">
+        <button
+          type="button"
+          aria-label="More info"
+          className="text-fg-tertiary hover:text-fg-default"
+        >
           <Info className="h-3.5 w-3.5" />
         </button>
       </Tooltip>
@@ -380,7 +384,14 @@ export const AllSizes: Story = {
       return (
         <div className="flex flex-col gap-4">
           {SIZES.map((size) => (
-            <MultiSelect key={size} {...args} size={size} value={value} onChange={setValue} label={size} />
+            <MultiSelect
+              key={size}
+              {...args}
+              size={size}
+              value={value}
+              onChange={setValue}
+              label={size}
+            />
           ))}
         </div>
       );
@@ -393,7 +404,9 @@ export const Grouped: Story = {
   render: (args) => {
     function Controlled() {
       const [value, setValue] = useState<(string | number)[]>([]);
-      return <MultiSelect {...args} options={groupedSkillOptions} value={value} onChange={setValue} />;
+      return (
+        <MultiSelect {...args} options={groupedSkillOptions} value={value} onChange={setValue} />
+      );
     }
     return <Controlled />;
   },

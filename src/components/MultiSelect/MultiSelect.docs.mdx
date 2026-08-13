@@ -28,7 +28,7 @@ of option values, `string | number`) and `onChange` are both required:
 
 ```tsx
 const [value, setValue] = useState<(string | number)[]>([]);
-<MultiSelect options={options} value={value} onChange={setValue} />
+<MultiSelect options={options} value={value} onChange={setValue} />;
 ```
 
 ## Options
@@ -39,12 +39,12 @@ Each `MultiSelectOption` is data-agnostic:
 interface MultiSelectOption {
   value: string | number;
   label: ReactNode;
-  searchText?: string;   // matched against when label isn't a plain string
+  searchText?: string; // matched against when label isn't a plain string
   description?: string; // second line in the dropdown row
-  avatarSrc?: string;    // shown on the chip and the dropdown row
-  disabled?: boolean;    // non-selectable, dimmed
-  badge?: ReactNode;     // small tag on the chip, e.g. "You"
-  group?: string;        // heading this option renders under
+  avatarSrc?: string; // shown on the chip and the dropdown row
+  disabled?: boolean; // non-selectable, dimmed
+  badge?: ReactNode; // small tag on the chip, e.g. "You"
+  group?: string; // heading this option renders under
 }
 ```
 

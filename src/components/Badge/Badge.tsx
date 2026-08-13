@@ -159,7 +159,11 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     >
       {withDot ? (
         <span
-          className={cn('inline-block shrink-0 rounded-full', dotSizeStyles[size], accentStyles[variant])}
+          className={cn(
+            'inline-block shrink-0 rounded-full',
+            dotSizeStyles[size],
+            accentStyles[variant],
+          )}
           aria-hidden
         />
       ) : (

@@ -27,13 +27,24 @@ import { cn } from '../../lib/cn';
 import { Empty } from '../Empty';
 import { InlineAlert } from '../InlineAlert';
 import { Skeleton } from '../Skeleton';
-import { DropdownContent, DropdownItem, DropdownMenu, DropdownSeparator, DropdownTrigger } from '../DropdownMenu';
+import {
+  DropdownContent,
+  DropdownItem,
+  DropdownMenu,
+  DropdownSeparator,
+  DropdownTrigger,
+} from '../DropdownMenu';
 import { TableV2ColumnFilter } from './TableV2Filter';
 import { TableV2Pagination } from './TableV2Pagination';
 import { TableV2Skeleton } from './TableV2Skeleton';
 import { TableV2Toolbar } from './TableV2Toolbar';
 import { useColumnOrderDnd, useDraggableColumn } from './useTableV2ColumnDnd';
-import { alignStyles, createSelectionColumn, densityStyles, getPinnedStyles } from './TableV2.utils';
+import {
+  alignStyles,
+  createSelectionColumn,
+  densityStyles,
+  getPinnedStyles,
+} from './TableV2.utils';
 import type { TableV2Props } from './TableV2.types';
 
 function useControllableState<T>(
@@ -44,7 +55,9 @@ function useControllableState<T>(
   const [internal, setInternal] = useState(initial);
   const value = controlledValue !== undefined ? controlledValue : internal;
   const handleChange: OnChangeFn<T> = (updater) => {
-    setInternal((old) => (typeof updater === 'function' ? (updater as (old: T) => T)(old) : updater));
+    setInternal((old) =>
+      typeof updater === 'function' ? (updater as (old: T) => T)(old) : updater,
+    );
     onChange?.(updater);
   };
   return [value, handleChange];
@@ -79,7 +92,9 @@ function HeaderCell<TData, TValue>({
   const drag = useDraggableColumn(column.id);
   const align = column.columnDef.meta?.align ?? 'left';
   const sortDir = column.getIsSorted();
-  const canShowMenu = !isStructural && ((enablePinning && column.getCanPin()) || (enableColumnVisibility && column.getCanHide()));
+  const canShowMenu =
+    !isStructural &&
+    ((enablePinning && column.getCanPin()) || (enableColumnVisibility && column.getCanHide()));
 
   const label = flexRender(column.columnDef.header, header.getContext());
 
@@ -149,27 +164,40 @@ function HeaderCell<TData, TValue>({
               {enablePinning && column.getCanPin() && (
                 <>
                   {column.getIsPinned() !== 'left' && (
-                    <DropdownItem icon={<Pin className="h-4 w-4" />} onSelect={() => column.pin('left')}>
+                    <DropdownItem
+                      icon={<Pin className="h-4 w-4" />}
+                      onSelect={() => column.pin('left')}
+                    >
                       Pin left
                     </DropdownItem>
                   )}
                   {column.getIsPinned() !== 'right' && (
-                    <DropdownItem icon={<Pin className="h-4 w-4" />} onSelect={() => column.pin('right')}>
+                    <DropdownItem
+                      icon={<Pin className="h-4 w-4" />}
+                      onSelect={() => column.pin('right')}
+                    >
                       Pin right
                     </DropdownItem>
                   )}
                   {column.getIsPinned() && (
-                    <DropdownItem icon={<PinOff className="h-4 w-4" />} onSelect={() => column.pin(false)}>
+                    <DropdownItem
+                      icon={<PinOff className="h-4 w-4" />}
+                      onSelect={() => column.pin(false)}
+                    >
                       Unpin
                     </DropdownItem>
                   )}
                 </>
               )}
-              {enablePinning && column.getCanPin() && enableColumnVisibility && column.getCanHide() && (
-                <DropdownSeparator />
-              )}
+              {enablePinning &&
+                column.getCanPin() &&
+                enableColumnVisibility &&
+                column.getCanHide() && <DropdownSeparator />}
               {enableColumnVisibility && column.getCanHide() && (
-                <DropdownItem icon={<EyeOff className="h-4 w-4" />} onSelect={() => column.toggleVisibility(false)}>
+                <DropdownItem
+                  icon={<EyeOff className="h-4 w-4" />}
+                  onSelect={() => column.toggleVisibility(false)}
+                >
                   Hide column
                 </DropdownItem>
               )}
@@ -207,7 +235,9 @@ function MobileRow<TData>({
   const leadCell = cells.find((cell) => !STRUCTURAL_COLUMN_IDS.has(cell.column.id));
   const selectCell = cells.find((cell) => cell.column.id === 'select');
   const actionsCell = cells.find((cell) => cell.column.id === 'actions');
-  const detailCells = cells.filter((cell) => cell !== leadCell && !STRUCTURAL_COLUMN_IDS.has(cell.column.id));
+  const detailCells = cells.filter(
+    (cell) => cell !== leadCell && !STRUCTURAL_COLUMN_IDS.has(cell.column.id),
+  );
 
   return (
     <div
@@ -253,7 +283,11 @@ function MobileSkeleton({ rowCount }: { rowCount: number }) {
   return (
     <div>
       {Array.from({ length: rowCount }, (_, index) => (
-        <div key={index} aria-hidden={index > 0 || undefined} className="flex flex-col gap-2 border-b border-border-default p-4">
+        <div
+          key={index}
+          aria-hidden={index > 0 || undefined}
+          className="flex flex-col gap-2 border-b border-border-default p-4"
+        >
           <Skeleton variant="text" width="60%" />
           <Skeleton variant="text" width="90%" />
         </div>
@@ -324,17 +358,49 @@ function TableV2Inner<TData, TValue = unknown>(
     dataTestId,
   } = props;
 
-  const [sorting, onSortingChange] = useControllableState(controlledSorting, onSortingChangeProp, []);
-  const [columnFilters, onColumnFiltersChange] = useControllableState(controlledColumnFilters, onColumnFiltersChangeProp, []);
-  const [globalFilter, onGlobalFilterChange] = useControllableState(controlledGlobalFilter, onGlobalFilterChangeProp, '');
-  const [rowSelection, onRowSelectionChange] = useControllableState(controlledRowSelection, onRowSelectionChangeProp, {});
-  const [columnVisibility, onColumnVisibilityChange] = useControllableState(controlledColumnVisibility, onColumnVisibilityChangeProp, {});
-  const [columnOrder, onColumnOrderChange] = useControllableState(controlledColumnOrder, onColumnOrderChangeProp, []);
-  const [columnPinning, onColumnPinningChange] = useControllableState(controlledColumnPinning, onColumnPinningChangeProp, {});
-  const [pagination, onPaginationChange] = useControllableState(controlledPagination, onPaginationChangeProp, {
-    pageIndex: 0,
-    pageSize,
-  });
+  const [sorting, onSortingChange] = useControllableState(
+    controlledSorting,
+    onSortingChangeProp,
+    [],
+  );
+  const [columnFilters, onColumnFiltersChange] = useControllableState(
+    controlledColumnFilters,
+    onColumnFiltersChangeProp,
+    [],
+  );
+  const [globalFilter, onGlobalFilterChange] = useControllableState(
+    controlledGlobalFilter,
+    onGlobalFilterChangeProp,
+    '',
+  );
+  const [rowSelection, onRowSelectionChange] = useControllableState(
+    controlledRowSelection,
+    onRowSelectionChangeProp,
+    {},
+  );
+  const [columnVisibility, onColumnVisibilityChange] = useControllableState(
+    controlledColumnVisibility,
+    onColumnVisibilityChangeProp,
+    {},
+  );
+  const [columnOrder, onColumnOrderChange] = useControllableState(
+    controlledColumnOrder,
+    onColumnOrderChangeProp,
+    [],
+  );
+  const [columnPinning, onColumnPinningChange] = useControllableState(
+    controlledColumnPinning,
+    onColumnPinningChangeProp,
+    {},
+  );
+  const [pagination, onPaginationChange] = useControllableState(
+    controlledPagination,
+    onPaginationChangeProp,
+    {
+      pageIndex: 0,
+      pageSize,
+    },
+  );
 
   const resolvedColumns = useMemo(() => {
     if (!enableRowSelection || columns.some((column) => column.id === 'select')) return columns;
@@ -386,7 +452,8 @@ function TableV2Inner<TData, TValue = unknown>(
   const leafColumnCount = table.getVisibleLeafColumns().length;
 
   const currentColumnOrder = useMemo(
-    () => (columnOrder.length > 0 ? columnOrder : table.getAllLeafColumns().map((column) => column.id)),
+    () =>
+      columnOrder.length > 0 ? columnOrder : table.getAllLeafColumns().map((column) => column.id),
     [columnOrder, table],
   );
 
@@ -465,7 +532,9 @@ function TableV2Inner<TData, TValue = unknown>(
           stickyHeader && 'sticky top-0 z-10',
         )}
       >
-        {table.getHeaderGroups().map((headerGroup) => headerRow(headerGroup.id, headerGroup.headers))}
+        {table
+          .getHeaderGroups()
+          .map((headerGroup) => headerRow(headerGroup.id, headerGroup.headers))}
       </thead>
       <tbody>
         {loading ? (
@@ -504,19 +573,25 @@ function TableV2Inner<TData, TValue = unknown>(
     <div
       ref={ref}
       data-test-id={dataTestId}
-      className={cn('w-full rounded-lg border border-border-default bg-bg-default', wrapperClassName, className)}
-    >
-      {toolbar === false ? null : toolbar ?? (
-        <TableV2Toolbar
-          table={table}
-          enableGlobalFilter={enableGlobalFilter}
-          enableColumnVisibility={enableColumnVisibility}
-          searchPlaceholder={searchPlaceholder}
-          onRefresh={onRefresh}
-          onExport={onExport}
-          actions={toolbarActions}
-        />
+      className={cn(
+        'w-full rounded-lg border border-border-default bg-bg-default',
+        wrapperClassName,
+        className,
       )}
+    >
+      {toolbar === false
+        ? null
+        : (toolbar ?? (
+            <TableV2Toolbar
+              table={table}
+              enableGlobalFilter={enableGlobalFilter}
+              enableColumnVisibility={enableColumnVisibility}
+              searchPlaceholder={searchPlaceholder}
+              onRefresh={onRefresh}
+              onExport={onExport}
+              actions={toolbarActions}
+            />
+          ))}
 
       {error ? (
         <div className="p-4">
@@ -527,8 +602,10 @@ function TableV2Inner<TData, TValue = unknown>(
           <div className="hidden md:block">
             <div
               ref={scrollContainerRef}
-              className="w-full overflow-auto"
-              style={enableVirtualization ? { maxHeight: maxBodyHeight } : undefined}
+              className="w-full overflow-auto rounded-b-lg"
+              style={
+                enableVirtualization || stickyHeader ? { maxHeight: maxBodyHeight } : undefined
+              }
             >
               {enableColumnOrdering ? (
                 <DndContext
@@ -537,7 +614,10 @@ function TableV2Inner<TData, TValue = unknown>(
                   modifiers={dnd.modifiers}
                   onDragEnd={handleDragEnd}
                 >
-                  <SortableContext items={currentColumnOrder} strategy={horizontalListSortingStrategy}>
+                  <SortableContext
+                    items={currentColumnOrder}
+                    strategy={horizontalListSortingStrategy}
+                  >
                     {tableEl}
                   </SortableContext>
                 </DndContext>
@@ -559,7 +639,9 @@ function TableV2Inner<TData, TValue = unknown>(
         </>
       )}
 
-      {enablePagination && !error && <TableV2Pagination table={table} pageSizeOptions={pageSizeOptions} />}
+      {enablePagination && !error && (
+        <TableV2Pagination table={table} pageSizeOptions={pageSizeOptions} />
+      )}
     </div>
   );
 }

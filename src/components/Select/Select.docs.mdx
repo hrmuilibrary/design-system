@@ -30,11 +30,11 @@ checking whether `value !== undefined`.
 
 ```tsx
 // Uncontrolled
-<Select options={options} defaultValue="apple" />
+<Select options={options} defaultValue="apple" />;
 
 // Controlled
 const [value, setValue] = useState('apple');
-<Select options={options} value={value} onChange={setValue} />
+<Select options={options} value={value} onChange={setValue} />;
 ```
 
 ## Validation state

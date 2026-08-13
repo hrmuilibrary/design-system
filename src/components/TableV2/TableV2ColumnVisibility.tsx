@@ -14,7 +14,9 @@ function columnLabel<TData>(column: ReturnType<Table<TData>['getAllLeafColumns']
 }
 
 /** Dropdown letting users toggle which columns are visible. Skips columns marked `enableHiding: false`. */
-export function TableV2ColumnVisibilityMenu<TData>({ table }: TableV2ColumnVisibilityMenuProps<TData>) {
+export function TableV2ColumnVisibilityMenu<TData>({
+  table,
+}: TableV2ColumnVisibilityMenuProps<TData>) {
   const columns = table.getAllLeafColumns().filter((column) => column.getCanHide());
 
   return (

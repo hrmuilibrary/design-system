@@ -16,9 +16,11 @@ const sidePosition: Record<TooltipSide, string> = {
 
 const arrowPosition: Record<TooltipSide, string> = {
   top: 'top-full left-1/2 -translate-x-1/2 border-t-fg-default border-x-transparent border-b-transparent',
-  bottom: 'bottom-full left-1/2 -translate-x-1/2 border-b-fg-default border-x-transparent border-t-transparent',
+  bottom:
+    'bottom-full left-1/2 -translate-x-1/2 border-b-fg-default border-x-transparent border-t-transparent',
   left: 'left-full top-1/2 -translate-y-1/2 border-l-fg-default border-y-transparent border-r-transparent',
-  right: 'right-full top-1/2 -translate-y-1/2 border-r-fg-default border-y-transparent border-l-transparent',
+  right:
+    'right-full top-1/2 -translate-y-1/2 border-r-fg-default border-y-transparent border-l-transparent',
 };
 
 export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Tooltip(

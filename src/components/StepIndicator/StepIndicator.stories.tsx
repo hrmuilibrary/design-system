@@ -130,7 +130,11 @@ export const NumericValues: Story = {
           {...args}
           steps={[
             { value: 1, label: 'Step 1', status: active === 1 ? 'active' : 'completed' },
-            { value: 2, label: 'Step 2', status: active === 2 ? 'active' : active > 2 ? 'completed' : 'upcoming' },
+            {
+              value: 2,
+              label: 'Step 2',
+              status: active === 2 ? 'active' : active > 2 ? 'completed' : 'upcoming',
+            },
             { value: 3, label: 'Step 3', status: active === 3 ? 'active' : 'upcoming' },
           ]}
           activeValue={active}

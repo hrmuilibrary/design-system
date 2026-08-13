@@ -32,11 +32,11 @@ the two sets of props.
 ```tsx
 // Single date
 const [value, setValue] = useState<Date | null>(null);
-<DatePicker value={value} onChange={setValue} />
+<DatePicker value={value} onChange={setValue} />;
 
 // Range
 const [range, setRange] = useState<DateRange>({ start: null, end: null });
-<DatePicker range rangeValue={range} onChangeRange={setRange} />
+<DatePicker range rangeValue={range} onChangeRange={setRange} />;
 ```
 
 In range mode, the first click sets `start`, the second sets `end` (dates

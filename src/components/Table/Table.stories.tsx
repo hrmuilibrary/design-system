@@ -12,11 +12,41 @@ interface Person {
 }
 
 const people: Person[] = [
-  { id: '1', name: 'Ana Petrosyan', role: 'Engineering Manager', department: 'Engineering', status: 'Active' },
-  { id: '2', name: 'Davit Sargsyan', role: 'Product Designer', department: 'Design', status: 'Active' },
-  { id: '3', name: 'Lilit Hovhannisyan', role: 'Recruiter', department: 'People', status: 'On leave' },
-  { id: '4', name: 'Narek Grigoryan', role: 'Backend Engineer', department: 'Engineering', status: 'Active' },
-  { id: '5', name: 'Mariam Avetisyan', role: 'Finance Analyst', department: 'Finance', status: 'Inactive' },
+  {
+    id: '1',
+    name: 'Ana Petrosyan',
+    role: 'Engineering Manager',
+    department: 'Engineering',
+    status: 'Active',
+  },
+  {
+    id: '2',
+    name: 'Davit Sargsyan',
+    role: 'Product Designer',
+    department: 'Design',
+    status: 'Active',
+  },
+  {
+    id: '3',
+    name: 'Lilit Hovhannisyan',
+    role: 'Recruiter',
+    department: 'People',
+    status: 'On leave',
+  },
+  {
+    id: '4',
+    name: 'Narek Grigoryan',
+    role: 'Backend Engineer',
+    department: 'Engineering',
+    status: 'Active',
+  },
+  {
+    id: '5',
+    name: 'Mariam Avetisyan',
+    role: 'Finance Analyst',
+    department: 'Finance',
+    status: 'Inactive',
+  },
 ];
 
 const meta = {

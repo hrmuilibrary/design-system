@@ -93,12 +93,7 @@ export const ItemProcessing: Story = {
 export const ItemCompleted: Story = {
   name: 'UploadItem — completed',
   render: () => (
-    <UploadItem
-      name="quarterly-report.pdf"
-      meta="2.4 MB"
-      status="completed"
-      onRemove={() => {}}
-    />
+    <UploadItem name="quarterly-report.pdf" meta="2.4 MB" status="completed" onRemove={() => {}} />
   ),
 };
 
@@ -254,8 +249,19 @@ export const ItemList: Story = {
     <div className="flex flex-col gap-3">
       <Upload {...args} />
       <div className="flex flex-col gap-2">
-        <UploadItem name="brand-guidelines.pdf" meta="1.1 MB" status="completed" onRemove={() => {}} />
-        <UploadItem name="hero-image.png" meta="4.8 MB" status="processing" progress={35} onRemove={() => {}} />
+        <UploadItem
+          name="brand-guidelines.pdf"
+          meta="1.1 MB"
+          status="completed"
+          onRemove={() => {}}
+        />
+        <UploadItem
+          name="hero-image.png"
+          meta="4.8 MB"
+          status="processing"
+          progress={35}
+          onRemove={() => {}}
+        />
         <UploadItem
           name="dataset.csv"
           meta="18 MB"

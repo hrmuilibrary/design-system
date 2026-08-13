@@ -62,7 +62,14 @@ function getInitials(name: string): string {
 }
 
 function colorFromName(name: string): string {
-  const palette = ['bg-brand-500', 'bg-blue-600', 'bg-purple-500', 'bg-pink-500', 'bg-yellow-600', 'bg-green-500'];
+  const palette = [
+    'bg-brand-500',
+    'bg-blue-600',
+    'bg-purple-500',
+    'bg-pink-500',
+    'bg-yellow-600',
+    'bg-green-500',
+  ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = (hash << 5) - hash + name.charCodeAt(i);

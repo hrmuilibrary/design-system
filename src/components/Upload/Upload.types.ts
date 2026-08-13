@@ -17,7 +17,8 @@ export interface FileValidationOptions {
 }
 
 export interface UploadProps
-  extends Omit<
+  extends
+    Omit<
       HTMLAttributes<HTMLDivElement>,
       | 'onClick'
       | 'onDrop'

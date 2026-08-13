@@ -61,5 +61,3 @@ export * from './tokens';
 
 // Shared types
 export * from './types';
-
-export { useFieldArray } from 'react-hook-form'

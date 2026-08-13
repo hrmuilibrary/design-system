@@ -13,7 +13,16 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['general', 'info', 'brand', 'danger', 'warning', 'success', 'discovery', 'disabled'],
+      options: [
+        'general',
+        'info',
+        'brand',
+        'danger',
+        'warning',
+        'success',
+        'discovery',
+        'disabled',
+      ],
     },
     size: {
       control: 'select',
@@ -90,7 +99,16 @@ export const CustomClassName: Story = {
   },
 };
 
-const VARIANTS = ['general', 'info', 'brand', 'danger', 'warning', 'success', 'discovery', 'disabled'] as const;
+const VARIANTS = [
+  'general',
+  'info',
+  'brand',
+  'danger',
+  'warning',
+  'success',
+  'discovery',
+  'disabled',
+] as const;
 const SIZES = ['sm', 'md', 'lg'] as const;
 
 export const AllVariants: Story = {

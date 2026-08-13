@@ -95,7 +95,11 @@ export const WithLabelAddons: Story = {
   args: {
     labelAddons: (
       <Tooltip content="Shown to reviewers on your public profile.">
-        <button type="button" aria-label="More info" className="text-fg-tertiary hover:text-fg-default">
+        <button
+          type="button"
+          aria-label="More info"
+          className="text-fg-tertiary hover:text-fg-default"
+        >
           <Info className="h-3.5 w-3.5" />
         </button>
       </Tooltip>

@@ -3,7 +3,8 @@ import type { BaseProps } from '../../types';
 import type { InputSize } from '../Input';
 
 export interface CounterProps
-  extends Omit<
+  extends
+    Omit<
       InputHTMLAttributes<HTMLInputElement>,
       'size' | 'type' | 'value' | 'defaultValue' | 'onChange' | 'min' | 'max' | 'step'
     >,

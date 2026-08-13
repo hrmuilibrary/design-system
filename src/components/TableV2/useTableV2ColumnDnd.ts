@@ -45,7 +45,12 @@ export function useColumnOrderDnd({
     onColumnOrderChange(arrayMove(columnOrder, oldIndex, newIndex));
   };
 
-  return { sensors, collisionDetection: closestCenter, modifiers: [restrictToHorizontalAxis], handleDragEnd };
+  return {
+    sensors,
+    collisionDetection: closestCenter,
+    modifiers: [restrictToHorizontalAxis],
+    handleDragEnd,
+  };
 }
 
 export interface UseDraggableColumnResult {

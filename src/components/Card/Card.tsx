@@ -46,15 +46,11 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
       {...rest}
     >
       {header && (
-        <div className={cn('border-b border-border-subtle', paddingStyles[padding])}>
-          {header}
-        </div>
+        <div className={cn('border-b border-border-subtle', paddingStyles[padding])}>{header}</div>
       )}
       {hasSlots ? <div className={paddingStyles[padding]}>{children}</div> : children}
       {footer && (
-        <div className={cn('border-t border-border-subtle', paddingStyles[padding])}>
-          {footer}
-        </div>
+        <div className={cn('border-t border-border-subtle', paddingStyles[padding])}>{footer}</div>
       )}
     </div>
   );

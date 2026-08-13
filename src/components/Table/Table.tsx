@@ -229,7 +229,11 @@ export function DataTable<T>({
       <TBody>
         {rows.length === 0 ? (
           <TR>
-            <TD colSpan={columns.length} className="text-center text-fg-tertiary py-10" align="center">
+            <TD
+              colSpan={columns.length}
+              className="text-center text-fg-tertiary py-10"
+              align="center"
+            >
               {empty}
             </TD>
           </TR>

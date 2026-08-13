@@ -1,5 +1,13 @@
 import { forwardRef } from 'react';
-import { CheckCircle2, AlertTriangle, XCircle, Info, Sparkles, X, type LucideIcon } from 'lucide-react';
+import {
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  Info,
+  Sparkles,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
 import { cn } from '../../lib/cn';
 import type { InlineAlertProps, InlineAlertVariant } from './InlineAlert.types';
 
@@ -35,7 +43,17 @@ const variantStyles: Record<
 };
 
 export const InlineAlert = forwardRef<HTMLDivElement, InlineAlertProps>(function InlineAlert(
-  { variant = 'info', title, description, onDismiss, actions, icon, className, dataTestId, ...rest },
+  {
+    variant = 'info',
+    title,
+    description,
+    onDismiss,
+    actions,
+    icon,
+    className,
+    dataTestId,
+    ...rest
+  },
   ref,
 ) {
   const { container, iconColor, DefaultIcon } = variantStyles[variant];

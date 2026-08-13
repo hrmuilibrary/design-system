@@ -50,6 +50,19 @@ function formatFileSize(bytes: number): string {
   return `${value.toFixed(1)} ${FILE_SIZE_UNITS[unitIndex]}`;
 }
 
+/**
+ * Also used by `Avatar`'s `editable` picker — changing these semantics
+ * changes both components.
+ */
+export function validateSingleFile(
+  file: File,
+  { accept, maxSizeMB }: FileValidationOptions,
+): UploadRejectionReason | null {
+  if (accept && !matchesAccept(file, accept)) return 'type';
+  if (maxSizeMB !== undefined && file.size > maxSizeMB * 1024 * 1024) return 'size';
+  return null;
+}
+
 export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
   {
     accept,
@@ -101,10 +114,14 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
     const accepted: File[] = [];
     const rejections: UploadRejection[] = [];
     const seen = [...currentFiles];
-    let remainingSlots = maxFiles !== undefined ? Math.max(0, maxFiles - currentFiles.length) : Infinity;
+    let remainingSlots =
+      maxFiles !== undefined ? Math.max(0, maxFiles - currentFiles.length) : Infinity;
 
     for (const file of incoming) {
-      if (dedupe && seen.some((existing) => existing.name === file.name && existing.size === file.size)) {
+      if (
+        dedupe &&
+        seen.some((existing) => existing.name === file.name && existing.size === file.size)
+      ) {
         rejections.push({ file, reason: 'duplicate' });
         continue;
       }
@@ -193,7 +210,12 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
 
   if (mode === 'view') {
     return (
-      <div ref={ref} data-test-id={dataTestId} className={cn('flex flex-col gap-1.5', className)} {...rest}>
+      <div
+        ref={ref}
+        data-test-id={dataTestId}
+        className={cn('flex flex-col gap-1.5', className)}
+        {...rest}
+      >
         {labelRow}
         {fileListEl}
         {errorRow}
@@ -204,7 +226,12 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
   if (mode !== 'dropzone') {
     const isIcon = mode === 'icon';
     return (
-      <div ref={ref} data-test-id={dataTestId} className={cn('flex flex-col gap-1.5', className)} {...rest}>
+      <div
+        ref={ref}
+        data-test-id={dataTestId}
+        className={cn('flex flex-col gap-1.5', className)}
+        {...rest}
+      >
         {labelRow}
         <Button
           type="button"
@@ -212,10 +239,12 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
           iconOnly={isIcon}
           disabled={disabled}
           onClick={() => inputRef.current?.click()}
-          leftIcon={isIcon ? undefined : triggerIcon ?? <Paperclip className="h-4 w-4" />}
+          leftIcon={isIcon ? undefined : (triggerIcon ?? <Paperclip className="h-4 w-4" />)}
           aria-label={isIcon ? 'Upload file' : undefined}
         >
-          {isIcon ? triggerIcon ?? <Pencil className="h-4 w-4" /> : (triggerLabel ?? 'Choose a file')}
+          {isIcon
+            ? (triggerIcon ?? <Pencil className="h-4 w-4" />)
+            : (triggerLabel ?? 'Choose a file')}
         </Button>
         {fileInput}
         {fileListEl}
@@ -268,7 +297,8 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
       </div>
       <div className="flex flex-col gap-0.5">
         <p className="text-p-std text-fg-default">
-          <span className="font-semibold text-brand-700">Choose a file</span> or drag &amp; drop it here.
+          <span className="font-semibold text-brand-700">Choose a file</span> or drag &amp; drop it
+          here.
         </p>
         <p className="text-p-sm text-fg-tertiary">{hintText}</p>
       </div>
@@ -318,13 +348,20 @@ export const UploadItem = forwardRef<HTMLDivElement, UploadItemProps>(function U
     <div
       ref={ref}
       data-test-id={dataTestId}
-      className={cn('flex items-start gap-3 px-3 py-2.5 rounded-lg border', statusStyles[status], className)}
+      className={cn(
+        'flex items-start gap-3 px-3 py-2.5 rounded-lg border',
+        statusStyles[status],
+        className,
+      )}
       {...rest}
     >
       <div
         className={cn(
           'shrink-0 flex items-center justify-center h-9 w-9 rounded-md overflow-hidden',
-          !showPreview && (status === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-700' : 'bg-bg-subtle text-fg-secondary'),
+          !showPreview &&
+            (status === 'error'
+              ? 'bg-red-100 dark:bg-red-900/30 text-red-700'
+              : 'bg-bg-subtle text-fg-secondary'),
         )}
       >
         {showPreview ? (
@@ -355,7 +392,9 @@ export const UploadItem = forwardRef<HTMLDivElement, UploadItemProps>(function U
             {status === 'completed' && (
               <CheckCircle2 className="h-4 w-4 text-green-600" aria-label="Completed" />
             )}
-            {status === 'error' && <AlertCircle className="h-4 w-4 text-red-600" aria-label="Failed" />}
+            {status === 'error' && (
+              <AlertCircle className="h-4 w-4 text-red-600" aria-label="Failed" />
+            )}
           </div>
         </div>
         {meta && <p className="text-p-sm text-fg-tertiary mt-0.5">{meta}</p>}
@@ -371,7 +410,11 @@ export const UploadItem = forwardRef<HTMLDivElement, UploadItemProps>(function U
           <p className="text-p-sm text-red-700 mt-1">
             {errorText}
             {onRetry && (
-              <button type="button" onClick={onRetry} className="ml-2 underline font-medium hover:no-underline">
+              <button
+                type="button"
+                onClick={onRetry}
+                className="ml-2 underline font-medium hover:no-underline"
+              >
                 Try again
               </button>
             )}

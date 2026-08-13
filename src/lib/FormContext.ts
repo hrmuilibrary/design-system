@@ -16,17 +16,17 @@ import type {
 } from 'react-hook-form';
 
 export interface FormContextValue {
-  control: Control<FieldValues>;
-  register: UseFormRegister<FieldValues>;
+  control?: Control<FieldValues>;
+  register?: UseFormRegister<FieldValues>;
   errors: FieldErrors<FieldValues>;
   setValue: UseFormSetValue<FieldValues>;
-  getValues: UseFormGetValues<FieldValues>;
-  watch: UseFormWatch<FieldValues>;
+  getValues?: UseFormGetValues<FieldValues>;
+  watch?: UseFormWatch<FieldValues>;
   reset: UseFormReset<FieldValues>;
-  trigger: UseFormTrigger<FieldValues>;
+  trigger?: UseFormTrigger<FieldValues>;
   clearErrors: UseFormClearErrors<FieldValues>;
   setError: UseFormSetError<FieldValues>;
-  getFieldState: UseFormGetFieldState<FieldValues>;
+  getFieldState?: UseFormGetFieldState<FieldValues>;
   unregister: UseFormUnregister<FieldValues>;
   isDirty: boolean;
   isSubmitted: boolean;

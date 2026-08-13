@@ -35,7 +35,9 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
   // Uncontrolled length has to be tracked in state and updated on every
   // keystroke — deriving it from `defaultValue` (as before) only reflects
   // the initial render and never moves after that.
-  const [uncontrolledLength, setUncontrolledLength] = useState(() => String(defaultValue ?? '').length);
+  const [uncontrolledLength, setUncontrolledLength] = useState(
+    () => String(defaultValue ?? '').length,
+  );
   const currentLength = isControlled ? String(value).length : uncontrolledLength;
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -80,7 +82,9 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
           hasError ? 'border-red-600' : 'border-border-default',
           !disabled && !hasError && 'hover:border-border-strong',
           'focus:ring-2',
-          hasError ? 'focus:ring-red-300 focus:border-red-600' : 'focus:ring-brand-300 focus:border-brand-500',
+          hasError
+            ? 'focus:ring-red-300 focus:border-red-600'
+            : 'focus:ring-brand-300 focus:border-brand-500',
           disabled && 'bg-bg-container border-border-default cursor-not-allowed',
           className,
         )}

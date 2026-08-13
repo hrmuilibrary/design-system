@@ -70,7 +70,11 @@ export function useFloatingPosition({
           const spaceBelow = viewportHeight - anchorRect.bottom;
           if (side === 'top' && spaceAbove < panelRect.height + offset && spaceBelow > spaceAbove) {
             resolvedSide = 'bottom';
-          } else if (side === 'bottom' && spaceBelow < panelRect.height + offset && spaceAbove > spaceBelow) {
+          } else if (
+            side === 'bottom' &&
+            spaceBelow < panelRect.height + offset &&
+            spaceAbove > spaceBelow
+          ) {
             resolvedSide = 'top';
           }
         } else {
@@ -78,7 +82,11 @@ export function useFloatingPosition({
           const spaceRight = viewportWidth - anchorRect.right;
           if (side === 'left' && spaceLeft < panelRect.width + offset && spaceRight > spaceLeft) {
             resolvedSide = 'right';
-          } else if (side === 'right' && spaceRight < panelRect.width + offset && spaceLeft > spaceRight) {
+          } else if (
+            side === 'right' &&
+            spaceRight < panelRect.width + offset &&
+            spaceLeft > spaceRight
+          ) {
             resolvedSide = 'left';
           }
         }
@@ -89,7 +97,10 @@ export function useFloatingPosition({
       let left: number;
 
       if (resolvedIsVertical) {
-        top = resolvedSide === 'bottom' ? anchorRect.bottom + offset : anchorRect.top - panelRect.height - offset;
+        top =
+          resolvedSide === 'bottom'
+            ? anchorRect.bottom + offset
+            : anchorRect.top - panelRect.height - offset;
         left =
           align === 'start'
             ? anchorRect.left
@@ -97,7 +108,10 @@ export function useFloatingPosition({
               ? anchorRect.right - panelRect.width
               : anchorRect.left + anchorRect.width / 2 - panelRect.width / 2;
       } else {
-        left = resolvedSide === 'right' ? anchorRect.right + offset : anchorRect.left - panelRect.width - offset;
+        left =
+          resolvedSide === 'right'
+            ? anchorRect.right + offset
+            : anchorRect.left - panelRect.width - offset;
         top =
           align === 'start'
             ? anchorRect.top
@@ -108,23 +122,35 @@ export function useFloatingPosition({
 
       if (shift) {
         if (resolvedIsVertical) {
-          left = Math.min(Math.max(left, VIEWPORT_MARGIN), viewportWidth - panelRect.width - VIEWPORT_MARGIN);
+          left = Math.min(
+            Math.max(left, VIEWPORT_MARGIN),
+            viewportWidth - panelRect.width - VIEWPORT_MARGIN,
+          );
         } else {
-          top = Math.min(Math.max(top, VIEWPORT_MARGIN), viewportHeight - panelRect.height - VIEWPORT_MARGIN);
+          top = Math.min(
+            Math.max(top, VIEWPORT_MARGIN),
+            viewportHeight - panelRect.height - VIEWPORT_MARGIN,
+          );
         }
       }
 
       let arrowStyle: CSSProperties;
       if (resolvedIsVertical) {
         const anchorCenterX = anchorRect.left + anchorRect.width / 2;
-        const arrowLeft = Math.min(Math.max(anchorCenterX - left, ARROW_MARGIN), panelRect.width - ARROW_MARGIN);
+        const arrowLeft = Math.min(
+          Math.max(anchorCenterX - left, ARROW_MARGIN),
+          panelRect.width - ARROW_MARGIN,
+        );
         arrowStyle = {
           left: arrowLeft,
           [resolvedSide === 'bottom' ? 'top' : 'bottom']: -ARROW_SIZE / 2,
         };
       } else {
         const anchorCenterY = anchorRect.top + anchorRect.height / 2;
-        const arrowTop = Math.min(Math.max(anchorCenterY - top, ARROW_MARGIN), panelRect.height - ARROW_MARGIN);
+        const arrowTop = Math.min(
+          Math.max(anchorCenterY - top, ARROW_MARGIN),
+          panelRect.height - ARROW_MARGIN,
+        );
         arrowStyle = {
           top: arrowTop,
           [resolvedSide === 'right' ? 'left' : 'right']: -ARROW_SIZE / 2,

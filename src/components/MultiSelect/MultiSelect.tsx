@@ -1,4 +1,14 @@
-import { forwardRef, Fragment, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type MutableRefObject } from 'react';
+import {
+  forwardRef,
+  Fragment,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type MutableRefObject,
+} from 'react';
 import { Loader2, Search, Users, X } from 'lucide-react';
 import { Avatar } from '../Avatar';
 import { cn } from '../../lib/cn';
@@ -27,9 +37,27 @@ const SIZES: Record<
   MultiSelectSize,
   { box: string; chip: string; chipText: string; input: string; avatar: 'xs' | 'sm' }
 > = {
-  sm: { box: 'px-1.5 py-1.5 gap-1', chip: 'h-6 pl-0.5 pr-1.5', chipText: 'text-p-xs', input: 'h-6 text-p-sm min-w-[100px]', avatar: 'xs' },
-  md: { box: 'px-2 py-2 gap-1.5', chip: 'h-7 pl-1 pr-2', chipText: 'text-p-sm', input: 'h-7 text-p-std min-w-[120px]', avatar: 'xs' },
-  lg: { box: 'px-2.5 py-2.5 gap-2', chip: 'h-8 pl-1 pr-2.5', chipText: 'text-p-std', input: 'h-8 text-p-md min-w-[140px]', avatar: 'sm' },
+  sm: {
+    box: 'px-1.5 py-1.5 gap-1',
+    chip: 'h-6 pl-0.5 pr-1.5',
+    chipText: 'text-p-xs',
+    input: 'h-6 text-p-sm min-w-[100px]',
+    avatar: 'xs',
+  },
+  md: {
+    box: 'px-2 py-2 gap-1.5',
+    chip: 'h-7 pl-1 pr-2',
+    chipText: 'text-p-sm',
+    input: 'h-7 text-p-std min-w-[120px]',
+    avatar: 'xs',
+  },
+  lg: {
+    box: 'px-2.5 py-2.5 gap-2',
+    chip: 'h-8 pl-1 pr-2.5',
+    chipText: 'text-p-std',
+    input: 'h-8 text-p-md min-w-[140px]',
+    avatar: 'sm',
+  },
 };
 
 export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(function MultiSelect(
@@ -79,10 +107,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     else if (ref) (ref as MutableRefObject<HTMLInputElement | null>).current = node;
   };
 
-  const byValue = useMemo(
-    () => new Map(options.map((o) => [String(o.value), o])),
-    [options],
-  );
+  const byValue = useMemo(() => new Map(options.map((o) => [String(o.value), o])), [options]);
   const selected = useMemo(
     () => value.map((v) => byValue.get(String(v))).filter((o): o is MultiSelectOption => !!o),
     [value, byValue],
@@ -151,8 +176,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      if (!open) { if (!loading) setOpen(true); }
-      else moveActive(1);
+      if (!open) {
+        if (!loading) setOpen(true);
+      } else moveActive(1);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       moveActive(-1);
@@ -169,11 +195,7 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
     }
   };
 
-  const describedBy = errorText
-    ? `${inputId}-error`
-    : helperText
-    ? `${inputId}-help`
-    : undefined;
+  const describedBy = errorText ? `${inputId}-error` : helperText ? `${inputId}-help` : undefined;
 
   return (
     <div data-test-id={dataTestId} className={cn('flex flex-col gap-1.5 w-full', wrapperClassName)}>
@@ -205,8 +227,8 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
             disabled
               ? 'opacity-60 cursor-not-allowed border-border-default'
               : hasError
-              ? 'border-red-500 focus-within:ring-2 focus-within:ring-red-300 focus-within:ring-offset-1 cursor-text'
-              : 'border-border-default hover:border-border-strong focus-within:border-fg-tertiary focus-within:ring-2 focus-within:ring-brand-300 focus-within:ring-offset-1 cursor-text',
+                ? 'border-red-500 focus-within:ring-2 focus-within:ring-red-300 focus-within:ring-offset-1 cursor-text'
+                : 'border-border-default hover:border-border-strong focus-within:border-fg-tertiary focus-within:ring-2 focus-within:ring-brand-300 focus-within:ring-offset-1 cursor-text',
             loading && 'cursor-wait',
             className,
           )}
@@ -229,7 +251,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                 )}
                 <span className="font-medium">{o.label}</span>
                 {o.badge && (
-                  <span className="text-label-xxs uppercase tracking-wider opacity-70">{o.badge}</span>
+                  <span className="text-label-xxs uppercase tracking-wider opacity-70">
+                    {o.badge}
+                  </span>
                 )}
                 {!locked && !disabled && (
                   <button
@@ -269,7 +293,13 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
             }}
             onFocus={() => !loading && setOpen(true)}
             onKeyDown={onKeyDown}
-            placeholder={selected.length === 0 ? placeholder : reached ? `Limit ${max} reached` : addMorePlaceholder}
+            placeholder={
+              selected.length === 0
+                ? placeholder
+                : reached
+                  ? `Limit ${max} reached`
+                  : addMorePlaceholder
+            }
             className={cn(
               'flex-1 bg-transparent outline-none text-fg-default placeholder:text-fg-tertiary disabled:cursor-not-allowed',
               !searchable && 'cursor-pointer',
@@ -287,7 +317,9 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
           <div className="absolute top-full left-0 right-0 mt-1 z-20 max-h-80 overflow-y-auto rounded-lg border border-border-default bg-bg-default shadow-z4">
             <div className="px-3 py-2 border-b border-border-subtle flex items-center gap-2 text-p-sm text-fg-tertiary">
               <Search className="w-3.5 h-3.5 shrink-0" />
-              <span className="truncate">{query ? `Matches for "${query}"` : suggestionsLabel}</span>
+              <span className="truncate">
+                {query ? `Matches for "${query}"` : suggestionsLabel}
+              </span>
             </div>
             {matches.length === 0 ? (
               <div className="px-3 py-6 text-center">
@@ -308,7 +340,12 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                           {o.group}
                         </li>
                       )}
-                      <li role="option" id={`${listId}-opt-${i}`} aria-selected={i === active} aria-disabled={o.disabled || undefined}>
+                      <li
+                        role="option"
+                        id={`${listId}-opt-${i}`}
+                        aria-selected={i === active}
+                        aria-disabled={o.disabled || undefined}
+                      >
                         <button
                           type="button"
                           disabled={o.disabled}
@@ -322,15 +359,21 @@ export const MultiSelect = forwardRef<HTMLInputElement, MultiSelectProps>(functi
                             o.disabled
                               ? 'opacity-50 cursor-not-allowed'
                               : i === active
-                              ? 'bg-bg-subtle'
-                              : 'hover:bg-bg-subtle',
+                                ? 'bg-bg-subtle'
+                                : 'hover:bg-bg-subtle',
                           )}
                         >
-                          {(showAvatars || o.avatarSrc) && <Avatar src={o.avatarSrc} name={optionSearchText(o)} size="sm" />}
+                          {(showAvatars || o.avatarSrc) && (
+                            <Avatar src={o.avatarSrc} name={optionSearchText(o)} size="sm" />
+                          )}
                           <span className="flex-1 min-w-0">
-                            <span className="block text-p-std font-medium text-fg-default truncate">{o.label}</span>
+                            <span className="block text-p-std font-medium text-fg-default truncate">
+                              {o.label}
+                            </span>
                             {o.description && (
-                              <span className="block text-p-sm text-fg-secondary truncate">{o.description}</span>
+                              <span className="block text-p-sm text-fg-secondary truncate">
+                                {o.description}
+                              </span>
                             )}
                           </span>
                         </button>

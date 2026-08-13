@@ -35,7 +35,8 @@ export interface RadioGroupProps extends BaseProps {
 }
 
 export interface RadioProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'name' | 'onChange' | 'value'>,
+  extends
+    Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'name' | 'onChange' | 'value'>,
     BaseProps {
   value: RadioValue;
   size?: RadioSize;

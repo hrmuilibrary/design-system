@@ -46,7 +46,10 @@ function ActionTrigger() {
         show({
           message: 'Conversation archived',
           variant: 'neutral',
-          action: { label: 'Undo', onClick: () => show({ message: 'Undo not implemented in demo' }) },
+          action: {
+            label: 'Undo',
+            onClick: () => show({ message: 'Undo not implemented in demo' }),
+          },
         })
       }
     >

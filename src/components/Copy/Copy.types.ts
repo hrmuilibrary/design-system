@@ -3,7 +3,8 @@ import type { BaseProps } from '../../types';
 import type { ButtonProps } from '../Button';
 
 export interface CopyProps
-  extends Omit<ButtonProps, 'children' | 'onClick' | 'leftIcon' | 'rightIcon' | 'onCopy'>,
+  extends
+    Omit<ButtonProps, 'children' | 'onClick' | 'leftIcon' | 'rightIcon' | 'onCopy'>,
     BaseProps {
   /** Text copied to the clipboard on click. */
   text: string;

@@ -41,13 +41,7 @@ function SaveButton() {
   const { show } = useSnackbar();
 
   return (
-    <button
-      onClick={() =>
-        show({ message: 'Changes saved', variant: 'success' })
-      }
-    >
-      Save
-    </button>
+    <button onClick={() => show({ message: 'Changes saved', variant: 'success' })}>Save</button>
   );
 }
 ```

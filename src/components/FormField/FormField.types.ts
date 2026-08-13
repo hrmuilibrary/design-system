@@ -25,7 +25,8 @@ export interface FormFieldRenderProps {
   isValid: boolean;
 }
 
-export interface FormFieldProps extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'>, BaseProps {
+export interface FormFieldProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'defaultValue'>, BaseProps {
   name: string;
   defaultValue?: unknown;
   /** Render prop — receives field bindings plus `error`/`errorText`, e.g. `(p) => <Input {...p} label="Email" />`. */

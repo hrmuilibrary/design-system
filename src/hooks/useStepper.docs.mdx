@@ -20,8 +20,12 @@ function Wizard() {
       {step === 1 && <PreferencesStep />}
       {step === 2 && <ReviewStep />}
 
-      <Button onClick={prev} disabled={isFirst}>Back</Button>
-      <Button onClick={next} disabled={isLast}>Next</Button>
+      <Button onClick={prev} disabled={isFirst}>
+        Back
+      </Button>
+      <Button onClick={next} disabled={isLast}>
+        Next
+      </Button>
     </div>
   );
 }

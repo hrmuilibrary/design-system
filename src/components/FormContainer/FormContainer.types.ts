@@ -4,7 +4,8 @@ import type { ObjectSchema } from 'yup';
 import type { BaseProps } from '../../types';
 import type { ButtonProps } from '../Button';
 
-export interface FormContainerProps extends Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>, BaseProps {
+export interface FormContainerProps
+  extends Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>, BaseProps {
   children?: ReactNode;
   /** A yup object schema — resolved via `@hookform/resolvers/yup`. */
   validationSchema: ObjectSchema<FieldValues>;

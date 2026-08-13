@@ -67,7 +67,11 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
       <label
         htmlFor={inputId}
         data-test-id={dataTestId}
-        className={cn('inline-flex', disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer', className)}
+        className={cn(
+          'inline-flex',
+          disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
+          className,
+        )}
       >
         {control}
       </label>
@@ -87,8 +91,12 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
     >
       {control}
       <span className="flex flex-col gap-0.5">
-        {label && <span className="text-p-std font-medium text-fg-default leading-tight">{label}</span>}
-        {description && <span className="text-p-sm text-fg-secondary leading-snug">{description}</span>}
+        {label && (
+          <span className="text-p-std font-medium text-fg-default leading-tight">{label}</span>
+        )}
+        {description && (
+          <span className="text-p-sm text-fg-secondary leading-snug">{description}</span>
+        )}
       </span>
     </label>
   );

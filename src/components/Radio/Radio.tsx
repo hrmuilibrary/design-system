@@ -40,7 +40,11 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
   const groupName = name ?? reactName;
   const labelId = `${reactName}-label`;
   const hasError = error || !!errorText;
-  const describedBy = errorText ? `${reactName}-error` : helperText ? `${reactName}-help` : undefined;
+  const describedBy = errorText
+    ? `${reactName}-error`
+    : helperText
+      ? `${reactName}-help`
+      : undefined;
 
   const groupEl = (
     <div

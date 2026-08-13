@@ -65,19 +65,32 @@ export function useAnchoredPosition({
       if (flip) {
         const spaceBelow = viewportHeight - anchorRect.bottom;
         const spaceAbove = anchorRect.top;
-        if (side === 'bottom' && spaceBelow < panelRect.height + offset && spaceAbove > spaceBelow) {
+        if (
+          side === 'bottom' &&
+          spaceBelow < panelRect.height + offset &&
+          spaceAbove > spaceBelow
+        ) {
           resolvedSide = 'top';
-        } else if (side === 'top' && spaceAbove < panelRect.height + offset && spaceBelow > spaceAbove) {
+        } else if (
+          side === 'top' &&
+          spaceAbove < panelRect.height + offset &&
+          spaceBelow > spaceAbove
+        ) {
           resolvedSide = 'bottom';
         }
       }
 
       const top =
-        resolvedSide === 'bottom' ? anchorRect.bottom + offset : anchorRect.top - panelRect.height - offset;
+        resolvedSide === 'bottom'
+          ? anchorRect.bottom + offset
+          : anchorRect.top - panelRect.height - offset;
 
       let left = align === 'end' ? anchorRect.right - panelRect.width : anchorRect.left;
       if (shift) {
-        left = Math.min(Math.max(left, VIEWPORT_MARGIN), viewportWidth - panelRect.width - VIEWPORT_MARGIN);
+        left = Math.min(
+          Math.max(left, VIEWPORT_MARGIN),
+          viewportWidth - panelRect.width - VIEWPORT_MARGIN,
+        );
       }
 
       setPosition({

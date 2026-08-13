@@ -37,7 +37,13 @@ Every stateful feature follows the same pair of props: a value and an
 ```tsx
 // Local state
 const [sorting, setSorting] = useState<SortingState>([]);
-<TableV2 data={data} columns={columns} enableSorting sorting={sorting} onSortingChange={setSorting} />
+<TableV2
+  data={data}
+  columns={columns}
+  enableSorting
+  sorting={sorting}
+  onSortingChange={setSorting}
+/>;
 
 // React Query-backed server pagination
 const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 20 });
@@ -51,7 +57,7 @@ const { data, isLoading } = useQuery(['users', pagination], () => fetchUsers(pag
   pageCount={data?.pageCount}
   pagination={pagination}
   onPaginationChange={setPagination}
-/>
+/>;
 ```
 
 The same pattern covers `columnFilters`/`onColumnFiltersChange`,
@@ -62,18 +68,18 @@ instance, just dispatches from the `onXChange` and selects the value back in.
 
 ## Feature flags
 
-| Prop | Feature |
-| --- | --- |
-| `enableSorting` / `enableMultiSort` | Column sorting, shift-click for multi-sort |
-| `enableFiltering` | Per-column filter row (driven by `meta.filterVariant`) |
-| `enableGlobalFilter` | Toolbar search box |
-| `enableRowSelection` / `enableMultiRowSelection` | Checkbox column with select-all + indeterminate state |
-| `enableColumnVisibility` | "Columns" toolbar dropdown |
-| `enableColumnOrdering` | Drag-and-drop column header reordering |
-| `enablePinning` | Pin columns left/right via the per-header menu |
-| `enableColumnResizing` | Draggable column edge resize handles |
-| `enablePagination` | Footer pagination — client-side by default, or manual/server via `manualPagination` |
-| `enableVirtualization` | Row virtualization (`@tanstack/react-virtual`) for large datasets |
+| Prop                                             | Feature                                                                             |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `enableSorting` / `enableMultiSort`              | Column sorting, shift-click for multi-sort                                          |
+| `enableFiltering`                                | Per-column filter row (driven by `meta.filterVariant`)                              |
+| `enableGlobalFilter`                             | Toolbar search box                                                                  |
+| `enableRowSelection` / `enableMultiRowSelection` | Checkbox column with select-all + indeterminate state                               |
+| `enableColumnVisibility`                         | "Columns" toolbar dropdown                                                          |
+| `enableColumnOrdering`                           | Drag-and-drop column header reordering                                              |
+| `enablePinning`                                  | Pin columns left/right via the per-header menu                                      |
+| `enableColumnResizing`                           | Draggable column edge resize handles                                                |
+| `enablePagination`                               | Footer pagination — client-side by default, or manual/server via `manualPagination` |
+| `enableVirtualization`                           | Row virtualization (`@tanstack/react-virtual`) for large datasets                   |
 
 All default to `false` — opt in per table.
 
@@ -90,11 +96,15 @@ const columns: ColumnDef<Employee>[] = [
     header: 'Department',
     meta: {
       filterVariant: 'select',
-      filterOptions: [{ label: 'Engineering', value: 'Engineering' }, /* ... */],
+      filterOptions: [{ label: 'Engineering', value: 'Engineering' } /* ... */],
     },
   },
   { accessorKey: 'joinDate', header: 'Joined', meta: { filterVariant: 'date' } },
-  { accessorKey: 'notes', header: 'Notes', meta: { filterVariant: 'custom', filterComponent: (column) => <MyControl column={column} /> } },
+  {
+    accessorKey: 'notes',
+    header: 'Notes',
+    meta: { filterVariant: 'custom', filterComponent: (column) => <MyControl column={column} /> },
+  },
 ];
 ```
 
@@ -117,7 +127,12 @@ const columns: ColumnDef<Employee>[] = [
   createRowActionsColumn<Employee>((employee) => [
     { label: 'Edit', icon: <Pencil className="h-4 w-4" />, onSelect: (row) => edit(row) },
     { label: 'Duplicate', onSelect: (row) => duplicate(row) },
-    { label: 'Delete', destructive: true, onSelect: (row) => remove(row), disabled: (row) => row.status === 'Inactive' },
+    {
+      label: 'Delete',
+      destructive: true,
+      onSelect: (row) => remove(row),
+      disabled: (row) => row.status === 'Inactive',
+    },
   ]),
 ];
 ```

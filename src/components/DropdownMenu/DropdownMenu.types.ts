@@ -1,4 +1,10 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, ReactElement, ReactNode, RefObject } from 'react';
+import type {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  ReactElement,
+  ReactNode,
+  RefObject,
+} from 'react';
 import type { BaseProps } from '../../types';
 import type { AnchoredAlign, AnchoredSide } from '../../lib/useAnchoredPosition';
 

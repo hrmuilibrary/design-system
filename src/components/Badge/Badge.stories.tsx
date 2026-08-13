@@ -148,7 +148,13 @@ export const IconOnly: Story = {
   render: (args) => (
     <div className="flex flex-wrap items-center gap-2">
       {SIZES.map((size) => (
-        <Badge key={size} {...args} size={size} leftIcon={<Star className="size-3" />} aria-label="Featured" />
+        <Badge
+          key={size}
+          {...args}
+          size={size}
+          leftIcon={<Star className="size-3" />}
+          aria-label="Featured"
+        />
       ))}
     </div>
   ),

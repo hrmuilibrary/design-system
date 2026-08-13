@@ -12,7 +12,10 @@ const toneStyles: Record<IconTileTone, { bg: string; icon: string }> = {
   brand: { bg: 'bg-bg-brand-lighter', icon: 'text-brand-700' },
   info: { bg: 'bg-bg-info-lighter', icon: 'text-blue-700' },
   gray: { bg: 'bg-bg-subtle', icon: 'text-fg-tertiary' },
-  purple: { bg: 'bg-purple-50 dark:bg-purple-900/30', icon: 'text-purple-700 dark:text-purple-300' },
+  purple: {
+    bg: 'bg-purple-50 dark:bg-purple-900/30',
+    icon: 'text-purple-700 dark:text-purple-300',
+  },
   pink: { bg: 'bg-pink-50 dark:bg-pink-900/30', icon: 'text-pink-700 dark:text-pink-300' },
   yellow: { bg: 'bg-bg-warning-lighter', icon: 'text-yellow-800' },
   success: { bg: 'bg-bg-success-lighter', icon: 'text-green-600' },
@@ -31,15 +34,7 @@ const sizeStyles: Record<IconTileSize, { box: string; icon: string; radius: stri
 };
 
 export const IconTile = forwardRef<HTMLDivElement, IconTileProps>(function IconTile(
-  {
-    icon: Icon,
-    tone = 'gray',
-    size = 'md',
-    shape = 'rounded',
-    className,
-    dataTestId,
-    ...rest
-  },
+  { icon: Icon, tone = 'gray', size = 'md', shape = 'rounded', className, dataTestId, ...rest },
   ref,
 ) {
   const t = toneStyles[tone];

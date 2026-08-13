@@ -4,8 +4,7 @@ import type { BaseProps } from '../../types';
 export type CheckboxSize = 'md' | 'sm';
 
 export interface CheckboxProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'>,
-    BaseProps {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'>, BaseProps {
   size?: CheckboxSize;
   label?: ReactNode;
   description?: ReactNode;

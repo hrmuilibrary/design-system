@@ -14,7 +14,17 @@ const meta = {
   argTypes: {
     tone: {
       control: 'select',
-      options: ['brand', 'info', 'gray', 'purple', 'pink', 'yellow', 'success', 'warning', 'danger'],
+      options: [
+        'brand',
+        'info',
+        'gray',
+        'purple',
+        'pink',
+        'yellow',
+        'success',
+        'warning',
+        'danger',
+      ],
     },
     size: {
       control: 'select',

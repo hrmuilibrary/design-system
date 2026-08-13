@@ -15,7 +15,8 @@ export interface StepIndicatorItem {
   highlighted?: boolean;
 }
 
-export interface StepIndicatorProps extends Omit<HTMLAttributes<HTMLOListElement>, 'children'>, BaseProps {
+export interface StepIndicatorProps
+  extends Omit<HTMLAttributes<HTMLOListElement>, 'children'>, BaseProps {
   steps: StepIndicatorItem[];
   /** Marks the matching step `aria-current="step"`. */
   activeValue?: OptionValue;

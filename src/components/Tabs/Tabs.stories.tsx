@@ -389,8 +389,8 @@ export const KeepMounted: Story = {
         className="h-40 overflow-y-auto text-p-std text-fg-secondary"
       >
         <p className="mb-2 text-fg-tertiary text-p-sm">
-          Scroll down, switch to &quot;Other&quot;, then switch back — the scroll position
-          survives because this panel stays mounted via `keepMounted`.
+          Scroll down, switch to &quot;Other&quot;, then switch back — the scroll position survives
+          because this panel stays mounted via `keepMounted`.
         </p>
         {Array.from({ length: 30 }, (_, i) => (
           <p key={i}>Item {i + 1}</p>

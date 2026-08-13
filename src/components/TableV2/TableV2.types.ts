@@ -117,7 +117,12 @@ export interface TableV2Props<TData, TValue = unknown> extends BaseProps {
   // Virtualization — for large datasets; renders a fixed-height scroll viewport.
   enableVirtualization?: boolean;
   estimatedRowHeight?: number;
-  /** Scroll viewport height. Required for virtualization to have a bounded container. @default 480 */
+  /**
+   * Scroll viewport height. Applied to the outer scroll container whenever
+   * `enableVirtualization` or `stickyHeader` is on, since both need a
+   * bounded, scrollable ancestor to have any visible effect.
+   * @default 480
+   */
   maxBodyHeight?: number | string;
 
   onRowClick?: (row: TData) => void;

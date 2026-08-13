@@ -67,7 +67,13 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(function Progr
           viewBox={`0 0 ${dim * 2} ${dim * 2}`}
           className={cn('-rotate-90', loop && 'animate-spin')}
         >
-          <circle cx={dim} cy={dim} r={r} strokeWidth={strokeWidth} className="fill-none stroke-bg-subtle" />
+          <circle
+            cx={dim}
+            cy={dim}
+            r={r}
+            strokeWidth={strokeWidth}
+            className="fill-none stroke-bg-subtle"
+          />
           <circle
             cx={dim}
             cy={dim}
@@ -107,7 +113,9 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(function Progr
       className={cn('flex w-full items-center gap-2', className)}
       {...rest}
     >
-      <div className={cn('w-full overflow-hidden rounded-full bg-bg-subtle', linearTrackHeight[size])}>
+      <div
+        className={cn('w-full overflow-hidden rounded-full bg-bg-subtle', linearTrackHeight[size])}
+      >
         <div
           className="h-full rounded-full bg-brand-500 transition-all duration-300 ease-linear"
           style={{ width: `${clampedPercent}%` }}

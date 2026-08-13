@@ -24,10 +24,34 @@ interface Employee {
   joinDate: string;
 }
 
-const FIRST_NAMES = ['Ana', 'Davit', 'Lilit', 'Narek', 'Mariam', 'Gor', 'Sona', 'Vahe', 'Nane', 'Armen'];
+const FIRST_NAMES = [
+  'Ana',
+  'Davit',
+  'Lilit',
+  'Narek',
+  'Mariam',
+  'Gor',
+  'Sona',
+  'Vahe',
+  'Nane',
+  'Armen',
+];
 const LAST_NAMES = ['Petrosyan', 'Sargsyan', 'Hovhannisyan', 'Grigoryan', 'Avetisyan', 'Manukyan'];
-const ROLES = ['Engineering Manager', 'Product Designer', 'Recruiter', 'Backend Engineer', 'Finance Analyst', 'Sales Lead'];
-const DEPARTMENTS: Employee['department'][] = ['Engineering', 'Design', 'People', 'Finance', 'Sales'];
+const ROLES = [
+  'Engineering Manager',
+  'Product Designer',
+  'Recruiter',
+  'Backend Engineer',
+  'Finance Analyst',
+  'Sales Lead',
+];
+const DEPARTMENTS: Employee['department'][] = [
+  'Engineering',
+  'Design',
+  'People',
+  'Finance',
+  'Sales',
+];
 const STATUSES: Employee['status'][] = ['Active', 'On leave', 'Inactive'];
 
 function buildEmployees(count: number): Employee[] {
@@ -112,7 +136,13 @@ export const Sorting: Story = {
 
 export const Pagination: Story = {
   render: () => (
-    <TableV2 data={manyEmployees} columns={baseColumns} enableSorting enablePagination pageSize={10} />
+    <TableV2
+      data={manyEmployees}
+      columns={baseColumns}
+      enableSorting
+      enablePagination
+      pageSize={10}
+    />
   ),
 };
 
@@ -148,7 +178,13 @@ export const ServerPagination: Story = {
 
 export const Filtering: Story = {
   render: () => (
-    <TableV2 data={manyEmployees} columns={baseColumns} enableFiltering enableGlobalFilter enablePagination />
+    <TableV2
+      data={manyEmployees}
+      columns={baseColumns}
+      enableFiltering
+      enableGlobalFilter
+      enablePagination
+    />
   ),
 };
 
@@ -182,7 +218,11 @@ export const Empty: Story = {
 
 export const ErrorState: Story = {
   render: () => (
-    <TableV2 data={[]} columns={baseColumns} error="Failed to load employees. Check your connection and try again." />
+    <TableV2
+      data={[]}
+      columns={baseColumns}
+      error="Failed to load employees. Check your connection and try again."
+    />
   ),
 };
 
@@ -218,6 +258,11 @@ export const Virtualized: Story = {
   ),
 };
 
+export const StickyHeader: Story = {
+  name: 'Sticky header (bounded scroll height)',
+  render: () => <TableV2 data={manyEmployees} columns={baseColumns} enableSorting stickyHeader />,
+};
+
 const customCellColumns: ColumnDef<Employee>[] = [
   {
     accessorKey: 'name',
@@ -227,7 +272,11 @@ const customCellColumns: ColumnDef<Employee>[] = [
         <Avatar name={row.original.name} size="sm" />
         <div className="min-w-0">
           <div className="text-p-std font-medium text-fg-default truncate">{row.original.name}</div>
-          <Link href={`mailto:${row.original.email}`} variant="p-sm" leftIcon={<Mail className="h-3.5 w-3.5" />}>
+          <Link
+            href={`mailto:${row.original.email}`}
+            variant="p-sm"
+            leftIcon={<Mail className="h-3.5 w-3.5" />}
+          >
             {row.original.email}
           </Link>
         </div>
@@ -244,7 +293,9 @@ const customCellColumns: ColumnDef<Employee>[] = [
     header: 'Verified',
     meta: { align: 'center' },
     cell: ({ getValue }) =>
-      getValue<boolean>() ? <BadgeCheck className="mx-auto h-5 w-5 text-green-600" aria-label="Verified" /> : null,
+      getValue<boolean>() ? (
+        <BadgeCheck className="mx-auto h-5 w-5 text-green-600" aria-label="Verified" />
+      ) : null,
   },
   {
     accessorKey: 'progress',
@@ -271,9 +322,21 @@ export const CustomCells: Story = {
 const rowActionsColumns: ColumnDef<Employee>[] = [
   ...baseColumns,
   createRowActionsColumn<Employee>((employee) => [
-    { label: 'Edit', icon: <Pencil className="h-4 w-4" />, onSelect: (row) => alert(`Edit ${row.name}`) },
-    { label: 'Duplicate', icon: <Copy className="h-4 w-4" />, onSelect: (row) => alert(`Duplicate ${row.name}`) },
-    { label: 'Archive', icon: <Archive className="h-4 w-4" />, onSelect: (row) => alert(`Archive ${row.name}`) },
+    {
+      label: 'Edit',
+      icon: <Pencil className="h-4 w-4" />,
+      onSelect: (row) => alert(`Edit ${row.name}`),
+    },
+    {
+      label: 'Duplicate',
+      icon: <Copy className="h-4 w-4" />,
+      onSelect: (row) => alert(`Duplicate ${row.name}`),
+    },
+    {
+      label: 'Archive',
+      icon: <Archive className="h-4 w-4" />,
+      onSelect: (row) => alert(`Archive ${row.name}`),
+    },
     {
       label: 'Delete',
       icon: <Trash2 className="h-4 w-4" />,

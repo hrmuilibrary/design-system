@@ -1,4 +1,13 @@
-import { forwardRef, useEffect, useId, useMemo, useRef, useState, Fragment, type KeyboardEvent } from 'react';
+import {
+  forwardRef,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  Fragment,
+  type KeyboardEvent,
+} from 'react';
 import { ChevronDown, Check, Loader2, Search } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
@@ -60,7 +69,11 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
   const [activeIndex, setActiveIndex] = useState(-1);
   const [query, setQuery] = useState('');
   const hasError = error || !!errorText;
-  const describedBy = errorText ? `${triggerId}-error` : helperText ? `${triggerId}-help` : undefined;
+  const describedBy = errorText
+    ? `${triggerId}-error`
+    : helperText
+      ? `${triggerId}-help`
+      : undefined;
 
   const selectedOption = options.find((o) => isSameOptionValue(o.value, selected));
 
@@ -101,7 +114,9 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
       return;
     }
     const selIdx = visibleOptions.findIndex((o) => isSameOptionValue(o.value, selected));
-    setActiveIndex(selIdx >= 0 && !visibleOptions[selIdx]?.disabled ? selIdx : firstEnabledIndex(visibleOptions));
+    setActiveIndex(
+      selIdx >= 0 && !visibleOptions[selIdx]?.disabled ? selIdx : firstEnabledIndex(visibleOptions),
+    );
   }, [open, selected, visibleOptions]);
 
   useEffect(() => {
@@ -232,7 +247,10 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
           <Loader2 className="h-4 w-4 ml-2 shrink-0 text-fg-secondary animate-spin" aria-hidden />
         ) : (
           <ChevronDown
-            className={cn('h-4 w-4 ml-2 shrink-0 text-fg-secondary transition-transform', open && 'rotate-180')}
+            className={cn(
+              'h-4 w-4 ml-2 shrink-0 text-fg-secondary transition-transform',
+              open && 'rotate-180',
+            )}
             aria-hidden
           />
         )}
@@ -249,7 +267,9 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(function Select
                 aria-expanded
                 aria-controls={visibleOptions.length > 0 ? listId : undefined}
                 aria-autocomplete="list"
-                aria-activedescendant={activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined}
+                aria-activedescendant={
+                  activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined
+                }
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={onSearchKeyDown}

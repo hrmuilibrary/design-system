@@ -80,129 +80,143 @@ function renderMarkerContent(
   if (marker === 'dot') {
     return (
       <span
-        className={cn('rounded-full', dotSize[size], status === 'active' ? 'bg-brand-500' : 'bg-transparent')}
+        className={cn(
+          'rounded-full',
+          dotSize[size],
+          status === 'active' ? 'bg-brand-500' : 'bg-transparent',
+        )}
       />
     );
   }
   return null;
 }
 
-export const StepIndicator = forwardRef<HTMLOListElement, StepIndicatorProps>(function StepIndicator(
-  {
-    steps,
-    activeValue,
-    onStepSelect,
-    marker = 'number',
-    orientation = 'horizontal',
-    size = 'lg',
-    className,
-    dataTestId,
-    ...rest
-  },
-  ref,
-) {
-  const isVertical = orientation === 'vertical';
+export const StepIndicator = forwardRef<HTMLOListElement, StepIndicatorProps>(
+  function StepIndicator(
+    {
+      steps,
+      activeValue,
+      onStepSelect,
+      marker = 'number',
+      orientation = 'horizontal',
+      size = 'lg',
+      className,
+      dataTestId,
+      ...rest
+    },
+    ref,
+  ) {
+    const isVertical = orientation === 'vertical';
 
-  const isCompleted = (step: StepIndicatorItem | undefined) => (step?.status ?? 'upcoming') === 'completed';
+    const isCompleted = (step: StepIndicatorItem | undefined) =>
+      (step?.status ?? 'upcoming') === 'completed';
 
-  return (
-    <ol
-      ref={ref}
-      data-test-id={dataTestId}
-      className={cn('flex', isVertical ? 'flex-col' : 'w-full items-start', className)}
-      {...rest}
-    >
-      {steps.map((step, index) => {
-        const status = step.status ?? 'upcoming';
-        const isFirst = index === 0;
-        const isLast = index === steps.length - 1;
-        const leadingColored = !isFirst && isCompleted(steps[index - 1]);
-        const trailingColored = !isLast && isCompleted(step);
+    return (
+      <ol
+        ref={ref}
+        data-test-id={dataTestId}
+        className={cn('flex', isVertical ? 'flex-col' : 'w-full items-start', className)}
+        {...rest}
+      >
+        {steps.map((step, index) => {
+          const status = step.status ?? 'upcoming';
+          const isFirst = index === 0;
+          const isLast = index === steps.length - 1;
+          const leadingColored = !isFirst && isCompleted(steps[index - 1]);
+          const trailingColored = !isLast && isCompleted(step);
 
-        const markerNode = (
-          <span
-            className={cn(
-              'relative z-10 inline-flex shrink-0 items-center justify-center rounded-full font-semibold transition-colors',
-              markerBoxSize[size],
-              markerBorderWidth[size],
-              markerTextSize[size],
-              markerStatusStyles[status],
-              step.highlighted && haloStyles[status],
-            )}
-          >
-            {renderMarkerContent(marker, status, index, size)}
-          </span>
-        );
-
-        const content = (
-          <div
-            className={cn(
-              'flex flex-col',
-              isVertical ? 'gap-0.5 pb-6' : 'mt-2 items-center gap-0.5 text-center',
-            )}
-          >
-            <span className={cn('font-medium text-fg-default', labelTextSize[size])}>{step.label}</span>
-            {step.description && (
-              <span className={cn('text-fg-secondary', descriptionTextSize[size])}>{step.description}</span>
-            )}
-          </div>
-        );
-
-        return (
-          <li
-            key={String(step.value)}
-            aria-current={isSameOptionValue(step.value, activeValue) ? 'step' : undefined}
-            className={cn('relative flex', isVertical ? 'flex-row gap-3' : 'flex-1 basis-0 min-w-0 flex-col')}
-          >
-            <div
+          const markerNode = (
+            <span
               className={cn(
-                'relative flex shrink-0',
-                isVertical
-                  ? 'w-9 flex-col items-center justify-center'
-                  : cn('w-full items-center justify-center', markerRowHeight[size]),
+                'relative z-10 inline-flex shrink-0 items-center justify-center rounded-full font-semibold transition-colors',
+                markerBoxSize[size],
+                markerBorderWidth[size],
+                markerTextSize[size],
+                markerStatusStyles[status],
+                step.highlighted && haloStyles[status],
               )}
             >
-              {!isFirst && (
-                <span
-                  aria-hidden
-                  className={cn(
-                    'absolute',
-                    isVertical
-                      ? 'left-1/2 top-0 bottom-1/2 w-0.5 -translate-x-1/2'
-                      : 'left-0 right-1/2 top-1/2 h-0.5 -translate-y-1/2',
-                    leadingColored ? 'bg-brand-500' : 'bg-border-default',
-                  )}
-                />
+              {renderMarkerContent(marker, status, index, size)}
+            </span>
+          );
+
+          const content = (
+            <div
+              className={cn(
+                'flex flex-col',
+                isVertical ? 'gap-0.5 pb-6' : 'mt-2 items-center gap-0.5 text-center',
               )}
-              {!isLast && (
-                <span
-                  aria-hidden
-                  className={cn(
-                    'absolute',
-                    isVertical
-                      ? 'left-1/2 top-1/2 bottom-0 w-0.5 -translate-x-1/2'
-                      : 'left-1/2 right-0 top-1/2 h-0.5 -translate-y-1/2',
-                    trailingColored ? 'bg-brand-500' : 'bg-border-default',
-                  )}
-                />
-              )}
-              {onStepSelect ? (
-                <button
-                  type="button"
-                  onClick={() => onStepSelect(step.value)}
-                  aria-label={typeof step.label === 'string' ? step.label : undefined}
-                  className="relative z-10 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2"
-                >
-                  {markerNode}
-                </button>
-              ) : (
-                markerNode
+            >
+              <span className={cn('font-medium text-fg-default', labelTextSize[size])}>
+                {step.label}
+              </span>
+              {step.description && (
+                <span className={cn('text-fg-secondary', descriptionTextSize[size])}>
+                  {step.description}
+                </span>
               )}
             </div>
-            {content}
-          </li>
-        );
-      })}
-    </ol>
-  );
-});
+          );
+
+          return (
+            <li
+              key={String(step.value)}
+              aria-current={isSameOptionValue(step.value, activeValue) ? 'step' : undefined}
+              className={cn(
+                'relative flex',
+                isVertical ? 'flex-row gap-3' : 'flex-1 basis-0 min-w-0 flex-col',
+              )}
+            >
+              <div
+                className={cn(
+                  'relative flex shrink-0',
+                  isVertical
+                    ? 'w-9 flex-col items-center justify-center'
+                    : cn('w-full items-center justify-center', markerRowHeight[size]),
+                )}
+              >
+                {!isFirst && (
+                  <span
+                    aria-hidden
+                    className={cn(
+                      'absolute',
+                      isVertical
+                        ? 'left-1/2 top-0 bottom-1/2 w-0.5 -translate-x-1/2'
+                        : 'left-0 right-1/2 top-1/2 h-0.5 -translate-y-1/2',
+                      leadingColored ? 'bg-brand-500' : 'bg-border-default',
+                    )}
+                  />
+                )}
+                {!isLast && (
+                  <span
+                    aria-hidden
+                    className={cn(
+                      'absolute',
+                      isVertical
+                        ? 'left-1/2 top-1/2 bottom-0 w-0.5 -translate-x-1/2'
+                        : 'left-1/2 right-0 top-1/2 h-0.5 -translate-y-1/2',
+                      trailingColored ? 'bg-brand-500' : 'bg-border-default',
+                    )}
+                  />
+                )}
+                {onStepSelect ? (
+                  <button
+                    type="button"
+                    onClick={() => onStepSelect(step.value)}
+                    aria-label={typeof step.label === 'string' ? step.label : undefined}
+                    className="relative z-10 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2"
+                  >
+                    {markerNode}
+                  </button>
+                ) : (
+                  markerNode
+                )}
+              </div>
+              {content}
+            </li>
+          );
+        })}
+      </ol>
+    );
+  },
+);

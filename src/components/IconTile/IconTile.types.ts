@@ -3,15 +3,7 @@ import type { LucideIcon } from 'lucide-react';
 import type { BaseProps } from '../../types';
 
 export type IconTileTone =
-  | 'brand'
-  | 'info'
-  | 'gray'
-  | 'purple'
-  | 'pink'
-  | 'yellow'
-  | 'success'
-  | 'warning'
-  | 'danger';
+  'brand' | 'info' | 'gray' | 'purple' | 'pink' | 'yellow' | 'success' | 'warning' | 'danger';
 
 export type IconTileSize = 'sm' | 'md' | 'lg' | 'xl';
 export type IconTileShape = 'rounded' | 'circle';

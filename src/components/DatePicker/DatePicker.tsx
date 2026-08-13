@@ -78,7 +78,11 @@ function startOfMonth(date: Date) {
 
 function sameDay(a: Date | null, b: Date | null) {
   return (
-    !!a && !!b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
+    !!a &&
+    !!b &&
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
   );
 }
 
@@ -117,7 +121,8 @@ function buildGrid(view: Date, firstDayOfWeek: number) {
   const daysInMonth = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
   const cells: (Date | null)[] = [];
   for (let i = 0; i < offset; i++) cells.push(null);
-  for (let i = 1; i <= daysInMonth; i++) cells.push(new Date(view.getFullYear(), view.getMonth(), i));
+  for (let i = 1; i <= daysInMonth; i++)
+    cells.push(new Date(view.getFullYear(), view.getMonth(), i));
   while (cells.length % 7 !== 0) cells.push(null);
   return cells;
 }
@@ -159,7 +164,11 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   const [hoverEnd, setHoverEnd] = useState<Date | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hasError = error || !!errorText;
-  const describedBy = errorText ? `${triggerId}-error` : helperText ? `${triggerId}-help` : undefined;
+  const describedBy = errorText
+    ? `${triggerId}-error`
+    : helperText
+      ? `${triggerId}-help`
+      : undefined;
 
   useEffect(() => {
     if (disabled) setOpen(false);
@@ -168,7 +177,8 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   useEffect(() => {
     if (!open) return;
     const onClick = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) setOpen(false);
+      if (containerRef.current && !containerRef.current.contains(event.target as Node))
+        setOpen(false);
     };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
@@ -291,7 +301,9 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
               <X className="w-4 h-4 text-fg-secondary" />
             </span>
           ) : (
-            <Calendar className={cn('w-4 h-4', disabled ? 'text-fg-disabled' : 'text-fg-secondary')} />
+            <Calendar
+              className={cn('w-4 h-4', disabled ? 'text-fg-disabled' : 'text-fg-secondary')}
+            />
           )}
         </button>
 
@@ -331,7 +343,11 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                 const isStart = range && sameDay(date, currentRange.start);
                 const isEnd = range && sameDay(date, rangeEnd);
                 const isInRange =
-                  range && !!currentRange.start && !!rangeEnd && date > currentRange.start && date < rangeEnd;
+                  range &&
+                  !!currentRange.start &&
+                  !!rangeEnd &&
+                  date > currentRange.start &&
+                  date < rangeEnd;
                 const stateClassName = dayDisabled
                   ? 'text-fg-disabled cursor-not-allowed'
                   : isSelected || isStart || isEnd
@@ -346,7 +362,11 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                     disabled={dayDisabled}
                     aria-disabled={dayDisabled || undefined}
                     onMouseEnter={() =>
-                      !dayDisabled && range && currentRange.start && !currentRange.end && setHoverEnd(date)
+                      !dayDisabled &&
+                      range &&
+                      currentRange.start &&
+                      !currentRange.end &&
+                      setHoverEnd(date)
                     }
                     onClick={() => !dayDisabled && pick(date)}
                     className={cn('h-8 rounded-md text-p-sm font-medium', stateClassName)}
