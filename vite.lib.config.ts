@@ -43,6 +43,10 @@ export default defineConfig({
         '@dnd-kit/core',
         '@dnd-kit/sortable',
         '@dnd-kit/utilities',
+        'react-select',
+        'react-select/async',
+        'react-select/creatable',
+        'react-select/async-creatable',
       ],
       output: {
         preserveModules: false,

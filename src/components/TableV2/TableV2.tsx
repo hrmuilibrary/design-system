@@ -346,7 +346,7 @@ function TableV2Inner<TData, TValue = unknown>(
     estimatedRowHeight = 44,
     maxBodyHeight = 480,
     onRowClick,
-    toolbar,
+    toolbar = false,
     toolbarActions,
     searchPlaceholder,
     onRefresh,
@@ -529,7 +529,7 @@ function TableV2Inner<TData, TValue = unknown>(
       <thead
         className={cn(
           'text-p-sm font-semibold text-fg-secondary uppercase tracking-wider',
-          stickyHeader && 'sticky top-0 z-10',
+          stickyHeader && 'sticky top-0 z-2',
         )}
       >
         {table
@@ -602,7 +602,10 @@ function TableV2Inner<TData, TValue = unknown>(
           <div className="hidden md:block">
             <div
               ref={scrollContainerRef}
-              className="w-full overflow-auto rounded-b-lg"
+              className={cn(
+                'w-full overflow-auto',
+                toolbar === false ? 'rounded-lg' : 'rounded-b-lg',
+              )}
               style={
                 enableVirtualization || stickyHeader ? { maxHeight: maxBodyHeight } : undefined
               }
