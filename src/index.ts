@@ -34,6 +34,7 @@ export * from './components/Progress';
 export * from './components/Radio';
 export * from './components/ReadMore';
 export * from './components/Select';
+export * from './components/SelectV2';
 export * from './components/Sidebar';
 export * from './components/Skeleton';
 export * from './components/Snackbar';

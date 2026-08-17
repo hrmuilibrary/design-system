@@ -1,0 +1,125 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as SelectV2Stories from './SelectV2.stories';
+
+<Meta of={SelectV2Stories} />
+
+# SelectV2
+
+A combobox built on [`react-select`](https://react-select.com/) — the
+headless-behavior counterpart to `Select`/`MultiSelect`, in the same sense
+that `TableV2` wraps `@tanstack/react-table` instead of hand-rolling table
+behavior. Reach for `SelectV2` when you need async-loaded options,
+user-creatable options, or option lists in the thousands — capabilities
+`Select`/`MultiSelect` don't have. For everything else, `Select` and
+`MultiSelect` remain the simpler, dependency-free choice.
+
+**Peer dependency**: `react-select` (`^5.10.2`) is an optional peer
+dependency, the same treatment as `react-hook-form`/`yup` for
+`FormContainer`/`FormField` — install it alongside this package if you use
+`SelectV2`.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Single vs. multi
+
+One component covers both, via `isMulti` — matching react-select's own API.
+`isMulti` also changes the type of `value`/`defaultValue`/`onChange`:
+
+```tsx
+// Single (isMulti omitted or false)
+<SelectV2 options={options} value={value} onChange={(v: OptionValue | undefined) => ...} />
+
+// Multi
+<SelectV2 isMulti options={options} value={values} onChange={(vs: OptionValue[]) => ...} />
+```
+
+As with `Select`, pass `value`/`onChange` for controlled usage or
+`defaultValue` for uncontrolled — never both.
+
+## Async options
+
+Pass `loadOptions` to fetch options as the user types (debounced internally
+by react-select). `defaultOptions` controls what's shown before the first
+keystroke: an array of options, or `true` to trigger an initial
+`loadOptions('')` call.
+
+```tsx
+<SelectV2
+  loadOptions={(query) => fetchUsers(query)}
+  defaultOptions
+  value={value}
+  onChange={setValue}
+/>
+```
+
+Because a controlled `value` needs the full option object (label, etc.) to
+render — not just the bare value — SelectV2 remembers every option it has
+ever seen (from `options`, `defaultOptions`, `loadOptions` results, and
+anything the user selects or creates). If you set a controlled `value` to an
+id `loadOptions` hasn't returned yet, it renders with a fallback label equal
+to the raw value until a matching option is seen — pass that option via
+`defaultOptions` up front to avoid the flash.
+
+## Creatable options
+
+`creatable` lets the user type a value that isn't in the list and add it.
+SelectV2 handles adding and selecting the new option itself; `onCreateOption`
+is for your own side effects (e.g. persisting it upstream) — it does not
+need to call back into `value`/`onChange` itself.
+
+```tsx
+<SelectV2
+  options={options}
+  creatable
+  onCreateOption={(text) => saveNewOption(text)}
+  value={value}
+  onChange={setValue}
+/>
+```
+
+`creatable` composes with `loadOptions` — SelectV2 picks react-select's
+`AsyncCreatableSelect` under the hood when both are set.
+
+## Virtualized menu
+
+`virtualized` renders the open menu's rows through
+`@tanstack/react-virtual` instead of all at once, for option lists in the
+thousands. It assumes uniform, single-line rows: grouped options or
+multi-line `description`s will misalign, and keyboard scroll-into-view for
+the active row is best-effort, since off-screen rows have no real DOM node
+until they scroll into range. Leave it off unless your option count is
+large enough to need it.
+
+## Validation state
+
+`error` switches the control to the danger border/ring styles; `errorText`
+does the same and renders below the control in place of `helperText`.
+
+## Styling
+
+SelectV2 renders react-select in `unstyled` mode and maps every part
+(control, menu, option, chips, indicators, ...) to Tailwind utility classes
+built from the same semantic tokens as `Select`/`MultiSelect`, so it looks
+like a native sibling rather than a third-party widget.
+
+## Accessibility
+
+Keyboard navigation, combobox ARIA roles, and live-region announcements are
+handled by react-select itself — one of the reasons to reach for `SelectV2`
+over hand-rolling a combobox.
+
+## Composition
+
+SelectV2 forwards its ref to react-select's own instance (`SelectInstance`
+from `react-select`, exposing `.focus()`/`.blur()`), not a plain DOM node —
+react-select doesn't render a single native form control. Its root DOM node
+is the wrapping `<div>` (label + control + menu + helper/error text), which
+is where `dataTestId` is applied as `data-test-id`.

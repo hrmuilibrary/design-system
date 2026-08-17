@@ -127,7 +127,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
-  render: () => <TableV2 data={employees} columns={baseColumns} />,
+  render: () => <TableV2 data={employees} columns={baseColumns} toolbar={false} />,
 };
 
 export const Sorting: Story = {
@@ -222,6 +222,8 @@ export const ErrorState: Story = {
       data={[]}
       columns={baseColumns}
       error="Failed to load employees. Check your connection and try again."
+      enableColumnVisibility
+      enableGlobalFilter
     />
   ),
 };
