@@ -27,6 +27,7 @@ import { ChevronDown, Loader2, X } from 'lucide-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
+import { Checkbox } from '../Checkbox';
 import type { SelectV2Option, SelectV2Props, SelectV2Size } from './SelectV2.types';
 import type { OptionValue } from '../../types';
 
@@ -53,6 +54,19 @@ function optionLabelText(option: SelectV2Option): string {
   return (
     option.searchText ?? (typeof option.label === 'string' ? option.label : String(option.value))
   );
+}
+
+function matchesSearch(option: SelectV2Option, inputValue: string): boolean {
+  const needle = inputValue.trim().toLowerCase();
+  if (!needle) return true;
+  const haystack = `${optionLabelText(option)} ${String(option.value)}`.toLowerCase();
+  return haystack.includes(needle);
+}
+
+interface SelectAllState {
+  count: number;
+  checked: boolean;
+  indeterminate: boolean;
 }
 
 function buildClassNames(
@@ -133,6 +147,40 @@ function MultiValueRemove(props: ComponentProps<typeof RSComponents.MultiValueRe
 
 function LoadingIndicator() {
   return <Loader2 className="h-4 w-4 animate-spin text-fg-secondary" aria-hidden />;
+}
+
+/** Wraps `Menu` to pin a "Select all" row above the option list — works for
+ *  both the default and virtualized `MenuList` since `Menu` wraps `MenuList`
+ *  regardless. Only registered when the select is multi and non-async. */
+function SelectAllMenu(props: ComponentProps<typeof RSComponents.Menu>) {
+  const { selectAllState, onSelectAllToggle } = props.selectProps as unknown as {
+    selectAllState?: SelectAllState | null;
+    onSelectAllToggle?: () => void;
+  };
+
+  return (
+    <RSComponents.Menu {...props}>
+      {selectAllState && (
+        <div
+          className="border-b border-border-default px-3 py-2"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={(e) => {
+            e.preventDefault();
+            onSelectAllToggle?.();
+          }}
+        >
+          <Checkbox
+            size="sm"
+            checked={selectAllState.checked}
+            indeterminate={selectAllState.indeterminate}
+            label={`Select all (${selectAllState.count})`}
+            readOnly
+          />
+        </div>
+      )}
+      {props.children}
+    </RSComponents.Menu>
+  );
 }
 
 /** Renders only the visible slice of `MenuList`'s children via
@@ -331,6 +379,55 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
 
   const anyOptionHasDescription = useMemo(() => options.some((o) => !!o.description), [options]);
 
+  // "Select all" only covers the static `options` case — async results
+  // stream in from the server and aren't retained as a stable "currently
+  // visible" list, so select-all isn't offered there.
+  const isSelectAllEligible = !!isMulti && !isAsync;
+
+  const [inputValue, setInputValue] = useState('');
+  const handleInputChange = useCallback((nextInputValue: string, meta: { action: string }) => {
+    if (meta.action === 'input-change') setInputValue(nextInputValue);
+  }, []);
+
+  const visibleSelectableOptions = useMemo(() => {
+    if (!isSelectAllEligible) return [];
+    return options.filter((o) => !o.disabled && matchesSearch(o, inputValue));
+  }, [isSelectAllEligible, options, inputValue]);
+
+  const selectAllState = useMemo<SelectAllState | null>(() => {
+    if (!isSelectAllEligible || visibleSelectableOptions.length === 0) return null;
+    const selectedValues = new Set(currentMulti.map(String));
+    const selectedVisibleCount = visibleSelectableOptions.filter((o) =>
+      selectedValues.has(String(o.value)),
+    ).length;
+    return {
+      count: visibleSelectableOptions.length,
+      checked: selectedVisibleCount === visibleSelectableOptions.length,
+      indeterminate:
+        selectedVisibleCount > 0 && selectedVisibleCount < visibleSelectableOptions.length,
+    };
+  }, [isSelectAllEligible, visibleSelectableOptions, currentMulti]);
+
+  const handleSelectAllToggle = useCallback(() => {
+    if (!selectAllState) return;
+    const visibleValues = new Set(visibleSelectableOptions.map((o) => String(o.value)));
+    let next: OptionValue[];
+    if (selectAllState.checked) {
+      next = currentMulti.filter((v) => !visibleValues.has(String(v)));
+    } else {
+      mergeKnown(visibleSelectableOptions);
+      const existing = new Set(currentMulti.map(String));
+      next = [
+        ...currentMulti,
+        ...visibleSelectableOptions
+          .filter((o) => !existing.has(String(o.value)))
+          .map((o) => o.value),
+      ];
+    }
+    setInternalMulti(next);
+    (onChange as ((v: OptionValue[]) => void) | undefined)?.(next);
+  }, [selectAllState, visibleSelectableOptions, currentMulti, mergeKnown, onChange]);
+
   const commonProps: Record<string, unknown> = {
     inputId,
     unstyled: true,
@@ -366,6 +463,14 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
     noOptionsMessage: () => emptyText,
     'aria-invalid': hasError || undefined,
     'aria-required': required || undefined,
+    ...(isSelectAllEligible
+      ? {
+          inputValue,
+          onInputChange: handleInputChange,
+          selectAllState,
+          onSelectAllToggle: handleSelectAllToggle,
+        }
+      : {}),
     components: {
       DropdownIndicator,
       ClearIndicator,
@@ -373,6 +478,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
       LoadingIndicator,
       IndicatorSeparator: () => null,
       ...(virtualized ? { MenuList: VirtualizedMenuList } : {}),
+      ...(isSelectAllEligible ? { Menu: SelectAllMenu } : {}),
     },
   };
 
