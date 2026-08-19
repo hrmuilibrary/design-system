@@ -1,6 +1,6 @@
 {
   "name": "@dinofront/design_system",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Enterprise React component library and design system built on Tailwind CSS.",
   "type": "module",
   "license": "MIT",
@@ -39,23 +39,11 @@
     "format:check": "prettier --check ."
   },
   "peerDependencies": {
-    "@hookform/resolvers": "^5.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-hook-form": "^7.59.0",
-    "react-select": "^5.10.2",
     "yup": "^1.0.0"
   },
   "peerDependenciesMeta": {
-    "@hookform/resolvers": {
-      "optional": true
-    },
-    "react-hook-form": {
-      "optional": true
-    },
-    "react-select": {
-      "optional": true
-    },
     "yup": {
       "optional": true
     }
@@ -64,16 +52,18 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@hookform/resolvers": "^5.1.1",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.14.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.25.0",
+    "react-hook-form": "^7.59.0",
+    "react-select": "^5.10.2",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
-    "@hookform/resolvers": "^5.7.1",
     "@storybook/addon-docs": "^10.5.2",
     "@storybook/react-vite": "^10.5.2",
     "@tailwindcss/cli": "^4.3.3",
@@ -90,8 +80,6 @@
     "prettier": "^3.9.5",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-hook-form": "^7.84.0",
-    "react-select": "^5.10.2",
     "storybook": "^10.5.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",

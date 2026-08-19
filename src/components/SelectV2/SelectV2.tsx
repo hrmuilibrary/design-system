@@ -28,6 +28,8 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
 import { Checkbox } from '../Checkbox';
+import { useVisibleTagCount } from './useVisibleTagCount';
+import { SELECT_V2_TRANSLATIONS } from './SelectV2.i18n';
 import type { SelectV2Option, SelectV2Props, SelectV2Size } from './SelectV2.types';
 import type { OptionValue } from '../../types';
 
@@ -45,6 +47,16 @@ const sizeValuePadding: Record<SelectV2Size, string> = {
   md: 'px-3 py-1',
   sm: 'px-2.5 py-0.5',
 };
+
+// Shared between `buildClassNames`' real chip/badge classNames and the
+// hidden measuring row in `useVisibleTagCount`, so both stay in lockstep.
+const MULTI_VALUE_CLASS =
+  'flex items-center gap-1 rounded-md bg-bg-subtle pl-2 pr-1 py-0.5 max-w-full';
+const MULTI_VALUE_LABEL_CLASS = 'truncate text-p-sm text-fg-default';
+const MULTI_VALUE_REMOVE_CLASS =
+  'rounded-sm text-fg-secondary hover:bg-bg-container hover:text-fg-default cursor-pointer';
+const MULTI_VALUE_BADGE_CLASS =
+  'flex items-center rounded-md bg-bg-info-lighter px-2 py-0.5 text-p-sm text-blue-800 dark:text-blue-300 shrink-0';
 
 // Estimated row height fed to the virtualizer when `virtualized` is on.
 // Assumes a single-line option row (see the prop doc for caveats).
@@ -67,11 +79,13 @@ interface SelectAllState {
   count: number;
   checked: boolean;
   indeterminate: boolean;
+  label: string;
 }
 
 function buildClassNames(
   size: SelectV2Size,
   hasError: boolean,
+  singleLine: boolean,
 ): ClassNamesConfig<SelectV2Option, boolean, GroupBase<SelectV2Option>> {
   return {
     container: () => 'w-full',
@@ -87,14 +101,17 @@ function buildClassNames(
         isDisabled && 'bg-bg-container border-border-default',
       ),
     valueContainer: () =>
-      cn('flex flex-1 flex-wrap items-center gap-1 min-w-0', sizeValuePadding[size]),
+      cn(
+        'flex flex-1 items-center gap-1 min-w-0 sv2-value-container',
+        singleLine ? 'flex-nowrap overflow-hidden' : 'flex-wrap',
+        sizeValuePadding[size],
+      ),
     placeholder: () => 'text-fg-tertiary truncate',
     singleValue: () => 'text-fg-default truncate min-w-0',
     input: () => 'text-fg-default',
-    multiValue: () => 'flex items-center gap-1 rounded-md bg-bg-subtle pl-2 pr-1 py-0.5 max-w-full',
-    multiValueLabel: () => 'truncate text-p-sm text-fg-default',
-    multiValueRemove: () =>
-      'rounded-sm text-fg-secondary hover:bg-bg-container hover:text-fg-default cursor-pointer',
+    multiValue: () => MULTI_VALUE_CLASS,
+    multiValueLabel: () => MULTI_VALUE_LABEL_CLASS,
+    multiValueRemove: () => MULTI_VALUE_REMOVE_CLASS,
     indicatorsContainer: () => 'flex items-center gap-1 pr-2 shrink-0',
     clearIndicator: () => 'text-fg-secondary hover:text-fg-default cursor-pointer p-0.5',
     dropdownIndicator: () => 'text-fg-secondary p-0.5',
@@ -145,6 +162,23 @@ function MultiValueRemove(props: ComponentProps<typeof RSComponents.MultiValueRe
   );
 }
 
+/** Only registered when `isMulti` and `singleLine` are both on. Renders chips
+ *  up to `visibleTagCount` as usual, replaces the next one with a "+N" badge
+ *  summarizing the rest, and drops the remainder — `visibleTagCount` and the
+ *  live selection count are threaded through `selectProps`, same pattern as
+ *  `selectAllState` on `SelectAllMenu`. */
+function MultiValue(props: ComponentProps<typeof RSComponents.MultiValue>) {
+  const { visibleTagCount } = props.selectProps as unknown as { visibleTagCount?: number };
+  if (visibleTagCount === undefined || props.index < visibleTagCount) {
+    return <RSComponents.MultiValue {...props} />;
+  }
+  if (props.index === visibleTagCount) {
+    const total = Array.isArray(props.selectProps.value) ? props.selectProps.value.length : 0;
+    return <span className={MULTI_VALUE_BADGE_CLASS}>+{total - visibleTagCount}</span>;
+  }
+  return null;
+}
+
 function LoadingIndicator() {
   return <Loader2 className="h-4 w-4 animate-spin text-fg-secondary" aria-hidden />;
 }
@@ -173,7 +207,7 @@ function SelectAllMenu(props: ComponentProps<typeof RSComponents.Menu>) {
             size="sm"
             checked={selectAllState.checked}
             indeterminate={selectAllState.indeterminate}
-            label={`Select all (${selectAllState.count})`}
+            label={selectAllState.label}
             readOnly
           />
         </div>
@@ -228,8 +262,8 @@ function VirtualizedMenuList(
   );
 }
 
-export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
-  {
+export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(props, ref) {
+  const {
     options,
     loadOptions,
     defaultOptions,
@@ -240,7 +274,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
     value,
     defaultValue,
     onChange,
-    placeholder = 'Select…',
+    placeholder,
     label,
     labelAddons,
     helperText,
@@ -251,16 +285,25 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
     clearable = false,
     searchable = true,
     virtualized = false,
-    emptyText = 'No results',
+    emptyText,
+    locale = 'en-US',
     size = 'md',
     disabled = false,
     id,
     className,
     wrapperClassName,
     dataTestId,
-  },
-  ref,
-) {
+  } = props;
+  // `singleLine` only exists on the `isMulti: true` branch of the
+  // discriminated union, so it can't be pulled in by the plain destructure
+  // above without widening every other field to a union type.
+  const singleLine = props.isMulti ? !!props.singleLine : false;
+
+  const t = SELECT_V2_TRANSLATIONS[locale];
+  const resolvedPlaceholder = placeholder ?? t.placeholder;
+  const resolvedEmptyText = emptyText ?? t.noResults;
+  const resolvedFormatCreateLabel = formatCreateLabel ?? ((value: string) => t.createLabel(value));
+
   const reactId = useId();
   const inputId = id ?? reactId;
   const hasError = error || !!errorText;
@@ -375,7 +418,21 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
       ? CreatableSelect
       : BaseSelect) as unknown as RSComponentType;
 
-  const classNames = useMemo(() => buildClassNames(size, hasError), [size, hasError]);
+  const classNames = useMemo(
+    () => buildClassNames(size, hasError, singleLine),
+    [size, hasError, singleLine],
+  );
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const measureRef = useRef<HTMLDivElement>(null);
+  const singleLineEnabled = !!isMulti && singleLine;
+  const visibleTagCount = useVisibleTagCount({
+    wrapperRef,
+    measureRef,
+    total: selectedMulti.length,
+    labelsKey: selectedMulti.map(optionLabelText).join(' '),
+    enabled: singleLineEnabled,
+  });
 
   const anyOptionHasDescription = useMemo(() => options.some((o) => !!o.description), [options]);
 
@@ -405,8 +462,9 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
       checked: selectedVisibleCount === visibleSelectableOptions.length,
       indeterminate:
         selectedVisibleCount > 0 && selectedVisibleCount < visibleSelectableOptions.length,
+      label: t.selectAllLabel(visibleSelectableOptions.length),
     };
-  }, [isSelectAllEligible, visibleSelectableOptions, currentMulti]);
+  }, [isSelectAllEligible, visibleSelectableOptions, currentMulti, t]);
 
   const handleSelectAllToggle = useCallback(() => {
     if (!selectAllState) return;
@@ -440,7 +498,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
     value: isMulti ? selectedMulti : selectedSingle,
     onChange: handleChange,
     onCreateOption: creatable ? handleCreate : undefined,
-    formatCreateLabel,
+    formatCreateLabel: creatable ? resolvedFormatCreateLabel : undefined,
     getOptionValue: (o: SelectV2Option) => String(o.value),
     getOptionLabel: optionLabelText,
     formatOptionLabel: (opt: SelectV2Option, meta: FormatOptionLabelMeta<SelectV2Option>) => {
@@ -455,12 +513,13 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
       );
     },
     isOptionDisabled: (o: SelectV2Option) => !!o.disabled,
-    placeholder,
+    placeholder: resolvedPlaceholder,
     isDisabled: disabled || loading,
     isClearable: clearable,
     isSearchable: searchable,
     isLoading: loading || undefined,
-    noOptionsMessage: () => emptyText,
+    noOptionsMessage: () => resolvedEmptyText,
+    loadingMessage: () => t.loadingMessage,
     'aria-invalid': hasError || undefined,
     'aria-required': required || undefined,
     ...(isSelectAllEligible
@@ -471,6 +530,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
           onSelectAllToggle: handleSelectAllToggle,
         }
       : {}),
+    ...(singleLineEnabled ? { visibleTagCount } : {}),
     components: {
       DropdownIndicator,
       ClearIndicator,
@@ -479,11 +539,16 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
       IndicatorSeparator: () => null,
       ...(virtualized ? { MenuList: VirtualizedMenuList } : {}),
       ...(isSelectAllEligible ? { Menu: SelectAllMenu } : {}),
+      ...(singleLineEnabled ? { MultiValue } : {}),
     },
   };
 
   return (
-    <div data-test-id={dataTestId} className={cn('flex flex-col gap-1.5 w-full', wrapperClassName)}>
+    <div
+      ref={wrapperRef}
+      data-test-id={dataTestId}
+      className={cn('flex flex-col gap-1.5 w-full', wrapperClassName)}
+    >
       {(label || labelAddons) && (
         <div className="flex items-center gap-1.5">
           {label && (
@@ -503,6 +568,24 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(
         </div>
       )}
       <Component ref={ref} {...commonProps} />
+      {singleLineEnabled && (
+        <div
+          ref={measureRef}
+          aria-hidden
+          className="flex items-center gap-1 whitespace-nowrap"
+          style={{ position: 'absolute', top: -9999, left: -9999, visibility: 'hidden' }}
+        >
+          {selectedMulti.map((opt) => (
+            <span key={String(opt.value)} data-measure-chip className={MULTI_VALUE_CLASS}>
+              <span className={MULTI_VALUE_LABEL_CLASS}>{optionLabelText(opt)}</span>
+              <span className={MULTI_VALUE_REMOVE_CLASS}>
+                <X className="h-3 w-3" aria-hidden />
+              </span>
+            </span>
+          ))}
+          <span data-measure-badge className={MULTI_VALUE_BADGE_CLASS} />
+        </div>
+      )}
       {errorText ? (
         <p id={`${inputId}-error`} className="text-p-sm text-fg-danger">
           {errorText}
