@@ -1,0 +1,12 @@
+import{a as e,i as t}from"./preload-helper-BdFrVu1K.js";import{t as n}from"./iframe-DIoW-LAR.js";import{a as r,t as i}from"./tokens-CmveXG68.js";var a=e({Scale:()=>l,__namedExportsOrder:()=>u,default:()=>c});function o({className:e,name:t,value:n}){return(0,s.jsxs)(`div`,{className:`flex flex-col gap-2`,children:[(0,s.jsx)(`div`,{className:`bg-bg-brand-lighter border-border-brand h-20 w-20 border ${e}`}),(0,s.jsxs)(`div`,{className:`text-label-sm text-fg-default font-medium`,children:[`rounded-`,t]}),(0,s.jsx)(`div`,{className:`text-p-xs text-fg-tertiary font-mono`,children:n})]})}var s,c,l,u,d=t((()=>{i(),s=n(),c={title:`Foundations/Radius`,parameters:{layout:`padded`,docs:{description:{component:"Reference page for the border-radius scale. Uses the real `rounded-*`\nutility classes — Tailwind v4 maps the `--radius-*` theme namespace to\n`rounded-*` directly, so these are the same classes components use."}}}},l={render:()=>(0,s.jsxs)(`div`,{className:`grid grid-cols-[repeat(auto-fill,minmax(110px,1fr))] gap-6`,children:[(0,s.jsx)(o,{className:`rounded-xs`,name:`xs`,value:r.xs}),(0,s.jsx)(o,{className:`rounded-sm`,name:`sm`,value:r.sm}),(0,s.jsx)(o,{className:`rounded-md`,name:`md`,value:r.md}),(0,s.jsx)(o,{className:`rounded-lg`,name:`lg`,value:r.lg}),(0,s.jsx)(o,{className:`rounded-xl`,name:`xl`,value:r.xl}),(0,s.jsx)(o,{className:`rounded-2xl`,name:`2xl`,value:r[`2xl`]}),(0,s.jsx)(o,{className:`rounded-3xl`,name:`3xl`,value:r[`3xl`]}),(0,s.jsx)(o,{className:`rounded-full`,name:`full`,value:r.full})]})},l.parameters={...l.parameters,docs:{...l.parameters?.docs,source:{originalSource:`{
+  render: () => <div className="grid grid-cols-[repeat(auto-fill,minmax(110px,1fr))] gap-6">
+      <Tile className="rounded-xs" name="xs" value={radius.xs} />
+      <Tile className="rounded-sm" name="sm" value={radius.sm} />
+      <Tile className="rounded-md" name="md" value={radius.md} />
+      <Tile className="rounded-lg" name="lg" value={radius.lg} />
+      <Tile className="rounded-xl" name="xl" value={radius.xl} />
+      <Tile className="rounded-2xl" name="2xl" value={radius['2xl']} />
+      <Tile className="rounded-3xl" name="3xl" value={radius['3xl']} />
+      <Tile className="rounded-full" name="full" value={radius.full} />
+    </div>
+}`,...l.parameters?.docs?.source}}},u=[`Scale`]}));d();export{l as Scale,u as __namedExportsOrder,c as default,d as n,a as t};
