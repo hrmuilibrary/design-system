@@ -1,1 +1,0 @@
-import{i as e}from"./preload-helper-BdFrVu1K.js";import{r as t}from"./Avatar-Cppy_MNt.js";var n=e((()=>{t()}));export{n as t};

@@ -1,0 +1,27 @@
+import{a as e,i as t}from"./preload-helper-BdFrVu1K.js";import{t as n}from"./iframe-cZVKo6eo.js";import{c as r,l as i,o as a,t as o}from"./tokens-CmveXG68.js";var s=e({Headline:()=>f,Label:()=>m,Paragraph:()=>p,__namedExportsOrder:()=>h,default:()=>u});function c({className:e,fontSize:t,lineHeight:n}){return(0,l.jsxs)(`div`,{className:`border-border-subtle flex items-baseline gap-6 border-b py-4 last:border-b-0`,children:[(0,l.jsxs)(`div`,{className:`w-40 shrink-0`,children:[(0,l.jsx)(`div`,{className:`text-label-sm text-fg-default font-medium`,children:e}),(0,l.jsxs)(`div`,{className:`text-p-xs text-fg-tertiary font-mono`,children:[t,` / `,n]})]}),(0,l.jsx)(`span`,{className:`${e} text-fg-default`,children:d})]})}var l,u,d,f,p,m,h,g=t((()=>{o(),l=n(),u={title:`Foundations/Typography`,parameters:{layout:`padded`,docs:{description:{component:"Reference page for the typography scale. Each row renders with the real\n`text-*` utility class (not an inline style) so this page doubles as a\ncheck that the class actually resolves the font-size/line-height pair\ngenerated from styles/tokens.css's `@theme` block."}}}},d=`The quick brown fox jumps over the lazy dog`,f={render:()=>(0,l.jsxs)(`div`,{className:`flex max-w-3xl flex-col`,children:[(0,l.jsx)(c,{className:`text-h-xl`,fontSize:a.xl.fontSize,lineHeight:a.xl.lineHeight}),(0,l.jsx)(c,{className:`text-h-lg`,fontSize:a.lg.fontSize,lineHeight:a.lg.lineHeight}),(0,l.jsx)(c,{className:`text-h-md`,fontSize:a.md.fontSize,lineHeight:a.md.lineHeight}),(0,l.jsx)(c,{className:`text-h-std`,fontSize:a.std.fontSize,lineHeight:a.std.lineHeight}),(0,l.jsx)(c,{className:`text-h-sm`,fontSize:a.sm.fontSize,lineHeight:a.sm.lineHeight}),(0,l.jsx)(c,{className:`text-h-xs`,fontSize:a.xs.fontSize,lineHeight:a.xs.lineHeight})]})},p={render:()=>(0,l.jsxs)(`div`,{className:`flex max-w-3xl flex-col`,children:[(0,l.jsx)(c,{className:`text-p-lg`,fontSize:i.lg.fontSize,lineHeight:i.lg.lineHeight}),(0,l.jsx)(c,{className:`text-p-md`,fontSize:i.md.fontSize,lineHeight:i.md.lineHeight}),(0,l.jsx)(c,{className:`text-p-std`,fontSize:i.std.fontSize,lineHeight:i.std.lineHeight}),(0,l.jsx)(c,{className:`text-p-sm`,fontSize:i.sm.fontSize,lineHeight:i.sm.lineHeight}),(0,l.jsx)(c,{className:`text-p-xs`,fontSize:i.xs.fontSize,lineHeight:i.xs.lineHeight})]})},m={render:()=>(0,l.jsxs)(`div`,{className:`flex max-w-3xl flex-col`,children:[(0,l.jsx)(c,{className:`text-label-lg`,fontSize:r.lg.fontSize,lineHeight:r.lg.lineHeight}),(0,l.jsx)(c,{className:`text-label-md`,fontSize:r.md.fontSize,lineHeight:r.md.lineHeight}),(0,l.jsx)(c,{className:`text-label-std`,fontSize:r.std.fontSize,lineHeight:r.std.lineHeight}),(0,l.jsx)(c,{className:`text-label-sm`,fontSize:r.sm.fontSize,lineHeight:r.sm.lineHeight}),(0,l.jsx)(c,{className:`text-label-xs`,fontSize:r.xs.fontSize,lineHeight:r.xs.lineHeight}),(0,l.jsx)(c,{className:`text-label-xxs`,fontSize:r.xxs.fontSize,lineHeight:r.xxs.lineHeight})]})},f.parameters={...f.parameters,docs:{...f.parameters?.docs,source:{originalSource:`{
+  render: () => <div className="flex max-w-3xl flex-col">
+      <Row className="text-h-xl" fontSize={headline.xl.fontSize} lineHeight={headline.xl.lineHeight} />
+      <Row className="text-h-lg" fontSize={headline.lg.fontSize} lineHeight={headline.lg.lineHeight} />
+      <Row className="text-h-md" fontSize={headline.md.fontSize} lineHeight={headline.md.lineHeight} />
+      <Row className="text-h-std" fontSize={headline.std.fontSize} lineHeight={headline.std.lineHeight} />
+      <Row className="text-h-sm" fontSize={headline.sm.fontSize} lineHeight={headline.sm.lineHeight} />
+      <Row className="text-h-xs" fontSize={headline.xs.fontSize} lineHeight={headline.xs.lineHeight} />
+    </div>
+}`,...f.parameters?.docs?.source}}},p.parameters={...p.parameters,docs:{...p.parameters?.docs,source:{originalSource:`{
+  render: () => <div className="flex max-w-3xl flex-col">
+      <Row className="text-p-lg" fontSize={paragraph.lg.fontSize} lineHeight={paragraph.lg.lineHeight} />
+      <Row className="text-p-md" fontSize={paragraph.md.fontSize} lineHeight={paragraph.md.lineHeight} />
+      <Row className="text-p-std" fontSize={paragraph.std.fontSize} lineHeight={paragraph.std.lineHeight} />
+      <Row className="text-p-sm" fontSize={paragraph.sm.fontSize} lineHeight={paragraph.sm.lineHeight} />
+      <Row className="text-p-xs" fontSize={paragraph.xs.fontSize} lineHeight={paragraph.xs.lineHeight} />
+    </div>
+}`,...p.parameters?.docs?.source}}},m.parameters={...m.parameters,docs:{...m.parameters?.docs,source:{originalSource:`{
+  render: () => <div className="flex max-w-3xl flex-col">
+      <Row className="text-label-lg" fontSize={label.lg.fontSize} lineHeight={label.lg.lineHeight} />
+      <Row className="text-label-md" fontSize={label.md.fontSize} lineHeight={label.md.lineHeight} />
+      <Row className="text-label-std" fontSize={label.std.fontSize} lineHeight={label.std.lineHeight} />
+      <Row className="text-label-sm" fontSize={label.sm.fontSize} lineHeight={label.sm.lineHeight} />
+      <Row className="text-label-xs" fontSize={label.xs.fontSize} lineHeight={label.xs.lineHeight} />
+      <Row className="text-label-xxs" fontSize={label.xxs.fontSize} lineHeight={label.xxs.lineHeight} />
+    </div>
+}`,...m.parameters?.docs?.source}}},h=[`Headline`,`Paragraph`,`Label`]}));g();export{f as Headline,m as Label,p as Paragraph,h as __namedExportsOrder,u as default,g as n,s as t};
