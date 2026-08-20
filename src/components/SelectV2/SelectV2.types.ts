@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { BaseProps, OptionValue } from '../../types';
+import type { BaseProps, OptionValue, TranslationLocale } from '../../types';
 
 export type SelectV2Size = 'sm' | 'md' | 'lg';
 
@@ -59,6 +59,11 @@ export interface SelectV2BaseProps extends BaseProps {
   virtualized?: boolean;
   /** Shown when the list is empty (no matches, or nothing loaded yet). Defaults to `'No results'`. */
   emptyText?: string;
+  /** Language for built-in strings ("Select all", "No results", the async
+   *  loading message, and the default create-option label). Explicit
+   *  `placeholder`/`emptyText`/`formatCreateLabel` props still take
+   *  precedence over the translated defaults. Default `'en-US'`. */
+  locale?: TranslationLocale;
   id?: string;
   className?: string;
   wrapperClassName?: string;
@@ -76,4 +81,7 @@ export type SelectV2Props =
       value?: OptionValue[];
       defaultValue?: OptionValue[];
       onChange?: (values: OptionValue[]) => void;
+      /** Keeps selected chips on a single line instead of wrapping, collapsing
+       *  whatever doesn't fit into a trailing "+N" badge. Default `false`. */
+      singleLine?: boolean;
     });

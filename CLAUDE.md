@@ -148,6 +148,25 @@ apps can override them freely. Only `build:css` (a separate Tailwind CLI
 invocation over `globals.css`) produces the distributable `dist/styles.css`
 containing the actual token/theme/base layer.
 
+## Versioning
+
+Bump `version` in `package.json` once per branch/PR, right before the
+branch is finished and merged — not on every intermediate commit. Use
+standard semver against the previous published version:
+
+- **patch** — bug fixes, internal refactors, docs/story-only changes;
+  anything with no effect on the public API surface.
+- **minor** — new components, new props, new optional capabilities; any
+  addition a consumer can adopt without changing existing code.
+- **major** — breaking changes to the public API: a renamed/removed prop,
+  a changed prop type or required/optional-ness, a changed default value
+  that alters existing behavior, or removal of an exported component/type.
+
+When a branch's changes span more than one category, bump for the
+highest one (e.g. a branch with both a bug fix and a new prop is a minor
+bump). If it's ambiguous which category a change falls into, ask rather
+than guessing.
+
 ## Stack
 
 React 19, Tailwind CSS v4 (CSS-first `@theme` config, no `tailwind.config.js`),

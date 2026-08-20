@@ -63,6 +63,10 @@ const meta = {
       control: 'select',
       options: ['sm', 'md', 'lg'],
     },
+    locale: {
+      control: 'select',
+      options: ['en-US', 'ru-RU', 'hy-AM'],
+    },
   },
   args: {
     options: fruitOptions,
@@ -230,6 +234,67 @@ export const MultiSelectStory: Story = {
             { value: 'product', label: 'Product' },
             { value: 'marketing', label: 'Marketing' },
             { value: 'sales', label: 'Sales (disabled)', disabled: true },
+          ]}
+          value={value}
+          onChange={setValue}
+        />
+      );
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Teams', placeholder: 'Select teams…' },
+};
+
+export const Localized: Story = {
+  name: 'Localized (locale)',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<OptionValue[]>(['design']);
+      return (
+        <SelectV2
+          {...args}
+          isMulti
+          creatable
+          onCreateOption={() => {}}
+          options={[
+            { value: 'design', label: 'Design' },
+            { value: 'engineering', label: 'Engineering' },
+            { value: 'product', label: 'Product' },
+          ]}
+          value={value}
+          onChange={setValue}
+        />
+      );
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Teams', locale: 'hy-AM', placeholder: undefined },
+};
+
+export const SingleLineStory: Story = {
+  name: 'Multi-select, single line (singleLine)',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<OptionValue[]>([
+        'design',
+        'engineering',
+        'product',
+        'marketing',
+        'sales',
+      ]);
+      return (
+        <SelectV2
+          {...args}
+          isMulti
+          singleLine
+          options={[
+            { value: 'design', label: 'Design' },
+            { value: 'engineering', label: 'Engineering' },
+            { value: 'product', label: 'Product' },
+            { value: 'marketing', label: 'Marketing' },
+            { value: 'sales', label: 'Sales' },
+            { value: 'customer-success', label: 'Customer Success' },
+            { value: 'legal', label: 'Legal' },
           ]}
           value={value}
           onChange={setValue}

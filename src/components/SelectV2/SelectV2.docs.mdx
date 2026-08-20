@@ -98,6 +98,20 @@ the active row is best-effort, since off-screen rows have no real DOM node
 until they scroll into range. Leave it off unless your option count is
 large enough to need it.
 
+## Localization
+
+`locale` (`'en-US'` | `'ru-RU'` | `'hy-AM'`, default `'en-US'`) translates
+SelectV2's built-in strings — the "Select all" checkbox label, the "No
+results" empty state, the async loading message, and the default
+`creatable` label — without needing a
+`formatCreateLabel`/`emptyText`/`placeholder` override for each. Explicit
+`placeholder`, `emptyText`, and `formatCreateLabel` props still take
+precedence over the translated defaults.
+
+```tsx
+<SelectV2 options={options} value={value} onChange={setValue} locale="hy-AM" />
+```
+
 ## Validation state
 
 `error` switches the control to the danger border/ring styles; `errorText`
