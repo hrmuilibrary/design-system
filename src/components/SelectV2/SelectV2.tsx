@@ -117,9 +117,9 @@ function buildClassNames(
     dropdownIndicator: () => 'text-fg-secondary p-0.5',
     indicatorSeparator: () => 'hidden',
     menu: () =>
-      'mt-1 rounded-lg border border-border-default bg-bg-default shadow-z4 overflow-hidden z-50',
+      'mt-1 rounded-lg border border-border-default bg-bg-default shadow-z4 overflow-hidden z-50!',
     menuList: () => 'max-h-60 overflow-y-auto py-1',
-    menuPortal: () => 'z-50',
+    menuPortal: () => 'z-50!',
     group: () => 'py-1',
     groupHeading: () =>
       'px-3 pt-2 pb-1 text-label-sm font-medium uppercase tracking-wide text-fg-tertiary select-none',
@@ -293,6 +293,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     className,
     wrapperClassName,
     dataTestId,
+    ...reactSelectProps
   } = props;
   // `singleLine` only exists on the `isMulti: true` branch of the
   // discriminated union, so it can't be pulled in by the plain destructure
@@ -487,6 +488,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
   }, [selectAllState, visibleSelectableOptions, currentMulti, mergeKnown, onChange]);
 
   const commonProps: Record<string, unknown> = {
+    ...reactSelectProps,
     inputId,
     unstyled: true,
     classNames,
