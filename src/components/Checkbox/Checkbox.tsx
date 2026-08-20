@@ -42,7 +42,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
       htmlFor={inputId}
       data-test-id={dataTestId}
       className={cn(
-        'inline-flex items-start gap-2.5 group/checkbox',
+        'inline-flex items-center gap-2.5 group/checkbox',
         disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
         className,
       )}

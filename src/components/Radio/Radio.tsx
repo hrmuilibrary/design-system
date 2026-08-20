@@ -158,7 +158,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
       htmlFor={inputId}
       data-test-id={dataTestId}
       className={cn(
-        'inline-flex items-start gap-2.5',
+        'inline-flex items-center gap-2.5',
         effectiveDisabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
         className,
       )}

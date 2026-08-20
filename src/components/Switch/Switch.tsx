@@ -83,7 +83,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
       htmlFor={inputId}
       data-test-id={dataTestId}
       className={cn(
-        'inline-flex items-start gap-3',
+        'inline-flex items-center gap-3',
         labelPosition === 'left' && 'flex-row-reverse justify-end',
         disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
         className,
