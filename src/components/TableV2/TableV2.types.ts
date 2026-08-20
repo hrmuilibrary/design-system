@@ -48,6 +48,23 @@ export interface TableV2RowAction<TData> {
   disabled?: (row: TData) => boolean;
 }
 
+// Re-exported so consumers can type columns/state (e.g. `ColumnDef<MyRow>`)
+// without adding @tanstack/react-table as their own direct dependency.
+export type {
+  Column,
+  ColumnDef,
+  ColumnFiltersState,
+  ColumnOrderState,
+  ColumnPinningState,
+  ColumnResizeMode,
+  OnChangeFn,
+  PaginationState,
+  Row,
+  RowSelectionState,
+  SortingState,
+  VisibilityState,
+} from '@tanstack/react-table';
+
 export interface TableV2Props<TData, TValue = unknown> extends BaseProps {
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
