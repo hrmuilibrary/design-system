@@ -529,7 +529,7 @@ function TableV2Inner<TData, TValue = unknown>(
       <thead
         className={cn(
           'text-p-sm font-semibold text-fg-secondary uppercase tracking-wider',
-          stickyHeader && 'sticky top-0 z-2',
+          stickyHeader && 'sticky top-0 z-10',
         )}
       >
         {table
