@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { GroupBase, Props as ReactSelectProps } from 'react-select';
 import type { BaseProps, OptionValue, TranslationLocale } from '../../types';
 
 export type SelectV2Size = 'sm' | 'md' | 'lg';
@@ -15,7 +16,42 @@ export interface SelectV2Option {
   group?: string;
 }
 
-export interface SelectV2BaseProps extends BaseProps {
+/** react-select props SelectV2 already computes/owns internally and can't be
+ *  overridden through passthrough without breaking its own logic. */
+type OwnedReactSelectProps =
+  | 'aria-invalid'
+  | 'aria-required'
+  | 'className'
+  | 'classNames'
+  | 'components'
+  | 'formatOptionLabel'
+  | 'getOptionLabel'
+  | 'getOptionValue'
+  | 'id'
+  | 'inputId'
+  | 'inputValue'
+  | 'isClearable'
+  | 'isDisabled'
+  | 'isLoading'
+  | 'isMulti'
+  | 'isOptionDisabled'
+  | 'isSearchable'
+  | 'loadingMessage'
+  | 'noOptionsMessage'
+  | 'onChange'
+  | 'onInputChange'
+  | 'options'
+  | 'placeholder'
+  | 'required'
+  | 'unstyled'
+  | 'value';
+
+export type SelectV2ReactSelectProps = Omit<
+  ReactSelectProps<SelectV2Option, boolean, GroupBase<SelectV2Option>>,
+  OwnedReactSelectProps
+>;
+
+export interface SelectV2BaseProps extends BaseProps, Partial<SelectV2ReactSelectProps> {
   /** Static option list, matching `Select`'s required `options` prop. Pass
    *  `[]` when `loadOptions` drives the list instead. */
   options: SelectV2Option[];
