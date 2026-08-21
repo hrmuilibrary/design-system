@@ -1,6 +1,6 @@
 {
   "name": "@dinofront/design_system",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Enterprise React component library and design system built on Tailwind CSS.",
   "type": "module",
   "license": "MIT",
