@@ -1,4 +1,12 @@
-import { forwardRef, useMemo, useRef, useState, type ReactElement, type Ref } from 'react';
+import {
+  forwardRef,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactElement,
+  type Ref,
+} from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -451,6 +459,21 @@ function TableV2Inner<TData, TValue = unknown>(
   const rows = table.getRowModel().rows;
   const leafColumnCount = table.getVisibleLeafColumns().length;
 
+  const firstRowRef = useRef<HTMLTableRowElement>(null);
+  const [measuredRowHeight, setMeasuredRowHeight] = useState<number | null>(null);
+
+  useLayoutEffect(() => {
+    if (!enablePagination || enableVirtualization) return;
+    const height = firstRowRef.current?.getBoundingClientRect().height;
+    if (height && height !== measuredRowHeight) setMeasuredRowHeight(height);
+  }, [enablePagination, enableVirtualization, density, rows, measuredRowHeight]);
+
+  const rowHeight = measuredRowHeight ?? estimatedRowHeight;
+  const fillerRowHeight =
+    enablePagination && !enableVirtualization
+      ? Math.max(0, pagination.pageSize - rows.length) * rowHeight
+      : 0;
+
   const currentColumnOrder = useMemo(
     () =>
       columnOrder.length > 0 ? columnOrder : table.getAllLeafColumns().map((column) => column.id),
@@ -476,23 +499,20 @@ function TableV2Inner<TData, TValue = unknown>(
       ? virtualizer.getTotalSize() - (virtualRows[virtualRows.length - 1]?.end ?? 0)
       : 0;
 
-  const renderRow = (row: Row<TData>) => (
+  const renderRow = (row: Row<TData>, rowRef?: Ref<HTMLTableRowElement>) => (
     <tr
       key={row.id}
+      ref={rowRef}
       data-selected={row.getIsSelected() || undefined}
       onClick={onRowClick ? () => onRowClick(row.original) : undefined}
-      className={cn(
-        'border-t border-border-default',
-        onRowClick && 'cursor-pointer hover:bg-bg-container',
-        row.getIsSelected() && 'bg-brand-50',
-      )}
+      className={cn('group border-t border-border-default', onRowClick && 'cursor-pointer')}
     >
       {row.getVisibleCells().map((cell) => (
         <td
           key={cell.id}
           style={getPinnedStyles(cell.column)}
           className={cn(
-            'bg-bg-default px-4',
+            'bg-bg-default px-4 group-hover:bg-bg-container group-data-[selected]:bg-brand-50',
             densityStyles[density],
             alignStyles[cell.column.columnDef.meta?.align ?? 'left'],
           )}
@@ -563,7 +583,14 @@ function TableV2Inner<TData, TValue = unknown>(
             )}
           </>
         ) : (
-          rows.map(renderRow)
+          <>
+            {rows.map((row, index) => renderRow(row, index === 0 ? firstRowRef : undefined))}
+            {fillerRowHeight > 0 && (
+              <tr aria-hidden>
+                <td style={{ height: fillerRowHeight }} colSpan={leafColumnCount} className="p-0" />
+              </tr>
+            )}
+          </>
         )}
       </tbody>
     </table>
