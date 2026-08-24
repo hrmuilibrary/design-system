@@ -146,6 +146,19 @@ export const Pagination: Story = {
   ),
 };
 
+export const LocalizedPagination: Story = {
+  name: 'Pagination (locale)',
+  render: () => (
+    <TableV2
+      data={manyEmployees}
+      columns={baseColumns}
+      enablePagination
+      pageSize={10}
+      locale="hy-AM"
+    />
+  ),
+};
+
 export const ServerPagination: Story = {
   render: function ServerPaginationStory() {
     const [pageIndex, setPageIndex] = useState(0);

@@ -387,6 +387,25 @@ export const Virtualized: Story = {
   args: { label: 'Pick one of 5,000', placeholder: 'Search…' },
 };
 
+export const OpensUpward: Story = {
+  name: "menuPlacement='top'",
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<OptionValue | undefined>('banana');
+      return <SelectV2 {...args} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Favorite fruit', menuPlacement: 'top' },
+  decorators: [
+    (Story) => (
+      <div className="flex h-40 w-80 items-end">
+        <Story />
+      </div>
+    ),
+  ],
+};
+
 const SIZES = ['sm', 'md', 'lg'] as const;
 
 export const AllSizes: Story = {

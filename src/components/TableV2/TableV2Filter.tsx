@@ -1,6 +1,6 @@
 import type { Column } from '@tanstack/react-table';
 import { Input } from '../Input';
-import { Select } from '../Select';
+import { SelectV2 } from '../SelectV2';
 
 export interface TableV2ColumnFilterProps<TData, TValue> {
   column: Column<TData, TValue>;
@@ -25,11 +25,13 @@ export function TableV2ColumnFilter<TData, TValue>({
 
   if (variant === 'select') {
     return (
-      <Select
+      <SelectV2
         size="sm"
+        searchable={false}
+        required={false}
         options={column.columnDef.meta?.filterOptions ?? []}
         placeholder="All"
-        value={typeof value === 'string' ? value : ''}
+        value={typeof value === 'string' ? value : undefined}
         onChange={(next) => column.setFilterValue(next || undefined)}
       />
     );

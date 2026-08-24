@@ -215,7 +215,7 @@ function HeaderCell<TData, TValue>({
       </div>
 
       {enableFiltering && column.getCanFilter() && (
-        <div className="mt-2" onClick={(event) => event.stopPropagation()}>
+        <div className="mt-2 normal-case" onClick={(event) => event.stopPropagation()}>
           <TableV2ColumnFilter column={column} />
         </div>
       )}
@@ -347,6 +347,7 @@ function TableV2Inner<TData, TValue = unknown>(
     pageSizeOptions,
     pagination: controlledPagination,
     onPaginationChange: onPaginationChangeProp,
+    locale = 'en-US',
     manualPagination = false,
     pageCount,
     rowCount,
@@ -670,7 +671,7 @@ function TableV2Inner<TData, TValue = unknown>(
       )}
 
       {enablePagination && !error && (
-        <TableV2Pagination table={table} pageSizeOptions={pageSizeOptions} />
+        <TableV2Pagination table={table} pageSizeOptions={pageSizeOptions} locale={locale} />
       )}
     </div>
   );

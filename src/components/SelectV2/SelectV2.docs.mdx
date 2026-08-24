@@ -117,6 +117,14 @@ precedence over the translated defaults.
 `error` switches the control to the danger border/ring styles; `errorText`
 does the same and renders below the control in place of `helperText`.
 
+## Menu placement
+
+`menuPlacement` (`'auto'` | `'bottom'` | `'top'`, default `'auto'`) is
+react-select's own prop, passed straight through — SelectV2 doesn't wrap or
+rename it. `'auto'` flips to whichever side has room; pass `'top'` to force
+it open upward regardless of available space, e.g. a control pinned near
+the bottom of a scroll container.
+
 ## Styling
 
 SelectV2 renders react-select in `unstyled` mode and maps every part

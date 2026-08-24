@@ -13,7 +13,7 @@ import type {
   SortingState,
   VisibilityState,
 } from '@tanstack/react-table';
-import type { BaseProps } from '../../types';
+import type { BaseProps, TranslationLocale } from '../../types';
 
 export type TableV2Density = 'comfortable' | 'compact';
 export type TableV2Align = 'left' | 'center' | 'right';
@@ -130,6 +130,8 @@ export interface TableV2Props<TData, TValue = unknown> extends BaseProps {
   manualPagination?: boolean;
   pageCount?: number;
   rowCount?: number;
+  /** Translates the pagination footer's built-in strings ("Rows per page", the row-range summary, "No results"). @default 'en-US' */
+  locale?: TranslationLocale;
 
   // Virtualization — for large datasets; renders a fixed-height scroll viewport.
   enableVirtualization?: boolean;
