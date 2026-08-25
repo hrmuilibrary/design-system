@@ -103,7 +103,7 @@ function buildClassNames(
     valueContainer: () =>
       cn(
         'flex flex-1 items-center gap-1 min-w-0 sv2-value-container',
-        singleLine ? 'flex-nowrap overflow-hidden' : 'flex-wrap',
+        singleLine ? 'flex-nowrap! overflow-hidden' : 'flex-wrap',
         sizeValuePadding[size],
       ),
     placeholder: () => 'text-fg-tertiary truncate',
@@ -444,9 +444,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
   // react-select only renders group headings for its own nested
   // `GroupBase[]` shape, so fold same-group items together here. Items
   // without a `group` stay top-level, in their original relative order.
-  const groupedOptions = useMemo(():
-    | SelectV2Option[]
-    | GroupBase<SelectV2Option>[] => {
+  const groupedOptions = useMemo((): SelectV2Option[] | GroupBase<SelectV2Option>[] => {
     if (!options.some((o) => o.group)) return options;
 
     const groups = new Map<string, SelectV2Option[]>();
@@ -490,12 +488,15 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     const selectedVisibleCount = visibleSelectableOptions.filter((o) =>
       selectedValues.has(String(o.value)),
     ).length;
+    const checked = selectedVisibleCount === visibleSelectableOptions.length;
     return {
       count: visibleSelectableOptions.length,
-      checked: selectedVisibleCount === visibleSelectableOptions.length,
+      checked,
       indeterminate:
         selectedVisibleCount > 0 && selectedVisibleCount < visibleSelectableOptions.length,
-      label: t.selectAllLabel(visibleSelectableOptions.length),
+      label: checked
+        ? t.deselectAllLabel(visibleSelectableOptions.length)
+        : t.selectAllLabel(visibleSelectableOptions.length),
     };
   }, [isSelectAllEligible, visibleSelectableOptions, currentMulti, t]);
 
