@@ -4,8 +4,14 @@ import { Modal } from './Modal';
 import type { ModalProps } from './Modal.types';
 import { Button } from '../Button';
 
-function InteractiveModal(args: Omit<ModalProps, 'open' | 'onClose'>) {
-  const [open, setOpen] = useState(false);
+// Modal is a controlled component (`open` / `onClose`), so every story wraps
+// it with local state and a trigger button instead of rendering it
+// permanently open — that keeps the docs canvas usable (the Docs page renders
+// all stories into one shared DOM, so several always-open portaled overlays
+// would stack on top of each other) and demonstrates the real open/close
+// interaction (overlay click, Escape, close button).
+function Template(args: ModalProps) {
+  const [open, setOpen] = useState(args.open);
   return (
     <>
       <Button onClick={() => setOpen(true)}>Open modal</Button>
@@ -27,9 +33,10 @@ const meta = {
       control: 'select',
       options: ['sm', 'md', 'lg', 'xl', '2xl'],
     },
+    onClose: { table: { disable: true } },
   },
   args: {
-    open: true,
+    open: false,
     onClose: () => {},
     title: 'Modal title',
     description: 'A short supporting description of what this modal is for.',
@@ -38,6 +45,7 @@ const meta = {
     closeOnOverlayClick: true,
     showClose: true,
   },
+  render: Template,
 } satisfies Meta<typeof Modal>;
 
 export default meta;
@@ -106,10 +114,4 @@ export const CustomClassName: Story = {
   args: {
     className: 'bg-bg-container border-2 border-brand-500',
   },
-};
-
-export const Interactive: Story = {
-  name: 'Interactive (trigger + close)',
-  args: { open: false },
-  render: (args) => <InteractiveModal {...args} />,
 };

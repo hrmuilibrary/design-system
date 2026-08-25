@@ -116,8 +116,11 @@ function buildClassNames(
     clearIndicator: () => 'text-fg-secondary hover:text-fg-default cursor-pointer p-0.5',
     dropdownIndicator: () => 'text-fg-secondary p-0.5',
     indicatorSeparator: () => 'hidden',
-    menu: () =>
-      'mt-1 rounded-lg border border-border-default bg-bg-default shadow-z4 overflow-hidden z-50!',
+    menu: ({ placement }) =>
+      cn(
+        'rounded-lg border border-border-default bg-bg-default shadow-z4 overflow-hidden z-50!',
+        placement === 'top' ? 'mb-1' : 'mt-1',
+      ),
     menuList: () => 'max-h-60 overflow-y-auto py-1',
     menuPortal: () => 'z-50!',
     group: () => 'py-1',
@@ -437,6 +440,35 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
 
   const anyOptionHasDescription = useMemo(() => options.some((o) => !!o.description), [options]);
 
+  // `options` is a flat array with an optional per-item `group` label —
+  // react-select only renders group headings for its own nested
+  // `GroupBase[]` shape, so fold same-group items together here. Items
+  // without a `group` stay top-level, in their original relative order.
+  const groupedOptions = useMemo(():
+    | SelectV2Option[]
+    | GroupBase<SelectV2Option>[] => {
+    if (!options.some((o) => o.group)) return options;
+
+    const groups = new Map<string, SelectV2Option[]>();
+    const result: Array<SelectV2Option | GroupBase<SelectV2Option>> = [];
+
+    for (const option of options) {
+      if (!option.group) {
+        result.push(option);
+        continue;
+      }
+      let group = groups.get(option.group);
+      if (!group) {
+        group = [];
+        groups.set(option.group, group);
+        result.push({ label: option.group, options: group });
+      }
+      group.push(option);
+    }
+
+    return result as SelectV2Option[] | GroupBase<SelectV2Option>[];
+  }, [options]);
+
   // "Select all" only covers the static `options` case — async results
   // stream in from the server and aren't retained as a stable "currently
   // visible" list, so select-all isn't offered there.
@@ -494,7 +526,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     classNames,
     className,
     isMulti,
-    options,
+    options: groupedOptions,
     loadOptions: wrappedLoadOptions,
     defaultOptions,
     value: isMulti ? selectedMulti : selectedSingle,

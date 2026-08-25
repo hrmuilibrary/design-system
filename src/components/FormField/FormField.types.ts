@@ -3,8 +3,8 @@ import type { RefCallBack, SetValueConfig } from 'react-hook-form';
 import type { BaseProps } from '../../types';
 
 /** Deliberately untyped `value`/`onChange`: this render prop feeds whichever
- *  input the consumer wires up (native `value`, Select's `string`, Checkbox's
- *  `boolean`, ...). */
+ *  input the consumer wires up (native `value`, SelectV2's `OptionValue`,
+ *  Checkbox's `boolean`, ...). */
 export interface FormFieldRenderProps {
   name: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
