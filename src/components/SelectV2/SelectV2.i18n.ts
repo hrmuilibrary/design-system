@@ -5,6 +5,7 @@ interface SelectV2Translations {
   noResults: string;
   loadingMessage: string;
   selectAllLabel: (count: number) => string;
+  deselectAllLabel: (count: number) => string;
   createLabel: (value: string) => string;
 }
 
@@ -14,6 +15,7 @@ export const SELECT_V2_TRANSLATIONS: Record<TranslationLocale, SelectV2Translati
     noResults: 'No results',
     loadingMessage: 'Loading…',
     selectAllLabel: (count) => `Select all (${count})`,
+    deselectAllLabel: (count) => `Deselect all (${count})`,
     createLabel: (value) => `Create "${value}"`,
   },
   'ru-RU': {
@@ -21,6 +23,7 @@ export const SELECT_V2_TRANSLATIONS: Record<TranslationLocale, SelectV2Translati
     noResults: 'Нет результатов',
     loadingMessage: 'Загрузка…',
     selectAllLabel: (count) => `Выбрать все (${count})`,
+    deselectAllLabel: (count) => `Снять все (${count})`,
     createLabel: (value) => `Создать «${value}»`,
   },
   'hy-AM': {
@@ -28,6 +31,7 @@ export const SELECT_V2_TRANSLATIONS: Record<TranslationLocale, SelectV2Translati
     noResults: 'Արդյունքներ չկան',
     loadingMessage: 'Բեռնվում է…',
     selectAllLabel: (count) => `Ընտրել բոլորը (${count})`,
+    deselectAllLabel: (count) => `Ապընտրել բոլորը (${count})`,
     createLabel: (value) => `Ստեղծել «${value}»`,
   },
 };
