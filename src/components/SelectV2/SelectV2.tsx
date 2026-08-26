@@ -23,7 +23,7 @@ import type {
   SelectInstance,
   SingleValue,
 } from 'react-select';
-import { ChevronDown, Loader2, X } from 'lucide-react';
+import { Check, ChevronDown, Loader2, X } from 'lucide-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
@@ -128,7 +128,7 @@ function buildClassNames(
       'px-3 pt-2 pb-1 text-label-sm font-medium uppercase tracking-wide text-fg-tertiary select-none',
     option: ({ isFocused, isSelected, isDisabled }) =>
       cn(
-        'flex items-center justify-between gap-2 px-3 py-2 cursor-pointer select-none',
+        'flex! items-center justify-between gap-2 px-3 py-2 cursor-pointer select-none',
         isDisabled && 'opacity-50 cursor-not-allowed',
         isFocused && !isDisabled && 'bg-bg-subtle',
         isSelected && 'font-medium',
@@ -180,6 +180,15 @@ function MultiValue(props: ComponentProps<typeof RSComponents.MultiValue>) {
     return <span className={MULTI_VALUE_BADGE_CLASS}>+{total - visibleTagCount}</span>;
   }
   return null;
+}
+
+function Option(props: ComponentProps<typeof RSComponents.Option>) {
+  return (
+    <RSComponents.Option {...props}>
+      {props.children}
+      {props.isSelected && <Check className="h-4 w-4 text-fg-brand shrink-0" aria-hidden />}
+    </RSComponents.Option>
+  );
 }
 
 function LoadingIndicator() {
@@ -566,6 +575,19 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
         }
       : {}),
     ...(singleLineEnabled ? { visibleTagCount } : {}),
+    // Multi-select stays open across selections so users can pick several
+    // options in one go, and keeps selected options in the list (rather than
+    // react-select's default of hiding them) so they can be toggled back off.
+    ...(isMulti
+      ? {
+          closeMenuOnSelect: reactSelectProps.closeMenuOnSelect ?? false,
+          hideSelectedOptions: reactSelectProps.hideSelectedOptions ?? false,
+        }
+      : {}),
+    // Flips the menu above the control when it wouldn't fit below the
+    // nearest scrollable ancestor/viewport, instead of always opening down
+    // and getting clipped or overflowing the page.
+    menuPlacement: reactSelectProps.menuPlacement ?? 'auto',
     components: {
       DropdownIndicator,
       ClearIndicator,
@@ -575,6 +597,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
       ...(virtualized ? { MenuList: VirtualizedMenuList } : {}),
       ...(isSelectAllEligible ? { Menu: SelectAllMenu } : {}),
       ...(singleLineEnabled ? { MultiValue } : {}),
+      ...(isMulti ? { Option } : {}),
     },
   };
 
