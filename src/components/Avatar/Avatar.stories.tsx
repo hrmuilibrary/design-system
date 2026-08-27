@@ -114,19 +114,25 @@ export const CustomClassName: Story = {
 
 export const Editable: Story = {
   name: 'Editable (upload overlay)',
-  render: () => (
-    <div className="flex items-end gap-4">
-      {(['2xs', 'xs', 'md', '2xl'] as const).map((s) => (
-        <Avatar
-          key={s}
-          size={s}
-          name="Ada Lovelace"
-          editable
-          onImageChange={(file) => window.alert(`Picked: ${file.name}`)}
-        />
-      ))}
-    </div>
-  ),
+  render: () => {
+    const handleChange = () => {
+      console.log('asdada');
+    };
+    return (
+      <div className="flex items-end gap-4">
+        {(['2xs', 'xs', 'md', 'lg', 'xl', '2xl'] as const).map((s) => (
+          <Avatar
+            key={s}
+            size={s}
+            name="Ada Lovelace"
+            editable
+            onClick={handleChange}
+            onImageChange={(file) => window.alert(`Picked: ${file.name}`)}
+          />
+        ))}
+      </div>
+    );
+  },
 };
 
 // `maxSizeMB={1}` needs a real file over 1 MB to see the rejection path —

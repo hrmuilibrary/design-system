@@ -45,13 +45,13 @@ const overlap: Record<AvatarSize, string> = {
 // corner) — no shared abstraction yet, but keep the two in sync if this
 // pattern changes.
 const editButtonSize: Record<AvatarSize, string> = {
-  '2xs': 'h-3 w-3',
-  xs: 'h-4 w-4',
-  sm: 'h-5 w-5',
-  md: 'h-6 w-6',
-  lg: 'h-7 w-7',
-  xl: 'h-8 w-8',
-  '2xl': 'h-9 w-9',
+  '2xs': 'h-2 w-2',
+  xs: 'h-3 w-3',
+  sm: 'h-4 w-4',
+  md: 'h-5 w-5',
+  lg: 'h-6 w-6',
+  xl: 'h-7 w-7',
+  '2xl': 'h-8 w-8',
 };
 
 function getInitials(name: string): string {
@@ -222,6 +222,7 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(function Avatar(
             ref={inputRef}
             type="file"
             accept={accept}
+            onClick={(event) => event.stopPropagation()}
             onChange={(event) => {
               event.stopPropagation();
               handleFileChange(event.target.files);

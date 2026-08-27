@@ -84,7 +84,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         onClick?.(event);
       }}
       className={cn(
-        'inline-flex items-center justify-center font-medium transition-colors outline-none',
+        'inline-flex items-center justify-center font-medium transition-colors outline-none cursor-pointer',
         iconOnly ? iconOnlySize[size] : sizeStyles[size],
         variantStyles[variant],
         pressed && pressedStyles[variant],

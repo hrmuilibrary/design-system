@@ -575,18 +575,12 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
         }
       : {}),
     ...(singleLineEnabled ? { visibleTagCount } : {}),
-    // Multi-select stays open across selections so users can pick several
-    // options in one go, and keeps selected options in the list (rather than
-    // react-select's default of hiding them) so they can be toggled back off.
     ...(isMulti
       ? {
           closeMenuOnSelect: reactSelectProps.closeMenuOnSelect ?? false,
           hideSelectedOptions: reactSelectProps.hideSelectedOptions ?? false,
         }
       : {}),
-    // Flips the menu above the control when it wouldn't fit below the
-    // nearest scrollable ancestor/viewport, instead of always opening down
-    // and getting clipped or overflowing the page.
     menuPlacement: reactSelectProps.menuPlacement ?? 'auto',
     components: {
       DropdownIndicator,
