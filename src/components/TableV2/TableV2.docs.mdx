@@ -161,6 +161,16 @@ label/value grid) instead of shrinking columns illegibly. This is driven by
 the real browser viewport width, not the component's container width — see
 the **Mobile** story.
 
+## Filling the page
+
+Pass `fillHeight` to stretch the table to its parent's height instead of
+sizing to its content — the row area scrolls internally (with a pinned
+header, the same as `stickyHeader`) and the pagination footer stays pinned
+to the bottom instead of trailing the last row. The parent element must
+give the table a definite height (e.g. `className="h-[calc(100vh-64px)]"`)
+for this to have any effect — see the **Fill height (pinned footer)**
+story. It does not apply to the mobile card layout.
+
 ## Performance
 
 - `getCoreRowModel`/`getSortedRowModel`/`getFilteredRowModel`/`getPaginationRowModel`

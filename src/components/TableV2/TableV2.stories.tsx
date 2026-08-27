@@ -278,6 +278,30 @@ export const StickyHeader: Story = {
   render: () => <TableV2 data={manyEmployees} columns={baseColumns} enableSorting stickyHeader />,
 };
 
+export const FillHeight: Story = {
+  name: 'Fill height (pinned footer)',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`fillHeight` stretches the table to its parent\'s height, scrolling rows internally with a pinned header and pinning the pagination footer to the bottom. The parent must provide a definite height — here a 500px wrapper.',
+      },
+    },
+  },
+  render: () => (
+    <div className="h-[500px]">
+      <TableV2
+        data={manyEmployees}
+        columns={baseColumns}
+        enableSorting
+        enablePagination
+        pageSize={5}
+        fillHeight
+      />
+    </div>
+  ),
+};
+
 const customCellColumns: ColumnDef<Employee>[] = [
   {
     accessorKey: 'name',

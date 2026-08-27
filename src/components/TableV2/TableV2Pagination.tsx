@@ -13,7 +13,7 @@ export interface TableV2PaginationProps<TData> {
 /** Footer bar: page-size select, row-range summary, and page controls. Works for both client and manual (server) pagination. */
 export function TableV2Pagination<TData>({
   table,
-  pageSizeOptions = [10, 25, 50, 100],
+  pageSizeOptions = [10, 20, 30],
   locale = 'en-US',
 }: TableV2PaginationProps<TData>) {
   const { pageIndex, pageSize } = table.getState().pagination;

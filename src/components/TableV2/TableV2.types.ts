@@ -156,6 +156,15 @@ export interface TableV2Props<TData, TValue = unknown> extends BaseProps {
 
   density?: TableV2Density;
   stickyHeader?: boolean;
+  /**
+   * Stretches the table to fill its parent's height instead of sizing to
+   * its content, with the row area scrolling internally (header pinned,
+   * same as `stickyHeader`) and the pagination footer pinned to the
+   * bottom of that area. The parent element must provide a definite
+   * height (e.g. `h-[calc(100vh-64px)]`) for this to have any effect.
+   * @default false
+   */
+  fillHeight?: boolean;
   wrapperClassName?: string;
   className?: string;
 }

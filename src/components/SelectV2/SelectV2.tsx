@@ -591,7 +591,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
       ...(virtualized ? { MenuList: VirtualizedMenuList } : {}),
       ...(isSelectAllEligible ? { Menu: SelectAllMenu } : {}),
       ...(singleLineEnabled ? { MultiValue } : {}),
-      ...(isMulti ? { Option } : {}),
+      Option,
     },
   };
 

@@ -362,6 +362,7 @@ function TableV2Inner<TData, TValue = unknown>(
     onExport,
     density = 'comfortable',
     stickyHeader = false,
+    fillHeight = false,
     wrapperClassName,
     className,
     dataTestId,
@@ -550,7 +551,7 @@ function TableV2Inner<TData, TValue = unknown>(
       <thead
         className={cn(
           'text-p-sm font-semibold text-fg-secondary uppercase tracking-wider',
-          stickyHeader && 'sticky top-0 z-10',
+          (stickyHeader || fillHeight) && 'sticky top-0 z-10',
         )}
       >
         {table
@@ -603,6 +604,7 @@ function TableV2Inner<TData, TValue = unknown>(
       data-test-id={dataTestId}
       className={cn(
         'w-full rounded-lg border border-border-default bg-bg-default',
+        fillHeight && 'h-full flex flex-col',
         wrapperClassName,
         className,
       )}
@@ -627,15 +629,22 @@ function TableV2Inner<TData, TValue = unknown>(
         </div>
       ) : (
         <>
-          <div className="hidden md:block">
+          <div
+            className={cn('hidden', fillHeight ? 'md:flex md:flex-col md:flex-1 md:min-h-0' : 'md:block')}
+          >
             <div
               ref={scrollContainerRef}
               className={cn(
                 'w-full overflow-auto',
                 toolbar === false ? 'rounded-lg' : 'rounded-b-lg',
+                fillHeight && 'flex-1 min-h-0',
               )}
               style={
-                enableVirtualization || stickyHeader ? { maxHeight: maxBodyHeight } : undefined
+                fillHeight
+                  ? undefined
+                  : enableVirtualization || stickyHeader
+                    ? { maxHeight: maxBodyHeight }
+                    : undefined
               }
             >
               {enableColumnOrdering ? (
