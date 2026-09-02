@@ -5,8 +5,9 @@ interface SelectV2Translations {
   noResults: string;
   loadingMessage: string;
   selectAllLabel: (count: number) => string;
-  deselectAllLabel: (count: number) => string;
+  clearAllLabel: (count: number) => string;
   createLabel: (value: string) => string;
+  saveSelectionLabel: string;
 }
 
 export const SELECT_V2_TRANSLATIONS: Record<TranslationLocale, SelectV2Translations> = {
@@ -15,23 +16,26 @@ export const SELECT_V2_TRANSLATIONS: Record<TranslationLocale, SelectV2Translati
     noResults: 'No results',
     loadingMessage: 'Loading…',
     selectAllLabel: (count) => `Select all (${count})`,
-    deselectAllLabel: (count) => `Deselect all (${count})`,
+    clearAllLabel: (count) => `Clear all (${count})`,
     createLabel: (value) => `Create "${value}"`,
+    saveSelectionLabel: 'Save',
   },
   'ru-RU': {
     placeholder: 'Выберите…',
     noResults: 'Нет результатов',
     loadingMessage: 'Загрузка…',
     selectAllLabel: (count) => `Выбрать все (${count})`,
-    deselectAllLabel: (count) => `Снять все (${count})`,
+    clearAllLabel: (count) => `Очистить все (${count})`,
     createLabel: (value) => `Создать «${value}»`,
+    saveSelectionLabel: 'Сохранить',
   },
   'hy-AM': {
     placeholder: 'Ընտրեք…',
     noResults: 'Արդյունքներ չկան',
     loadingMessage: 'Բեռնվում է…',
     selectAllLabel: (count) => `Ընտրել բոլորը (${count})`,
-    deselectAllLabel: (count) => `Ապընտրել բոլորը (${count})`,
+    clearAllLabel: (count) => `Մաքրել բոլորը (${count})`,
     createLabel: (value) => `Ստեղծել «${value}»`,
+    saveSelectionLabel: 'Պահպանել',
   },
 };

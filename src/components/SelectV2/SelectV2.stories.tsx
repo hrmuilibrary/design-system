@@ -306,6 +306,28 @@ export const SingleLineStory: Story = {
   args: { label: 'Teams', placeholder: 'Select teams…' },
 };
 
+export const SaveSelection: Story = {
+  name: 'Save selection (storageKey)',
+  render: (args) => (
+    <SelectV2
+      {...args}
+      isMulti
+      options={[
+        { value: 'design', label: 'Design' },
+        { value: 'engineering', label: 'Engineering' },
+        { value: 'product', label: 'Product' },
+        { value: 'marketing', label: 'Marketing' },
+      ]}
+      defaultValue={['design']}
+    />
+  ),
+  args: {
+    label: 'Teams',
+    placeholder: 'Select teams…',
+    storageKey: 'storybook-select-v2-teams',
+  },
+};
+
 export const Async: Story = {
   name: 'Async (loadOptions)',
   render: (args) => {

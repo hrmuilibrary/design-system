@@ -100,6 +100,19 @@ export interface SelectV2BaseProps extends BaseProps, Partial<SelectV2ReactSelec
    *  `placeholder`/`emptyText`/`formatCreateLabel` props still take
    *  precedence over the translated defaults. Default `'en-US'`. */
   locale?: TranslationLocale;
+  /** Enables a "save selection" checkbox pinned above the option list. When
+   *  checked, the current selection is written to `localStorage` under this
+   *  key and kept in sync on every subsequent change, until unchecked —
+   *  which clears it. On mount, if the select is
+   *  uncontrolled and a saved selection exists for this key, it's restored
+   *  automatically, taking priority over `defaultValue`. When the select is
+   *  controlled (`value` passed), saving/clearing still works but the saved
+   *  value is never auto-restored into `value` — read it yourself if you
+   *  need that. */
+  storageKey?: string;
+  /** Label for the "save selection" checkbox row. Defaults to a translated
+   *  built-in string. */
+  saveSelectionLabel?: ReactNode;
   id?: string;
   className?: string;
   wrapperClassName?: string;

@@ -2,12 +2,14 @@ import {
   Children,
   forwardRef,
   useCallback,
+  useEffect,
   useId,
   useMemo,
   useRef,
   useState,
   type ComponentProps,
   type ForwardRefExoticComponent,
+  type ReactNode,
   type RefAttributes,
 } from 'react';
 import BaseSelect, { components as RSComponents } from 'react-select';
@@ -15,7 +17,6 @@ import AsyncSelect from 'react-select/async';
 import CreatableSelect from 'react-select/creatable';
 import AsyncCreatableSelect from 'react-select/async-creatable';
 import type {
-  ClassNamesConfig,
   FormatOptionLabelMeta,
   GroupBase,
   MenuListProps,
@@ -30,50 +31,28 @@ import { mergeRefs } from '../../lib/mergeRefs';
 import { Checkbox } from '../Checkbox';
 import { useVisibleTagCount } from './useVisibleTagCount';
 import { SELECT_V2_TRANSLATIONS } from './SelectV2.i18n';
-import type { SelectV2Option, SelectV2Props, SelectV2Size } from './SelectV2.types';
+import {
+  MULTI_VALUE_BADGE_CLASS,
+  MULTI_VALUE_CLASS,
+  MULTI_VALUE_LABEL_CLASS,
+  MULTI_VALUE_REMOVE_CLASS,
+  buildClassNames,
+  clearStoredSelection,
+  hasStoredSelection,
+  matchesSearch,
+  optionLabelText,
+  readStoredSelection,
+  writeStoredSelection,
+} from './SelectV2.utils';
+import type { SelectV2Option, SelectV2Props } from './SelectV2.types';
 import type { OptionValue } from '../../types';
 
 type Instance = SelectInstance<SelectV2Option, boolean, GroupBase<SelectV2Option>>;
 type RSComponentType = ForwardRefExoticComponent<Record<string, unknown> & RefAttributes<Instance>>;
 
-const sizeControlStyles: Record<SelectV2Size, string> = {
-  lg: 'min-h-12 text-p-md',
-  md: 'min-h-10 text-p-std',
-  sm: 'min-h-8 text-p-sm',
-};
-
-const sizeValuePadding: Record<SelectV2Size, string> = {
-  lg: 'px-3.5 py-1.5',
-  md: 'px-3 py-1',
-  sm: 'px-2.5 py-0.5',
-};
-
-// Shared between `buildClassNames`' real chip/badge classNames and the
-// hidden measuring row in `useVisibleTagCount`, so both stay in lockstep.
-const MULTI_VALUE_CLASS =
-  'flex items-center gap-1 rounded-md bg-bg-subtle pl-2 pr-1 py-0.5 max-w-full';
-const MULTI_VALUE_LABEL_CLASS = 'truncate text-p-sm text-fg-default';
-const MULTI_VALUE_REMOVE_CLASS =
-  'rounded-sm text-fg-secondary hover:bg-bg-container hover:text-fg-default cursor-pointer';
-const MULTI_VALUE_BADGE_CLASS =
-  'flex items-center rounded-md bg-bg-info-lighter px-2 py-0.5 text-p-sm text-blue-800 dark:text-blue-300 shrink-0';
-
 // Estimated row height fed to the virtualizer when `virtualized` is on.
 // Assumes a single-line option row (see the prop doc for caveats).
 const OPTION_ROW_HEIGHT = 36;
-
-function optionLabelText(option: SelectV2Option): string {
-  return (
-    option.searchText ?? (typeof option.label === 'string' ? option.label : String(option.value))
-  );
-}
-
-function matchesSearch(option: SelectV2Option, inputValue: string): boolean {
-  const needle = inputValue.trim().toLowerCase();
-  if (!needle) return true;
-  const haystack = `${optionLabelText(option)} ${String(option.value)}`.toLowerCase();
-  return haystack.includes(needle);
-}
 
 interface SelectAllState {
   count: number;
@@ -82,60 +61,9 @@ interface SelectAllState {
   label: string;
 }
 
-function buildClassNames(
-  size: SelectV2Size,
-  hasError: boolean,
-  singleLine: boolean,
-): ClassNamesConfig<SelectV2Option, boolean, GroupBase<SelectV2Option>> {
-  return {
-    container: () => 'w-full',
-    control: ({ isFocused, isDisabled }) =>
-      cn(
-        'flex items-center rounded-lg border bg-bg-default transition-colors',
-        isDisabled ? 'cursor-not-allowed' : 'cursor-text',
-        sizeControlStyles[size],
-        hasError ? 'border-red-600' : 'border-border-default',
-        !isDisabled && !hasError && 'hover:border-border-strong',
-        isFocused && !hasError && 'ring-2 ring-brand-300 border-brand-500',
-        isFocused && hasError && 'ring-2 ring-red-300 border-red-600',
-        isDisabled && 'bg-bg-container border-border-default',
-      ),
-    valueContainer: () =>
-      cn(
-        'flex flex-1 items-center gap-1 min-w-0 sv2-value-container',
-        singleLine ? 'flex-nowrap! overflow-hidden' : 'flex-wrap',
-        sizeValuePadding[size],
-      ),
-    placeholder: () => 'text-fg-tertiary truncate',
-    singleValue: () => 'text-fg-default truncate min-w-0',
-    input: () => 'text-fg-default',
-    multiValue: () => MULTI_VALUE_CLASS,
-    multiValueLabel: () => MULTI_VALUE_LABEL_CLASS,
-    multiValueRemove: () => MULTI_VALUE_REMOVE_CLASS,
-    indicatorsContainer: () => 'flex items-center gap-1 pr-2 shrink-0',
-    clearIndicator: () => 'text-fg-secondary hover:text-fg-default cursor-pointer p-0.5',
-    dropdownIndicator: () => 'text-fg-secondary p-0.5',
-    indicatorSeparator: () => 'hidden',
-    menu: ({ placement }) =>
-      cn(
-        'rounded-lg border border-border-default bg-bg-default shadow-z4 overflow-hidden z-50!',
-        placement === 'top' ? 'mb-1' : 'mt-1',
-      ),
-    menuList: () => 'max-h-60 overflow-y-auto py-1',
-    menuPortal: () => 'z-50!',
-    group: () => 'py-1',
-    groupHeading: () =>
-      'px-3 pt-2 pb-1 text-label-sm font-medium uppercase tracking-wide text-fg-tertiary select-none',
-    option: ({ isFocused, isSelected, isDisabled }) =>
-      cn(
-        'flex! items-center justify-between gap-2 px-3 py-2 cursor-pointer select-none',
-        isDisabled && 'opacity-50 cursor-not-allowed',
-        isFocused && !isDisabled && 'bg-bg-subtle',
-        isSelected && 'font-medium',
-      ),
-    noOptionsMessage: () => 'px-3 py-6 text-center text-p-sm text-fg-secondary',
-    loadingMessage: () => 'px-3 py-6 text-center text-p-sm text-fg-secondary',
-  };
+interface SaveSelectionState {
+  checked: boolean;
+  label: ReactNode;
 }
 
 function DropdownIndicator(props: ComponentProps<typeof RSComponents.DropdownIndicator>) {
@@ -195,14 +123,18 @@ function LoadingIndicator() {
   return <Loader2 className="h-4 w-4 animate-spin text-fg-secondary" aria-hidden />;
 }
 
-/** Wraps `Menu` to pin a "Select all" row above the option list — works for
- *  both the default and virtualized `MenuList` since `Menu` wraps `MenuList`
- *  regardless. Only registered when the select is multi and non-async. */
-function SelectAllMenu(props: ComponentProps<typeof RSComponents.Menu>) {
-  const { selectAllState, onSelectAllToggle } = props.selectProps as unknown as {
-    selectAllState?: SelectAllState | null;
-    onSelectAllToggle?: () => void;
-  };
+/** Wraps `Menu` to pin "Select all" and/or "Save selection" rows above the
+ *  option list — works for both the default and virtualized `MenuList`
+ *  since `Menu` wraps `MenuList` regardless. Registered whenever either row
+ *  applies (select is multi and non-async, and/or `storageKey` is set). */
+function PinnedRowsMenu(props: ComponentProps<typeof RSComponents.Menu>) {
+  const { selectAllState, onSelectAllToggle, saveSelectionState, onSaveSelectionToggle } =
+    props.selectProps as unknown as {
+      selectAllState?: SelectAllState | null;
+      onSelectAllToggle?: () => void;
+      saveSelectionState?: SaveSelectionState | null;
+      onSaveSelectionToggle?: () => void;
+    };
 
   return (
     <RSComponents.Menu {...props}>
@@ -220,6 +152,23 @@ function SelectAllMenu(props: ComponentProps<typeof RSComponents.Menu>) {
             checked={selectAllState.checked}
             indeterminate={selectAllState.indeterminate}
             label={selectAllState.label}
+            readOnly
+          />
+        </div>
+      )}
+      {saveSelectionState && (
+        <div
+          className="border-b border-border-default px-3 py-2"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={(e) => {
+            e.preventDefault();
+            onSaveSelectionToggle?.();
+          }}
+        >
+          <Checkbox
+            size="sm"
+            checked={saveSelectionState.checked}
+            label={saveSelectionState.label}
             readOnly
           />
         </div>
@@ -299,6 +248,8 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     virtualized = false,
     emptyText,
     locale = 'en-US',
+    storageKey,
+    saveSelectionLabel,
     size = 'md',
     disabled = false,
     id,
@@ -322,11 +273,27 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
   const hasError = error || !!errorText;
   const isControlled = value !== undefined;
 
-  const [internalSingle, setInternalSingle] = useState<OptionValue | undefined>(
-    isMulti ? undefined : (defaultValue as OptionValue | undefined),
-  );
-  const [internalMulti, setInternalMulti] = useState<OptionValue[]>(
-    isMulti ? ((defaultValue as OptionValue[] | undefined) ?? []) : [],
+  const [internalSingle, setInternalSingle] = useState<OptionValue | undefined>(() => {
+    if (isMulti) return undefined;
+    if (storageKey && !isControlled) {
+      const stored = readStoredSelection(storageKey);
+      if (stored !== undefined) return stored as OptionValue;
+    }
+    return defaultValue as OptionValue | undefined;
+  });
+  const [internalMulti, setInternalMulti] = useState<OptionValue[]>(() => {
+    if (!isMulti) return [];
+    if (storageKey && !isControlled) {
+      const stored = readStoredSelection(storageKey);
+      if (Array.isArray(stored)) return stored as OptionValue[];
+    }
+    return (defaultValue as OptionValue[] | undefined) ?? [];
+  });
+  // Reflects whether a saved selection is currently pinned in storage for
+  // `storageKey` — drives both the checkbox and whether further selection
+  // changes keep getting written until unchecked.
+  const [savePinned, setSavePinned] = useState<boolean>(
+    () => !!storageKey && hasStoredSelection(storageKey),
   );
 
   // Options are only known by value from `options`/`defaultOptions` at first;
@@ -438,6 +405,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
+  const instanceRef = useRef<Instance>(null);
   const singleLineEnabled = !!isMulti && singleLine;
   const visibleTagCount = useVisibleTagCount({
     wrapperRef,
@@ -481,6 +449,33 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
   // visible" list, so select-all isn't offered there.
   const isSelectAllEligible = !!isMulti && !isAsync;
 
+  const currentSelection = isMulti ? currentMulti : currentSingle;
+  // Keeps writing the live selection to storage as long as `savePinned` is
+  // on — including while controlled, so a parent-driven `value` still gets
+  // persisted even though it won't be auto-restored on mount (see prop doc).
+  useEffect(() => {
+    if (!storageKey || !savePinned) return;
+    writeStoredSelection(storageKey, currentSelection);
+  }, [storageKey, savePinned, currentSelection]);
+
+  const handleSaveSelectionToggle = useCallback(() => {
+    if (!storageKey) return;
+    setSavePinned((prev) => {
+      const next = !prev;
+      if (next) {
+        writeStoredSelection(storageKey, currentSelection);
+      } else {
+        clearStoredSelection(storageKey);
+      }
+      return next;
+    });
+  }, [storageKey, currentSelection]);
+
+  const saveSelectionState = useMemo<SaveSelectionState | null>(() => {
+    if (!storageKey) return null;
+    return { checked: savePinned, label: saveSelectionLabel ?? t.saveSelectionLabel };
+  }, [storageKey, savePinned, saveSelectionLabel, t]);
+
   const [inputValue, setInputValue] = useState('');
   const handleInputChange = useCallback((nextInputValue: string, meta: { action: string }) => {
     if (meta.action === 'input-change') setInputValue(nextInputValue);
@@ -504,7 +499,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
       indeterminate:
         selectedVisibleCount > 0 && selectedVisibleCount < visibleSelectableOptions.length,
       label: checked
-        ? t.deselectAllLabel(visibleSelectableOptions.length)
+        ? t.clearAllLabel(visibleSelectableOptions.length)
         : t.selectAllLabel(visibleSelectableOptions.length),
     };
   }, [isSelectAllEligible, visibleSelectableOptions, currentMulti, t]);
@@ -527,6 +522,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     }
     setInternalMulti(next);
     (onChange as ((v: OptionValue[]) => void) | undefined)?.(next);
+    instanceRef.current?.onMenuClose();
   }, [selectAllState, visibleSelectableOptions, currentMulti, mergeKnown, onChange]);
 
   const commonProps: Record<string, unknown> = {
@@ -574,6 +570,9 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
           onSelectAllToggle: handleSelectAllToggle,
         }
       : {}),
+    ...(saveSelectionState
+      ? { saveSelectionState, onSaveSelectionToggle: handleSaveSelectionToggle }
+      : {}),
     ...(singleLineEnabled ? { visibleTagCount } : {}),
     ...(isMulti
       ? {
@@ -589,7 +588,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
       LoadingIndicator,
       IndicatorSeparator: () => null,
       ...(virtualized ? { MenuList: VirtualizedMenuList } : {}),
-      ...(isSelectAllEligible ? { Menu: SelectAllMenu } : {}),
+      ...(isSelectAllEligible || saveSelectionState ? { Menu: PinnedRowsMenu } : {}),
       ...(singleLineEnabled ? { MultiValue } : {}),
       Option,
     },
@@ -619,7 +618,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
           {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}
         </div>
       )}
-      <Component ref={ref} {...commonProps} />
+      <Component ref={mergeRefs(ref, instanceRef)} {...commonProps} />
       {singleLineEnabled && (
         <div
           ref={measureRef}
