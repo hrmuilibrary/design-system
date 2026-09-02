@@ -34,8 +34,8 @@ export const ThemeSwitch = forwardRef<HTMLInputElement, ThemeSwitchProps>(functi
         />
         <span
           className={cn(
-            'inline-flex h-8 w-16 items-center justify-between rounded-full px-2 transition-colors',
-            'bg-gray-200 peer-checked:bg-gray-700 dark:bg-gray-700 dark:peer-checked:bg-gray-900',
+            'inline-flex h-8 w-16 items-center justify-between rounded-full border px-2 transition-colors',
+            'peer-checked:bg-gray-700 dark:bg-gray-700 dark:peer-checked:bg-gray-900',
             'peer-focus-visible:ring-2 peer-focus-visible:ring-brand-300 peer-focus-visible:ring-offset-2',
           )}
         >
@@ -44,7 +44,7 @@ export const ThemeSwitch = forwardRef<HTMLInputElement, ThemeSwitchProps>(functi
         </span>
         <span
           aria-hidden
-          className="absolute left-1 top-1 size-6 rounded-full bg-white shadow-z1 transition-transform peer-checked:translate-x-8 peer-checked:bg-gray-600"
+          className="absolute left-1 top-1 size-6 rounded-full bg-white shadow-[0_1px_3px_#00000040] transition-transform peer-checked:translate-x-8 peer-checked:bg-gray-600"
         />
       </span>
       {label && <span className="text-p-std font-medium text-fg-default">{label}</span>}

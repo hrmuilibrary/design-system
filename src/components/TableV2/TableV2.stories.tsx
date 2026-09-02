@@ -82,11 +82,14 @@ const baseColumns: ColumnDef<Employee>[] = [
   {
     accessorKey: 'name',
     header: 'Name',
+    maxSize: 200,
+    minSize: 180,
     meta: { filterVariant: 'text' },
   },
   {
     accessorKey: 'role',
     header: 'Role',
+    maxSize: 100,
     meta: { filterVariant: 'text' },
   },
   {
@@ -127,7 +130,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
-  render: () => <TableV2 data={employees} columns={baseColumns} toolbar={false} />,
+  render: () => (
+    <TableV2 data={employees} columns={baseColumns} toolbar={false} enableColumnResizing />
+  ),
 };
 
 export const Sorting: Story = {
@@ -284,7 +289,7 @@ export const FillHeight: Story = {
     docs: {
       description: {
         story:
-          '`fillHeight` stretches the table to its parent\'s height, scrolling rows internally with a pinned header and pinning the pagination footer to the bottom. The parent must provide a definite height — here a 500px wrapper.',
+          "`fillHeight` stretches the table to its parent's height, scrolling rows internally with a pinned header and pinning the pagination footer to the bottom. The parent must provide a definite height — here a 500px wrapper.",
       },
     },
   },

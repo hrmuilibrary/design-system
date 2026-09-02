@@ -630,7 +630,10 @@ function TableV2Inner<TData, TValue = unknown>(
       ) : (
         <>
           <div
-            className={cn('hidden', fillHeight ? 'md:flex md:flex-col md:flex-1 md:min-h-0' : 'md:block')}
+            className={cn(
+              'hidden',
+              fillHeight ? 'md:flex md:flex-col md:flex-1 md:min-h-0' : 'md:block',
+            )}
           >
             <div
               ref={scrollContainerRef}
