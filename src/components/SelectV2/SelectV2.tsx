@@ -123,10 +123,11 @@ function LoadingIndicator() {
   return <Loader2 className="h-4 w-4 animate-spin text-fg-secondary" aria-hidden />;
 }
 
-/** Wraps `Menu` to pin "Select all" and/or "Save selection" rows above the
- *  option list — works for both the default and virtualized `MenuList`
- *  since `Menu` wraps `MenuList` regardless. Registered whenever either row
- *  applies (select is multi and non-async, and/or `storageKey` is set). */
+/** Wraps `Menu` to pin a "Select all" row above the option list and a "Save
+ *  selection" row below it — works for both the default and virtualized
+ *  `MenuList` since `Menu` wraps `MenuList` regardless. Registered whenever
+ *  either row applies (select is multi and non-async, and/or `storageKey`
+ *  is set). */
 function PinnedRowsMenu(props: ComponentProps<typeof RSComponents.Menu>) {
   const { selectAllState, onSelectAllToggle, saveSelectionState, onSaveSelectionToggle } =
     props.selectProps as unknown as {
@@ -156,9 +157,10 @@ function PinnedRowsMenu(props: ComponentProps<typeof RSComponents.Menu>) {
           />
         </div>
       )}
+      {props.children}
       {saveSelectionState && (
         <div
-          className="border-b border-border-default px-3 py-2"
+          className="border-t border-border-default px-3 py-2"
           onMouseDown={(e) => e.preventDefault()}
           onClick={(e) => {
             e.preventDefault();
@@ -173,7 +175,6 @@ function PinnedRowsMenu(props: ComponentProps<typeof RSComponents.Menu>) {
           />
         </div>
       )}
-      {props.children}
     </RSComponents.Menu>
   );
 }

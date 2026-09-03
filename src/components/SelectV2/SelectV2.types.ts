@@ -100,7 +100,7 @@ export interface SelectV2BaseProps extends BaseProps, Partial<SelectV2ReactSelec
    *  `placeholder`/`emptyText`/`formatCreateLabel` props still take
    *  precedence over the translated defaults. Default `'en-US'`. */
   locale?: TranslationLocale;
-  /** Enables a "save selection" checkbox pinned above the option list. When
+  /** Enables a "save selection" checkbox pinned below the option list. When
    *  checked, the current selection is written to `localStorage` under this
    *  key and kept in sync on every subsequent change, until unchecked —
    *  which clears it. On mount, if the select is

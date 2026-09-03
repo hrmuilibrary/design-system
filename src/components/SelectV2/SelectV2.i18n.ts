@@ -18,7 +18,7 @@ export const SELECT_V2_TRANSLATIONS: Record<TranslationLocale, SelectV2Translati
     selectAllLabel: (count) => `Select all (${count})`,
     clearAllLabel: (count) => `Clear all (${count})`,
     createLabel: (value) => `Create "${value}"`,
-    saveSelectionLabel: 'Save',
+    saveSelectionLabel: 'Save template',
   },
   'ru-RU': {
     placeholder: 'Выберите…',
@@ -27,7 +27,7 @@ export const SELECT_V2_TRANSLATIONS: Record<TranslationLocale, SelectV2Translati
     selectAllLabel: (count) => `Выбрать все (${count})`,
     clearAllLabel: (count) => `Очистить все (${count})`,
     createLabel: (value) => `Создать «${value}»`,
-    saveSelectionLabel: 'Сохранить',
+    saveSelectionLabel: 'Сохранить шаблон',
   },
   'hy-AM': {
     placeholder: 'Ընտրեք…',
@@ -36,6 +36,6 @@ export const SELECT_V2_TRANSLATIONS: Record<TranslationLocale, SelectV2Translati
     selectAllLabel: (count) => `Ընտրել բոլորը (${count})`,
     clearAllLabel: (count) => `Մաքրել բոլորը (${count})`,
     createLabel: (value) => `Ստեղծել «${value}»`,
-    saveSelectionLabel: 'Պահպանել',
+    saveSelectionLabel: 'Պահպանել ձևանմուշը',
   },
 };
