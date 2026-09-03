@@ -87,7 +87,11 @@ export interface SelectV2BaseProps extends BaseProps, Partial<SelectV2ReactSelec
   loading?: boolean;
   /** Shows a clear ("x") indicator once a value is selected. Default `false`. */
   clearable?: boolean;
-  /** Type-to-filter the option list. Default `true` (react-select is a combobox by nature). */
+  /** Type-to-filter the option list. Defaults to `true`, except for a
+   *  static (non-async, non-creatable) select with fewer than 10 options,
+   *  where the search box is hidden automatically since it adds little
+   *  value over a short list — pass `searchable` explicitly to override
+   *  this in either direction. */
   searchable?: boolean;
   /** Virtualizes the menu list with `@tanstack/react-virtual`, for option
    *  lists in the thousands. Assumes uniform, single-line option rows — off

@@ -1,6 +1,6 @@
 {
   "name": "@dinofront/design_system",
-  "version": "1.12.2",
+  "version": "1.13.0",
   "description": "Enterprise React component library and design system built on Tailwind CSS.",
   "type": "module",
   "license": "MIT",
@@ -34,6 +34,7 @@
     "build": "tsc -p tsconfig.build.json --noEmit && vite build --config vite.lib.config.ts && npm run build:css",
     "build:css": "tailwindcss -i ./src/styles/globals.css -o ./dist/styles.css",
     "build:storybook": "storybook build",
+    "check": "npm run lint & npm run format",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

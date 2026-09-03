@@ -245,7 +245,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     required = true,
     loading = false,
     clearable = false,
-    searchable = true,
+    searchable,
     virtualized = false,
     emptyText,
     locale = 'en-US',
@@ -391,6 +391,12 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
   );
 
   const isAsync = !!loadOptions;
+  // Static, non-creatable selects with few options don't need a search box
+  // cluttering the menu — hide it once `options.length` drops under 10,
+  // unless the consumer explicitly set `searchable`. Async selects need the
+  // input to drive `loadOptions`, and creatable ones need it to type a new
+  // value, so both keep search on regardless of option count.
+  const resolvedSearchable = searchable ?? (isAsync || creatable ? true : options.length >= 10);
   const Component = (isAsync
     ? creatable
       ? AsyncCreatableSelect
@@ -557,7 +563,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     placeholder: resolvedPlaceholder,
     isDisabled: disabled || loading,
     isClearable: clearable,
-    isSearchable: searchable,
+    isSearchable: resolvedSearchable,
     isLoading: loading || undefined,
     noOptionsMessage: () => resolvedEmptyText,
     loadingMessage: () => t.loadingMessage,
