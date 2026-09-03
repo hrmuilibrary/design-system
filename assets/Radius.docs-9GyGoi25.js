@@ -1,6 +1,0 @@
-import{i as e}from"./preload-helper-BdFrVu1K.js";import{t}from"./iframe-p9i34dfU.js";import{c as n,l as r,o as i,x as a}from"./blocks-BakqR_Jw.js";import{t as o}from"./mdx-react-shim-CE2bDRHD.js";import{n as s,t as c}from"./Radius.stories-DsxmcCc0.js";function l(e){let t={code:`code`,h1:`h1`,p:`p`,...a(),...e.components};return(0,d.jsxs)(d.Fragment,{children:[(0,d.jsx)(i,{of:c}),`
-`,(0,d.jsx)(t.h1,{id:`radius`,children:`Radius`}),`
-`,(0,d.jsxs)(t.p,{children:[`The border-radius scale, from `,(0,d.jsx)(t.code,{children:`rounded-xs`}),` (2px) to `,(0,d.jsx)(t.code,{children:`rounded-full`}),`. Tailwind
-v4 maps the `,(0,d.jsx)(t.code,{children:`--radius-*`}),` theme namespace directly to `,(0,d.jsx)(t.code,{children:`rounded-*`}),` utilities,
-so these are the exact classes components use — not a separate token layer.`]}),`
-`,(0,d.jsx)(n,{})]})}function u(e={}){let{wrapper:t}={...a(),...e.components};return t?(0,d.jsx)(t,{...e,children:(0,d.jsx)(l,{...e})}):l(e)}var d;e((()=>{d=t(),o(),r(),s()}))();export{u as default};
