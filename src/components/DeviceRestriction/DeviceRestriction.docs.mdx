@@ -1,0 +1,44 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as DeviceRestrictionStories from './DeviceRestriction.stories';
+
+<Meta of={DeviceRestrictionStories} />
+
+# DeviceRestriction
+
+A premium empty-state placeholder for a page that's only accessible from
+certain device types (mobile, tablet, desktop, or mobile-and-tablet). It
+never detects the current device — the consuming app decides when to
+render it, based on its own viewport/breakpoint logic.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Copy
+
+`title` and `description` default to a built-in string per `type`,
+translated for `'en-US'`, `'ru-RU'`, and `'hy-AM'`
+(`DeviceRestriction.i18n.ts`) — pick one via the `locale` prop. Pass an
+explicit `title`/`description` to override the translated default
+entirely.
+
+## Icon
+
+`icon` defaults to a `type`-specific lucide icon (`Smartphone`, `Tablet`,
+`Monitor`, or `TabletSmartphone`) inside an `IconTile` — not a bundled
+image asset. Pass your own node via `icon` to override it; the default
+icon is decorative and hidden from assistive tech, since the title and
+description already carry the message on their own.
+
+## Layout
+
+`DeviceRestriction` centers its content with flexbox and never forces a
+height on itself — it fills whatever container it's placed in. Pass
+`fillHeight` to have it stretch to fill a parent with an explicit height
+(e.g. `<div style={{ height: '100vh' }}>`).

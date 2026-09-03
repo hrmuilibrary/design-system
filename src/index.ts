@@ -11,6 +11,7 @@ export * from './components/Checkbox';
 export * from './components/Copy';
 export * from './components/Counter';
 export * from './components/DatePicker';
+export * from './components/DeviceRestriction';
 export * from './components/DistributionBar';
 export * from './components/Divider';
 export * from './components/Drawer';
