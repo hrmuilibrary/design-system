@@ -1,0 +1,54 @@
+import{a as e,i as t,s as n}from"./preload-helper-BdFrVu1K.js";import{O as r,t as i}from"./iframe-NGpJ9wog.js";import{S as a,X as o,f as s,m as c,t as l,ut as u}from"./lucide-react-DU0ceBuS.js";import{n as d,t as f}from"./cn-BNhCYuha.js";import{t as p}from"./IconTile-CbcwYWQm.js";import{t as m}from"./IconTile-a5WSphl2.js";import{t as h}from"./Text-Cy8If5bj.js";import{t as g}from"./Text-BiW6sMS5.js";var _,v=t((()=>{_={"en-US":{mobile:{title:`Mobile only`,description:`This page is available only on mobile devices. Please open this page on your phone to continue.`},tablet:{title:`Tablet only`,description:`This page is available only on tablet devices. Please open this page on your tablet to continue.`},desktop:{title:`Desktop only`,description:`This page is available only on desktop devices. Please open this page on your computer to continue.`},"mobile-tablet":{title:`Mobile experience`,description:`This page is available only on mobile and tablet devices. Please open this page on your phone or tablet to continue.`}},"ru-RU":{mobile:{title:`Только для мобильных устройств`,description:`Эта страница доступна только на мобильных устройствах. Пожалуйста, откройте её на телефоне, чтобы продолжить.`},tablet:{title:`Только для планшетов`,description:`Эта страница доступна только на планшетах. Пожалуйста, откройте её на планшете, чтобы продолжить.`},desktop:{title:`Только для компьютера`,description:`Эта страница доступна только на компьютере. Пожалуйста, откройте её на компьютере, чтобы продолжить.`},"mobile-tablet":{title:`Мобильный интерфейс`,description:`Эта страница доступна только на мобильных устройствах и планшетах. Пожалуйста, откройте её на телефоне или планшете, чтобы продолжить.`}},"hy-AM":{mobile:{title:`Միայն մոբայլի համար`,description:`Այս էջը հասանելի է միայն մոբայլ սարքերում։ Շարունակելու համար խնդրում ենք բացել այն ձեր հեռախոսում։`},tablet:{title:`Միայն պլանշետի համար`,description:`Այս էջը հասանելի է միայն պլանշետներում։ Շարունակելու համար խնդրում ենք բացել այն ձեր պլանշետում։`},desktop:{title:`Միայն համակարգչի համար`,description:`Այս էջը հասանելի է միայն համակարգչում։ Շարունակելու համար խնդրում ենք բացել այն ձեր համակարգչում։`},"mobile-tablet":{title:`Մոբայլ փորձառություն`,description:`Այս էջը հասանելի է միայն մոբայլ և պլանշետ սարքերում։ Շարունակելու համար խնդրում ենք բացել այն ձեր հեռախոսում կամ պլանշետում։`}}}})),y,b,x,S,C=t((()=>{y=n(r(),1),l(),d(),m(),g(),v(),b=i(),x={mobile:a,tablet:s,desktop:o,"mobile-tablet":c},S=(0,y.forwardRef)(function({type:e=`desktop`,locale:t=`en-US`,title:n,description:r,icon:i,fillHeight:a=!1,className:o,dataTestId:s,...c},l){let u=_[t][e];return(0,b.jsxs)(`div`,{ref:l,"data-test-id":s,className:f(`flex flex-col items-center justify-center text-center px-6 py-16`,a&&`h-full`,o),...c,children:[i??(0,b.jsx)(p,{icon:x[e],tone:`gray`,shape:`rounded`,size:`xl`,className:`rounded-2xl`}),(0,b.jsx)(h,{as:`h3`,variant:`h-xs`,weight:`semibold`,className:`mt-6`,children:n??u.title}),(0,b.jsx)(h,{variant:`p-md`,color:`secondary`,className:`mt-2 max-w-105`,children:r??u.description})]})});try{S.displayName=`DeviceRestriction`,S.__docgenInfo={description:``,displayName:`DeviceRestriction`,filePath:`/home/runner/work/design-system/design-system/src/components/DeviceRestriction/DeviceRestriction.tsx`,methods:[],props:{type:{defaultValue:{value:`desktop`},declarations:[{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`}],description:"Which device(s) the page requires. Drives the default icon, title, and\ndescription. Defaults to `'desktop'`.",name:`type`,parent:{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`},required:!1,tags:{},type:{name:`enum`,raw:`DeviceRestrictionType`,value:[{value:`"mobile"`},{value:`"tablet"`},{value:`"desktop"`},{value:`"mobile-tablet"`}]}},title:{defaultValue:null,declarations:[{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`}],description:"Defaults to a translated built-in string for `type`.",name:`title`,parent:{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`},required:!1,tags:{},type:{name:`ReactNode`}},description:{defaultValue:null,declarations:[{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`}],description:"Defaults to a translated built-in string for `type`.",name:`description`,parent:{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`},required:!1,tags:{},type:{name:`ReactNode`}},icon:{defaultValue:null,declarations:[{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`}],description:"Defaults to a `type`-specific lucide icon in an `IconTile` — pass your\nown node to override.",name:`icon`,parent:{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`},required:!1,tags:{},type:{name:`ReactNode`}},locale:{defaultValue:{value:`en-US`},declarations:[{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`}],description:"Language for the built-in title/description. An explicit `title`/\n`description` still takes precedence over the translated default.\nDefault `'en-US'`.",name:`locale`,parent:{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`},required:!1,tags:{},type:{name:`enum`,raw:`TranslationLocale`,value:[{value:`"en-US"`},{value:`"hy-AM"`},{value:`"ru-RU"`}]}},fillHeight:{defaultValue:{value:`false`},declarations:[{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`}],description:`Stretches the component to fill its container's height (\`h-full\`),
+for centering inside a full-viewport-height parent. Off by default —
+the component never forces a height on its own.`,name:`fillHeight`,parent:{fileName:`design-system/src/components/DeviceRestriction/DeviceRestriction.types.ts`,name:`DeviceRestrictionProps`},required:!1,tags:{},type:{name:`boolean`}},dataTestId:{defaultValue:null,declarations:[{fileName:`design-system/src/types/base.ts`,name:`BaseProps`}],description:"Rendered as `data-test-id` for test selectors.",name:`dataTestId`,parent:{fileName:`design-system/src/types/base.ts`,name:`BaseProps`},required:!1,tags:{},type:{name:`string`}}},tags:{}}}catch{}})),w=e({CustomDescription:()=>M,CustomIcon:()=>N,CustomTitle:()=>j,Desktop:()=>k,FillHeight:()=>F,LongContent:()=>P,Mobile:()=>D,MobileTablet:()=>A,Tablet:()=>O,__namedExportsOrder:()=>I,default:()=>E}),T,E,D,O,k,A,j,M,N,P,F,I,L=t((()=>{l(),C(),m(),T=i(),E={title:`Components/DeviceRestriction`,component:S,parameters:{layout:`centered`},argTypes:{type:{control:`select`,options:[`mobile`,`tablet`,`desktop`,`mobile-tablet`]},locale:{control:`select`,options:[`en-US`,`ru-RU`,`hy-AM`]}},decorators:[e=>(0,T.jsx)(`div`,{className:`w-96`,children:(0,T.jsx)(e,{})})]},D={args:{type:`mobile`}},O={args:{type:`tablet`}},k={args:{type:`desktop`}},A={name:`Mobile + tablet`,args:{type:`mobile-tablet`}},j={name:`Custom title`,args:{type:`mobile-tablet`,title:`Continue on mobile`}},M={name:`Custom description`,args:{type:`mobile-tablet`,description:`For the best experience, open this page from your phone or tablet.`}},N={name:`Custom icon`,args:{type:`desktop`,icon:(0,T.jsx)(p,{icon:u,tone:`brand`,shape:`circle`,size:`xl`})}},P={name:`Long content`,args:{type:`mobile-tablet`,title:`This experience was designed exclusively for smaller, touch-first screens`,description:`We rebuilt this flow around the way people actually hold and tap a phone or tablet — dense desktop layouts and mouse-driven interactions just don’t translate. Please switch to a mobile or tablet device to pick up right where you left off.`}},F={name:`Full-height (fillHeight)`,args:{type:`desktop`,fillHeight:!0},decorators:[e=>(0,T.jsx)(`div`,{className:`h-96 w-96 border border-dashed border-border-default`,children:(0,T.jsx)(e,{})})]},D.parameters={...D.parameters,docs:{...D.parameters?.docs,source:{originalSource:`{
+  args: {
+    type: 'mobile'
+  }
+}`,...D.parameters?.docs?.source}}},O.parameters={...O.parameters,docs:{...O.parameters?.docs,source:{originalSource:`{
+  args: {
+    type: 'tablet'
+  }
+}`,...O.parameters?.docs?.source}}},k.parameters={...k.parameters,docs:{...k.parameters?.docs,source:{originalSource:`{
+  args: {
+    type: 'desktop'
+  }
+}`,...k.parameters?.docs?.source}}},A.parameters={...A.parameters,docs:{...A.parameters?.docs,source:{originalSource:`{
+  name: 'Mobile + tablet',
+  args: {
+    type: 'mobile-tablet'
+  }
+}`,...A.parameters?.docs?.source}}},j.parameters={...j.parameters,docs:{...j.parameters?.docs,source:{originalSource:`{
+  name: 'Custom title',
+  args: {
+    type: 'mobile-tablet',
+    title: 'Continue on mobile'
+  }
+}`,...j.parameters?.docs?.source}}},M.parameters={...M.parameters,docs:{...M.parameters?.docs,source:{originalSource:`{
+  name: 'Custom description',
+  args: {
+    type: 'mobile-tablet',
+    description: 'For the best experience, open this page from your phone or tablet.'
+  }
+}`,...M.parameters?.docs?.source}}},N.parameters={...N.parameters,docs:{...N.parameters?.docs,source:{originalSource:`{
+  name: 'Custom icon',
+  args: {
+    type: 'desktop',
+    icon: <IconTile icon={Laptop} tone="brand" shape="circle" size="xl" />
+  }
+}`,...N.parameters?.docs?.source}}},P.parameters={...P.parameters,docs:{...P.parameters?.docs,source:{originalSource:`{
+  name: 'Long content',
+  args: {
+    type: 'mobile-tablet',
+    title: 'This experience was designed exclusively for smaller, touch-first screens',
+    description: 'We rebuilt this flow around the way people actually hold and tap a phone or tablet — dense desktop layouts and mouse-driven interactions just don’t translate. Please switch to a mobile or tablet device to pick up right where you left off.'
+  }
+}`,...P.parameters?.docs?.source}}},F.parameters={...F.parameters,docs:{...F.parameters?.docs,source:{originalSource:`{
+  name: 'Full-height (fillHeight)',
+  args: {
+    type: 'desktop',
+    fillHeight: true
+  },
+  decorators: [Story => <div className="h-96 w-96 border border-dashed border-border-default">
+        <Story />
+      </div>]
+}`,...F.parameters?.docs?.source}}},I=[`Mobile`,`Tablet`,`Desktop`,`MobileTablet`,`CustomTitle`,`CustomDescription`,`CustomIcon`,`LongContent`,`FillHeight`]}));L();export{M as CustomDescription,N as CustomIcon,j as CustomTitle,k as Desktop,F as FillHeight,P as LongContent,D as Mobile,A as MobileTablet,O as Tablet,I as __namedExportsOrder,E as default,L as n,w as t};

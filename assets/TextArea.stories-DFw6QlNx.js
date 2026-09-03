@@ -1,0 +1,43 @@
+import{a as e,i as t,s as n}from"./preload-helper-BdFrVu1K.js";import{O as r,t as i}from"./iframe-NGpJ9wog.js";import{ft as a,t as o}from"./lucide-react-DU0ceBuS.js";import{n as s,t as c}from"./cn-BNhCYuha.js";import{t as l}from"./Tooltip-Bm_i4czz.js";import{t as u}from"./Tooltip-DbqABL4y.js";var d,f,p,m=t((()=>{d=n(r(),1),s(),f=i(),p=(0,d.forwardRef)(function({label:e,labelAddons:t,helperText:n,errorText:r,error:i=!1,id:a,disabled:o,required:s,maxLength:l,showCount:u=!1,className:p,wrapperClassName:m,value:h,defaultValue:g,rows:_=4,dataTestId:v,onChange:y,...b},x){let S=(0,d.useId)(),C=a??S,w=i||!!r,T=r?`${C}-error`:n?`${C}-help`:void 0,E=h!==void 0,D=u&&!!l,[O,k]=(0,d.useState)(()=>String(g??``).length),A=E?String(h).length:O;return(0,f.jsxs)(`div`,{className:c(`flex flex-col gap-1.5 w-full`,m),"data-test-id":v,children:[(e||t)&&(0,f.jsxs)(`div`,{className:`flex items-center gap-1.5`,children:[e&&(0,f.jsxs)(`label`,{htmlFor:C,className:`text-p-std font-medium text-fg-default inline-flex items-center gap-1`,children:[e,s&&(0,f.jsx)(`span`,{className:`text-red-600`,"aria-hidden":!0,children:`*`})]}),t&&(0,f.jsx)(`span`,{className:`inline-flex items-center gap-1`,children:t})]}),(0,f.jsx)(`textarea`,{ref:x,id:C,disabled:o,required:s,maxLength:l,rows:_,value:h,defaultValue:g,onChange:e=>{!E&&D&&k(e.target.value.length),y?.(e)},"aria-invalid":w||void 0,"aria-describedby":T,className:c(`w-full px-3 py-2.5 rounded-lg border bg-bg-default text-p-std text-fg-default placeholder:text-fg-tertiary outline-none transition-colors resize-y`,w?`border-red-600`:`border-border-default`,!o&&!w&&`hover:border-border-strong`,`focus:ring-2`,w?`focus:ring-red-300 focus:border-red-600`:`focus:ring-brand-300 focus:border-brand-500`,o&&`bg-bg-container border-border-default cursor-not-allowed`,p),...b}),(0,f.jsxs)(`div`,{className:`flex items-start justify-between gap-2`,children:[(0,f.jsx)(`div`,{className:`flex-1 min-w-0`,children:r?(0,f.jsx)(`p`,{id:`${C}-error`,className:`text-p-sm text-red-700`,children:r}):n?(0,f.jsx)(`p`,{id:`${C}-help`,className:`text-p-sm text-fg-secondary`,children:n}):null}),D&&(0,f.jsxs)(`p`,{className:`text-p-sm text-fg-tertiary tabular-nums shrink-0`,children:[A,`/`,l]})]})]})});try{p.displayName=`TextArea`,p.__docgenInfo={description:``,displayName:`TextArea`,filePath:`/home/runner/work/design-system/design-system/src/components/TextArea/TextArea.tsx`,methods:[],props:{label:{defaultValue:null,declarations:[{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`}],description:``,name:`label`,parent:{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`},required:!1,tags:{},type:{name:`ReactNode`}},labelAddons:{defaultValue:null,declarations:[{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`}],description:"Content rendered on the label row, right of the label text and required marker — e.g. an info tooltip trigger. Rendered as a sibling of the `<label>`, not a child, so an interactive addon never steals focus into the field.",name:`labelAddons`,parent:{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`},required:!1,tags:{},type:{name:`ReactNode`}},helperText:{defaultValue:null,declarations:[{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`}],description:``,name:`helperText`,parent:{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`},required:!1,tags:{},type:{name:`ReactNode`}},errorText:{defaultValue:null,declarations:[{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`}],description:``,name:`errorText`,parent:{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`},required:!1,tags:{},type:{name:`ReactNode`}},error:{defaultValue:{value:`false`},declarations:[{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`}],description:``,name:`error`,parent:{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`},required:!1,tags:{},type:{name:`boolean`}},wrapperClassName:{defaultValue:null,declarations:[{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`}],description:``,name:`wrapperClassName`,parent:{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`},required:!1,tags:{},type:{name:`string`}},showCount:{defaultValue:{value:`false`},declarations:[{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`}],description:``,name:`showCount`,parent:{fileName:`design-system/src/components/TextArea/TextArea.types.ts`,name:`TextAreaProps`},required:!1,tags:{},type:{name:`boolean`}},dataTestId:{defaultValue:null,declarations:[{fileName:`design-system/src/types/base.ts`,name:`BaseProps`}],description:"Rendered as `data-test-id` for test selectors.",name:`dataTestId`,parent:{fileName:`design-system/src/types/base.ts`,name:`BaseProps`},required:!1,tags:{},type:{name:`string`}}},tags:{}}}catch{}})),h=e({CustomClassName:()=>E,Disabled:()=>S,NoLabel:()=>w,Primary:()=>v,Required:()=>x,WithCharacterCount:()=>C,WithError:()=>b,WithHelperText:()=>y,WithLabelAddons:()=>T,__namedExportsOrder:()=>D,default:()=>_}),g,_,v,y,b,x,S,C,w,T,E,D,O=t((()=>{o(),m(),u(),g=i(),_={title:`Components/TextArea`,component:p,parameters:{layout:`centered`},argTypes:{error:{control:`boolean`},showCount:{control:`boolean`},rows:{control:`number`},maxLength:{control:`number`}},args:{label:`Description`,placeholder:`Enter a description...`,helperText:void 0,errorText:void 0,error:!1,disabled:!1,required:!1,showCount:!1,rows:4},decorators:[e=>(0,g.jsx)(`div`,{className:`w-80`,children:(0,g.jsx)(e,{})})]},v={},y={args:{helperText:`Share a few sentences about yourself.`}},b={args:{error:!0,errorText:`Description is required.`}},x={args:{required:!0}},S={args:{disabled:!0,defaultValue:`This field is disabled.`}},C={args:{showCount:!0,maxLength:200,defaultValue:`Some starting text.`}},w={args:{label:void 0}},T={name:`With label addons`,args:{labelAddons:(0,g.jsx)(l,{content:`Shown to reviewers on your public profile.`,children:(0,g.jsx)(`button`,{type:`button`,"aria-label":`More info`,className:`text-fg-tertiary hover:text-fg-default`,children:(0,g.jsx)(a,{className:`h-3.5 w-3.5`})})})}},E={name:`Overriding classes via className`,args:{className:`rounded-full`}},v.parameters={...v.parameters,docs:{...v.parameters?.docs,source:{originalSource:`{}`,...v.parameters?.docs?.source}}},y.parameters={...y.parameters,docs:{...y.parameters?.docs,source:{originalSource:`{
+  args: {
+    helperText: 'Share a few sentences about yourself.'
+  }
+}`,...y.parameters?.docs?.source}}},b.parameters={...b.parameters,docs:{...b.parameters?.docs,source:{originalSource:`{
+  args: {
+    error: true,
+    errorText: 'Description is required.'
+  }
+}`,...b.parameters?.docs?.source}}},x.parameters={...x.parameters,docs:{...x.parameters?.docs,source:{originalSource:`{
+  args: {
+    required: true
+  }
+}`,...x.parameters?.docs?.source}}},S.parameters={...S.parameters,docs:{...S.parameters?.docs,source:{originalSource:`{
+  args: {
+    disabled: true,
+    defaultValue: 'This field is disabled.'
+  }
+}`,...S.parameters?.docs?.source}}},C.parameters={...C.parameters,docs:{...C.parameters?.docs,source:{originalSource:`{
+  args: {
+    showCount: true,
+    maxLength: 200,
+    defaultValue: 'Some starting text.'
+  }
+}`,...C.parameters?.docs?.source}}},w.parameters={...w.parameters,docs:{...w.parameters?.docs,source:{originalSource:`{
+  args: {
+    label: undefined
+  }
+}`,...w.parameters?.docs?.source}}},T.parameters={...T.parameters,docs:{...T.parameters?.docs,source:{originalSource:`{
+  name: 'With label addons',
+  args: {
+    labelAddons: <Tooltip content="Shown to reviewers on your public profile.">
+        <button type="button" aria-label="More info" className="text-fg-tertiary hover:text-fg-default">
+          <Info className="h-3.5 w-3.5" />
+        </button>
+      </Tooltip>
+  }
+}`,...T.parameters?.docs?.source}}},E.parameters={...E.parameters,docs:{...E.parameters?.docs,source:{originalSource:`{
+  name: 'Overriding classes via className',
+  args: {
+    className: 'rounded-full'
+  }
+}`,...E.parameters?.docs?.source}}},D=[`Primary`,`WithHelperText`,`WithError`,`Required`,`Disabled`,`WithCharacterCount`,`NoLabel`,`WithLabelAddons`,`CustomClassName`]}));O();export{E as CustomClassName,S as Disabled,w as NoLabel,v as Primary,x as Required,C as WithCharacterCount,b as WithError,y as WithHelperText,T as WithLabelAddons,D as __namedExportsOrder,_ as default,O as n,h as t};
