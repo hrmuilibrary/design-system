@@ -121,9 +121,22 @@ const meta = {
   parameters: {
     layout: 'centered',
   },
+  argTypes: {
+    position: {
+      control: 'select',
+      options: [
+        'top-left',
+        'top-center',
+        'top-right',
+        'bottom-left',
+        'bottom-center',
+        'bottom-right',
+      ],
+    },
+  },
   decorators: [
-    (Story) => (
-      <SnackbarProvider>
+    (Story, context) => (
+      <SnackbarProvider position={context.args.position}>
         <Story />
       </SnackbarProvider>
     ),
@@ -148,4 +161,27 @@ export const Persistent: Story = {
 export const WithDataTestId: Story = {
   name: 'Tagging a toast with dataTestId',
   render: () => <DataTestIdTrigger />,
+};
+
+export const TopRight: Story = {
+  args: { position: 'top-right' },
+  render: () => <VariantTriggers />,
+};
+
+function MultiCornerTrigger() {
+  const { show } = useSnackbar();
+  return (
+    <Button
+      onClick={() => {
+        show({ message: 'Something went wrong', variant: 'danger', position: 'top-right' });
+        show({ message: 'Changes saved', variant: 'success', position: 'bottom-left' });
+      }}
+    >
+      Show in two corners
+    </Button>
+  );
+}
+
+export const MultipleCorners: Story = {
+  render: () => <MultiCornerTrigger />,
 };

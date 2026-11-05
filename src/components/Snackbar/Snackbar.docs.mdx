@@ -99,6 +99,15 @@ Because there's no `<Snackbar />` JSX element for a consumer to attach
   `SnackbarItem`), rendered as `data-test-id` on that specific toast's
   root element — see the "Tagging a toast with dataTestId" story.
 
+## Position
+
+`SnackbarProvider` takes a `position` prop (`top-left`, `top-center`,
+`top-right`, `bottom-left`, `bottom-center`, `bottom-right`; default
+`bottom-center`) that sets the default for every toast. A single `show()`
+call can override it with its own `position`, so toasts in different
+corners can be on screen at once — one stack per corner, each stacking
+newest-last. See the "Multiple Corners" story.
+
 ## Composition
 
 `SnackbarProvider` renders its `children` in place and portals the toast
