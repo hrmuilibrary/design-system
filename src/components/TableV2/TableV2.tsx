@@ -501,10 +501,13 @@ function TableV2Inner<TData, TValue = unknown>(
       ? virtualizer.getTotalSize() - (virtualRows[virtualRows.length - 1]?.end ?? 0)
       : 0;
 
+  const testId = (suffix: string) => (dataTestId ? `${dataTestId}-${suffix}` : undefined);
+
   const renderRow = (row: Row<TData>, rowRef?: Ref<HTMLTableRowElement>) => (
     <tr
       key={row.id}
       ref={rowRef}
+      data-test-id={testId(`row-${row.id}`)}
       data-selected={row.getIsSelected() || undefined}
       onClick={onRowClick ? () => onRowClick(row.original) : undefined}
       className={cn('group border-t border-border-default', onRowClick && 'cursor-pointer')}
@@ -526,7 +529,7 @@ function TableV2Inner<TData, TValue = unknown>(
   );
 
   const headerRow = (headerGroupId: string, headerGroupHeaders: Header<TData, unknown>[]) => (
-    <tr key={headerGroupId}>
+    <tr key={headerGroupId} data-test-id={testId(`header-row-${headerGroupId}`)}>
       {headerGroupHeaders.map((header) => (
         <HeaderCell
           key={header.id}
@@ -560,9 +563,13 @@ function TableV2Inner<TData, TValue = unknown>(
       </thead>
       <tbody>
         {loading ? (
-          <TableV2Skeleton columnCount={leafColumnCount} rowCount={pagination.pageSize} />
+          <TableV2Skeleton
+            columnCount={leafColumnCount}
+            rowCount={pagination.pageSize}
+            testIdPrefix={dataTestId}
+          />
         ) : rows.length === 0 ? (
-          <tr>
+          <tr data-test-id={testId('empty-row')}>
             <td colSpan={leafColumnCount} className="p-0">
               <Empty size="sm" title={emptyMessage as string} />
             </td>
@@ -570,7 +577,7 @@ function TableV2Inner<TData, TValue = unknown>(
         ) : enableVirtualization && virtualRows ? (
           <>
             {paddingTop > 0 && (
-              <tr aria-hidden>
+              <tr aria-hidden data-test-id={testId('padding-top-row')}>
                 <td style={{ height: paddingTop }} colSpan={leafColumnCount} />
               </tr>
             )}
@@ -579,7 +586,7 @@ function TableV2Inner<TData, TValue = unknown>(
               return row ? renderRow(row) : null;
             })}
             {paddingBottom > 0 && (
-              <tr aria-hidden>
+              <tr aria-hidden data-test-id={testId('padding-bottom-row')}>
                 <td style={{ height: paddingBottom }} colSpan={leafColumnCount} />
               </tr>
             )}
@@ -588,7 +595,7 @@ function TableV2Inner<TData, TValue = unknown>(
           <>
             {rows.map((row, index) => renderRow(row, index === 0 ? firstRowRef : undefined))}
             {fillerRowHeight > 0 && (
-              <tr aria-hidden>
+              <tr aria-hidden data-test-id={testId('filler-row')}>
                 <td style={{ height: fillerRowHeight }} colSpan={leafColumnCount} className="p-0" />
               </tr>
             )}
