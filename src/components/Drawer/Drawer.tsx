@@ -126,12 +126,18 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
           <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-border-default">
             <div className="flex-1 min-w-0">
               {title && (
-                <h2 id="drawer-title" className="text-h-xs font-semibold text-fg-default">
+                <h2
+                  data-test-id={dataTestId ? `${dataTestId}-drawer-title` : undefined}
+                  className="text-h-xs font-semibold text-fg-default"
+                >
                   {title}
                 </h2>
               )}
               {description && (
-                <p id="drawer-desc" className="mt-1 text-p-std text-fg-secondary">
+                <p
+                  data-test-id={dataTestId ? `${dataTestId}-drawer-subtitle` : undefined}
+                  className="mt-1 text-p-std text-fg-secondary"
+                >
                   {description}
                 </p>
               )}
@@ -143,6 +149,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
                   type="button"
                   onClick={onClose}
                   aria-label="Close"
+                  data-test-id={dataTestId ? `${dataTestId}-drawer-close-button` : undefined}
                   className="p-2 rounded-md text-fg-secondary hover:text-fg-default hover:bg-bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300"
                 >
                   <X className="h-5 w-5" />

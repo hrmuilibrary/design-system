@@ -59,7 +59,7 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
           role="tooltip"
           id={tooltipId}
           className={cn(
-            'absolute z-50 whitespace-pre-wrap w-80 max-w-80 rounded-md bg-fg-default text-bg-default shadow-z3 pointer-events-none select-none',
+            'absolute z-50 whitespace-pre-wrap w-max rounded-md bg-fg-default text-bg-default shadow-z3 pointer-events-none select-none',
             sizeStyles[size],
             sidePosition[side],
             className,

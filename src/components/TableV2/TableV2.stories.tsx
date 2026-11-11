@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef, ColumnPinningState } from '@tanstack/react-table';
 import { BadgeCheck, Mail, Pencil, Trash2, Copy, Archive } from 'lucide-react';
 import { TableV2 } from './TableV2';
 import { createRowActionsColumn } from './TableV2.utils';
@@ -393,6 +393,69 @@ const rowActionsColumns: ColumnDef<Employee>[] = [
 
 export const RowActions: Story = {
   render: () => <TableV2 data={employees} columns={rowActionsColumns} />,
+};
+
+const widePinningColumns: ColumnDef<Employee>[] = [
+  { accessorKey: 'name', header: 'Name', size: 200, meta: { filterVariant: 'text' } },
+  { accessorKey: 'email', header: 'Email', size: 260 },
+  { accessorKey: 'role', header: 'Role', size: 240 },
+  {
+    accessorKey: 'department',
+    header: 'Department',
+    size: 200,
+  },
+  { accessorKey: 'joinDate', header: 'Join date', size: 200 },
+  {
+    accessorKey: 'progress',
+    header: 'Onboarding %',
+    size: 200,
+    cell: ({ getValue }) => `${getValue<number>()}%`,
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    size: 200,
+    cell: ({ getValue }) => (
+      <Status variant={statusVariant[getValue<Employee['status']>()]} dot size="sm">
+        {getValue<Employee['status']>()}
+      </Status>
+    ),
+  },
+  createRowActionsColumn<Employee>(() => [
+    { label: 'Edit', icon: <Pencil className="h-4 w-4" />, onSelect: (row) => alert(row.name) },
+  ]),
+];
+
+export const ColumnPinning: Story = {
+  name: 'Column pinning',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Wide table to exercise sticky pinned columns. Scroll horizontally: `select` and `name` are pinned left, `actions` pinned right. Use the header menu (Pin left / Pin right / Unpin) on any column to change pinning; the current state is shown above the table.',
+      },
+    },
+  },
+  render: function ColumnPinningStory() {
+    const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
+      left: ['select', 'name'],
+      right: ['actions'],
+    });
+    return (
+      <div className="flex flex-col gap-3">
+        <pre className="text-p-sm text-fg-secondary">{JSON.stringify(columnPinning)}</pre>
+        <div className="max-w-3xl">
+          <TableV2
+            data={employees}
+            columns={widePinningColumns}
+            enableRowSelection
+            columnPinning={columnPinning}
+            onColumnPinningChange={setColumnPinning}
+          />
+        </div>
+      </div>
+    );
+  },
 };
 
 export const AllFeatures: Story = {
