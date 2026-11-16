@@ -2,6 +2,7 @@ import { forwardRef, useId } from 'react';
 import { Check, Minus } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import type { CheckboxProps, CheckboxSize } from './Checkbox.types';
+import { createTestId } from '../../lib/testId';
 
 const boxSize: Record<CheckboxSize, string> = {
   md: 'h-5 w-5 rounded-sm',
@@ -36,6 +37,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
   const inputId = id ?? reactId;
   const hasError = error || !!errorText;
   const describedBy = errorText ? `${inputId}-error` : undefined;
+  const testId = createTestId(dataTestId);
 
   return (
     <label
@@ -61,6 +63,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           aria-required={required || undefined}
           aria-describedby={describedBy}
           aria-checked={indeterminate ? 'mixed' : undefined}
+          data-test-id={testId('input')}
           {...rest}
         />
         <span

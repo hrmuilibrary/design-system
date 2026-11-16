@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import type { PaginationProps } from './Pagination.types';
+import { createTestId } from '../../lib/testId';
 
 type Item = number | 'ellipsis-left' | 'ellipsis-right';
 
@@ -64,6 +65,8 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
   const prevDisabled = page <= 1;
   const nextDisabled = page >= pageCount;
 
+  const testId = createTestId(dataTestId);
+
   return (
     <nav
       ref={ref}
@@ -75,7 +78,7 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
       <button
         type="button"
         onClick={() => !prevDisabled && onPageChange(page - 1)}
-        disabled={prevDisabled}
+        data-test-id={testId('prev-page')}
         aria-label="Previous page"
         className={cn(itemBase, navButtonStyles)}
       >
@@ -101,6 +104,8 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
             type="button"
             onClick={() => onPageChange(item)}
             aria-current={isActive ? 'page' : undefined}
+            data-test-id={testId('page-link')}
+            data-page={item}
             className={cn(
               itemBase,
               isActive
@@ -118,6 +123,7 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
         onClick={() => !nextDisabled && onPageChange(page + 1)}
         disabled={nextDisabled}
         aria-label="Next page"
+        data-test-id={testId('next-page')}
         className={cn(itemBase, navButtonStyles)}
       >
         <ChevronRight className="h-4 w-4" />

@@ -32,6 +32,7 @@ import {
   PinOff,
 } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { createTestId } from '../../lib/testId';
 import { Empty } from '../Empty';
 import { InlineAlert } from '../InlineAlert';
 import { Skeleton } from '../Skeleton';
@@ -501,13 +502,22 @@ function TableV2Inner<TData, TValue = unknown>(
       ? virtualizer.getTotalSize() - (virtualRows[virtualRows.length - 1]?.end ?? 0)
       : 0;
 
-  const testId = (suffix: string) => (dataTestId ? `${dataTestId}-${suffix}` : undefined);
+  const testId = createTestId(dataTestId);
+
+  // Prefer the `id` carried by the consumer's own row data; fall back to
+  // react-table's row id (index, or whatever `getRowId` returns).
+  const getDataId = (row: Row<TData>): string => {
+    const original = row.original as { id?: unknown } | null | undefined;
+    const dataId = original?.id;
+    return typeof dataId === 'string' || typeof dataId === 'number' ? String(dataId) : row.id;
+  };
 
   const renderRow = (row: Row<TData>, rowRef?: Ref<HTMLTableRowElement>) => (
     <tr
       key={row.id}
       ref={rowRef}
-      data-test-id={testId(`row-${row.id}`)}
+      data-test-id={testId(`row-${getDataId(row)}`)}
+      data-row-id={getDataId(row)}
       data-selected={row.getIsSelected() || undefined}
       onClick={onRowClick ? () => onRowClick(row.original) : undefined}
       className={cn('group border-t border-border-default', onRowClick && 'cursor-pointer')}
@@ -515,6 +525,7 @@ function TableV2Inner<TData, TValue = unknown>(
       {row.getVisibleCells().map((cell) => (
         <td
           key={cell.id}
+          data-test-id={testId(`cell-${cell.column.id}`)}
           style={getPinnedStyles(cell.column)}
           className={cn(
             'bg-bg-default px-4 group-hover:bg-bg-container group-data-[selected]:bg-brand-50',
@@ -690,7 +701,12 @@ function TableV2Inner<TData, TValue = unknown>(
       )}
 
       {enablePagination && !error && (
-        <TableV2Pagination table={table} pageSizeOptions={pageSizeOptions} locale={locale} />
+        <TableV2Pagination
+          table={table}
+          pageSizeOptions={pageSizeOptions}
+          locale={locale}
+          dataTestId={dataTestId}
+        />
       )}
     </div>
   );
