@@ -100,6 +100,18 @@ accept only `Date` no longer satisfies the prop, even if you never pass
 `Date | null` (and, if you're storing the value in state, switch to
 `useState<Date | null>`).
 
+## Menu placement
+
+`menuPlacement` (`'auto'` | `'bottom'` | `'top'`, default `'auto'`) mirrors
+SelectV2's prop of the same name. `'auto'` measures the popover against the
+space below the trigger when it opens and flips upward only when it doesn't
+fit *and* there's more room above; `'top'`/`'bottom'` force the side
+regardless of available space — e.g. a control pinned near the bottom of a
+scroll container. The measurement runs before paint (and again when the
+month view changes, since a 6-week month is taller), so the popover never
+flashes on the wrong side; it isn't re-evaluated on scroll while the
+popover is already open.
+
 ## Required & helper text
 
 `required` renders a red asterisk next to the label and sets
