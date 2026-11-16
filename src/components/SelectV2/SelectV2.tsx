@@ -27,6 +27,7 @@ import type {
 import { Check, ChevronDown, Loader2, X } from 'lucide-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '../../lib/cn';
+import { createTestId } from '../../lib/testId';
 import { mergeRefs } from '../../lib/mergeRefs';
 import { Checkbox } from '../Checkbox';
 import { useVisibleTagCount } from './useVisibleTagCount';
@@ -66,7 +67,30 @@ interface SaveSelectionState {
   label: ReactNode;
 }
 
-function DropdownIndicator(props: ComponentProps<typeof RSComponents.DropdownIndicator>) {
+function selectTestId(selectProps: unknown, suffix: string): string | undefined {
+  const { dataTestId } = selectProps as { dataTestId?: string };
+  return createTestId(dataTestId)(suffix);
+}
+
+function withTestId<T extends object>(innerProps: T | undefined, testId: string | undefined): T {
+  return { ...innerProps, 'data-test-id': testId } as T;
+}
+
+function Control(props: Readonly<ComponentProps<typeof RSComponents.Control>>) {
+  return (
+    <RSComponents.Control
+      {...props}
+      innerProps={withTestId(props.innerProps, selectTestId(props.selectProps, 'trigger'))}
+    />
+  );
+}
+
+function SearchInput(props: Readonly<ComponentProps<typeof RSComponents.Input>>) {
+  const testIdProps = { 'data-test-id': selectTestId(props.selectProps, 'search') };
+  return <RSComponents.Input {...props} {...testIdProps} />;
+}
+
+function DropdownIndicator(props: Readonly<ComponentProps<typeof RSComponents.DropdownIndicator>>) {
   return (
     <RSComponents.DropdownIndicator {...props}>
       <ChevronDown
@@ -77,15 +101,18 @@ function DropdownIndicator(props: ComponentProps<typeof RSComponents.DropdownInd
   );
 }
 
-function ClearIndicator(props: ComponentProps<typeof RSComponents.ClearIndicator>) {
+function ClearIndicator(props: Readonly<ComponentProps<typeof RSComponents.ClearIndicator>>) {
   return (
-    <RSComponents.ClearIndicator {...props}>
+    <RSComponents.ClearIndicator
+      {...props}
+      innerProps={withTestId(props.innerProps, selectTestId(props.selectProps, 'clear'))}
+    >
       <X className="h-3.5 w-3.5" aria-hidden />
     </RSComponents.ClearIndicator>
   );
 }
 
-function MultiValueRemove(props: ComponentProps<typeof RSComponents.MultiValueRemove>) {
+function MultiValueRemove(props: Readonly<ComponentProps<typeof RSComponents.MultiValueRemove>>) {
   return (
     <RSComponents.MultiValueRemove {...props}>
       <X className="h-3 w-3" aria-hidden />
@@ -98,7 +125,7 @@ function MultiValueRemove(props: ComponentProps<typeof RSComponents.MultiValueRe
  *  summarizing the rest, and drops the remainder — `visibleTagCount` and the
  *  live selection count are threaded through `selectProps`, same pattern as
  *  `selectAllState` on `SelectAllMenu`. */
-function MultiValue(props: ComponentProps<typeof RSComponents.MultiValue>) {
+function MultiValue(props: Readonly<ComponentProps<typeof RSComponents.MultiValue>>) {
   const { visibleTagCount } = props.selectProps as unknown as { visibleTagCount?: number };
   if (visibleTagCount === undefined || props.index < visibleTagCount) {
     return <RSComponents.MultiValue {...props} />;
@@ -110,9 +137,15 @@ function MultiValue(props: ComponentProps<typeof RSComponents.MultiValue>) {
   return null;
 }
 
-function Option(props: ComponentProps<typeof RSComponents.Option>) {
+function Option(props: Readonly<ComponentProps<typeof RSComponents.Option>>) {
   return (
-    <RSComponents.Option {...props}>
+    <RSComponents.Option
+      {...props}
+      innerProps={withTestId(
+        props.innerProps,
+        selectTestId(props.selectProps, `option-${String((props.data as SelectV2Option).value)}`),
+      )}
+    >
       {props.children}
       {props.isSelected && <Check className="h-4 w-4 text-fg-brand shrink-0" aria-hidden />}
     </RSComponents.Option>
@@ -128,7 +161,7 @@ function LoadingIndicator() {
  *  `MenuList` since `Menu` wraps `MenuList` regardless. Registered whenever
  *  either row applies (select is multi and non-async, and/or `storageKey`
  *  is set). */
-function PinnedRowsMenu(props: ComponentProps<typeof RSComponents.Menu>) {
+function PinnedRowsMenu(props: Readonly<ComponentProps<typeof RSComponents.Menu>>) {
   const { selectAllState, onSelectAllToggle, saveSelectionState, onSaveSelectionToggle } =
     props.selectProps as unknown as {
       selectAllState?: SelectAllState | null;
@@ -138,9 +171,13 @@ function PinnedRowsMenu(props: ComponentProps<typeof RSComponents.Menu>) {
     };
 
   return (
-    <RSComponents.Menu {...props}>
+    <RSComponents.Menu
+      {...props}
+      innerProps={withTestId(props.innerProps, selectTestId(props.selectProps, 'content'))}
+    >
       {selectAllState && (
         <div
+          data-test-id={selectTestId(props.selectProps, 'select-all')}
           className="border-b border-border-default px-3 py-2"
           onMouseDown={(e) => e.preventDefault()}
           onClick={(e) => {
@@ -185,7 +222,7 @@ function PinnedRowsMenu(props: ComponentProps<typeof RSComponents.Menu>) {
  *  scroll-into-view for the active option is best-effort since off-screen
  *  rows have no real DOM node until they're scrolled into range. */
 function VirtualizedMenuList(
-  props: MenuListProps<SelectV2Option, boolean, GroupBase<SelectV2Option>>,
+  props: Readonly<MenuListProps<SelectV2Option, boolean, GroupBase<SelectV2Option>>>,
 ) {
   const { children, innerRef, innerProps, maxHeight } = props;
   const items = Children.toArray(children);
@@ -484,8 +521,11 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
   }, [storageKey, savePinned, saveSelectionLabel, t]);
 
   const [inputValue, setInputValue] = useState('');
-  const handleInputChange = useCallback((nextInputValue: string, meta: { action: string }) => {
-    if (meta.action === 'input-change') setInputValue(nextInputValue);
+  // Since `inputValue` is controlled here, react-select's built-in clearing
+  // (on `set-value` after a selection, `menu-close`, `input-blur`) only takes
+  // effect if we honor every action, not just `input-change`.
+  const handleInputChange = useCallback((nextInputValue: string) => {
+    setInputValue(nextInputValue);
   }, []);
 
   const visibleSelectableOptions = useMemo(() => {
@@ -534,6 +574,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
 
   const commonProps: Record<string, unknown> = {
     ...reactSelectProps,
+    dataTestId,
     inputId,
     unstyled: true,
     classNames,
@@ -589,13 +630,15 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
       : {}),
     menuPlacement: reactSelectProps.menuPlacement ?? 'auto',
     components: {
+      Control,
+      Menu: PinnedRowsMenu,
+      ...(resolvedSearchable ? { Input: SearchInput } : {}),
       DropdownIndicator,
       ClearIndicator,
       MultiValueRemove,
       LoadingIndicator,
       IndicatorSeparator: () => null,
       ...(virtualized ? { MenuList: VirtualizedMenuList } : {}),
-      ...(isSelectAllEligible || saveSelectionState ? { Menu: PinnedRowsMenu } : {}),
       ...(singleLineEnabled ? { MultiValue } : {}),
       Option,
     },

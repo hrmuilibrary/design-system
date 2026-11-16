@@ -1,4 +1,5 @@
 import { Skeleton } from '../Skeleton';
+import { createTestId } from '../../lib/testId';
 
 export interface TableV2SkeletonProps {
   columnCount: number;
@@ -12,13 +13,15 @@ export function TableV2Skeleton({
   columnCount,
   rowCount = 8,
   testIdPrefix,
-}: TableV2SkeletonProps) {
+}: Readonly<TableV2SkeletonProps>) {
+  const testId = createTestId(testIdPrefix);
+
   return (
     <>
       {Array.from({ length: rowCount }, (_, rowIndex) => (
         <tr
           key={rowIndex}
-          data-test-id={testIdPrefix ? `${testIdPrefix}-skeleton-row-${rowIndex}` : undefined}
+          data-test-id={testId(`skeleton-row-${rowIndex}`)}
           aria-hidden={rowIndex > 0 || undefined}
         >
           {Array.from({ length: columnCount }, (_, colIndex) => (
