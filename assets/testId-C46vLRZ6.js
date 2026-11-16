@@ -1,0 +1,1 @@
+import{i as e}from"./preload-helper-BdFrVu1K.js";var t,n=e((()=>{t=e=>t=>e?`${e}-${t}`:void 0}));export{n,t};
