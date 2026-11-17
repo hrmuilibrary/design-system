@@ -3,6 +3,9 @@ import type { BaseProps } from '../../types';
 
 export type DatePickerSize = 'lg' | 'md' | 'sm';
 
+/** Mirrors SelectV2's `menuPlacement` surface (react-select's own union). */
+export type DatePickerMenuPlacement = 'auto' | 'bottom' | 'top';
+
 export interface DateRange {
   start: Date | null;
   end: Date | null;
@@ -43,6 +46,11 @@ export interface DatePickerProps extends BaseProps {
   excludeDates?: Date[];
   /** Arbitrary per-day predicate, evaluated alongside `minDate`/`maxDate`/`excludeDates`. Days it rejects render disabled. */
   filterDate?: (date: Date) => boolean;
+  /** Which side the calendar popover opens on. `'auto'` (default) measures the
+   *  popover against the space below the trigger on open and flips upward only
+   *  when it doesn't fit and there's more room above; `'top'`/`'bottom'` force
+   *  the side regardless of available space. Same surface as SelectV2. */
+  menuPlacement?: DatePickerMenuPlacement;
   /** Switch the trigger to the danger border/ring styles. */
   error?: boolean;
   /** Message rendered below the control; also switches the trigger to the danger styles. */

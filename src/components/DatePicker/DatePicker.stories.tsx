@@ -16,6 +16,10 @@ const meta = {
       control: 'select',
       options: ['lg', 'md', 'sm'],
     },
+    menuPlacement: {
+      control: 'select',
+      options: ['auto', 'bottom', 'top'],
+    },
   },
   args: {
     placeholder: 'Select date',
@@ -198,6 +202,18 @@ export const WeekdaysOnly: Story = {
     label: 'Business day',
     filterDate: (date: Date) => date.getDay() !== 0 && date.getDay() !== 6,
   },
+};
+
+export const OpensUpward: Story = {
+  name: "menuPlacement='top'",
+  args: { label: 'Start date', menuPlacement: 'top' },
+  decorators: [
+    (Story) => (
+      <div className="flex h-72 w-80 items-end">
+        <Story />
+      </div>
+    ),
+  ],
 };
 
 const SIZES = ['sm', 'md', 'lg'] as const;
