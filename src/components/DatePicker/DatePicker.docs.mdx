@@ -111,6 +111,9 @@ same slot and switches the control to the danger styles instead.
 
 `DatePicker` forwards its ref to the trigger `<button>` element. Its root
 DOM node is the wrapping `<div>` (label + trigger + calendar popover),
-which is where `dataTestId` is applied as `data-test-id`. Use
+which carries `<dataTestId>-root`. `dataTestId` itself is applied to the trigger
+`<button>` (with `data-value`, or `data-from` / `data-to` for a range, as ISO
+dates); the popover parts are `-calendar`, `-prev-month`, `-next-month`,
+`-month-label` (with `data-month`) and `-day` (with `data-date`). Use
 `wrapperClassName` to style that outer wrapper and `className` to style the
 trigger button itself — same split as `Select`.

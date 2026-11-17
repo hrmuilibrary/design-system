@@ -114,7 +114,13 @@ function ClearIndicator(props: Readonly<ComponentProps<typeof RSComponents.Clear
 
 function MultiValueRemove(props: Readonly<ComponentProps<typeof RSComponents.MultiValueRemove>>) {
   return (
-    <RSComponents.MultiValueRemove {...props}>
+    <RSComponents.MultiValueRemove
+      {...props}
+      innerProps={{
+        ...props.innerProps,
+        'aria-label': `Remove ${optionLabelText(props.data as SelectV2Option)}`,
+      }}
+    >
       <X className="h-3 w-3" aria-hidden />
     </RSComponents.MultiValueRemove>
   );
