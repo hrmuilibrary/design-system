@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useId, useLayoutEffect, useMemo, useRef, useStat
 import type { MouseEvent as ReactMouseEvent, KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { createTestId } from '../../lib/testId';
 import type { DatePickerProps, DatePickerSize } from './DatePicker.types';
 
 // Heights, text sizes and horizontal padding mirror Input/Select exactly so a
@@ -129,6 +130,13 @@ function buildGrid(view: Date, firstDayOfWeek: number) {
     cells.push(new Date(view.getFullYear(), view.getMonth(), i));
   while (cells.length % 7 !== 0) cells.push(null);
   return cells;
+}
+
+function toIsoDate(date: Date | null | undefined): string | undefined {
+  if (!date) return undefined;
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
 }
 
 export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(function DatePicker(
@@ -263,13 +271,14 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     };
   }, [locale]);
   const cells = buildGrid(view, firstDayOfWeek);
+  const testId = createTestId(dataTestId);
   const currentRange = rangeValue ?? { start: null, end: null };
   const rangeEnd = currentRange.end ?? hoverEnd;
 
   return (
     <div
       ref={containerRef}
-      data-test-id={dataTestId}
+      data-test-id={testId('root')}
       className={cn('flex flex-col gap-1.5', fullWidth && 'w-full', wrapperClassName)}
     >
       {label && (
@@ -289,6 +298,10 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
         <button
           ref={ref}
           id={triggerId}
+          data-test-id={dataTestId}
+          data-value={range ? undefined : toIsoDate(value)}
+          data-from={range ? toIsoDate(rangeValue?.start) : undefined}
+          data-to={range ? toIsoDate(rangeValue?.end) : undefined}
           type="button"
           disabled={disabled}
           aria-invalid={hasError || undefined}
@@ -342,6 +355,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
         {open && (
           <div
             ref={popoverRef}
+            data-test-id={testId('calendar')}
             className={cn(
               'absolute z-50 left-0 rounded-xl border border-border-default bg-bg-default shadow-z3 p-3 w-[300px]',
               resolvedPlacement === 'top' ? 'bottom-full mb-1' : 'top-full mt-1',
@@ -353,10 +367,15 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                 className="w-8 h-8 rounded-md hover:bg-bg-container flex items-center justify-center text-fg-secondary"
                 onClick={() => setView(new Date(view.getFullYear(), view.getMonth() - 1, 1))}
                 aria-label="Previous month"
+                data-test-id={testId('prev-month')}
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <div className="text-p-md font-semibold text-fg-default">
+              <div
+                data-test-id={testId('month-label')}
+                data-month={`${view.getFullYear()}-${String(view.getMonth() + 1).padStart(2, '0')}`}
+                className="text-p-md font-semibold text-fg-default"
+              >
                 {monthNames[view.getMonth()]} {view.getFullYear()}
               </div>
               <button
@@ -364,6 +383,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                 className="w-8 h-8 rounded-md hover:bg-bg-container flex items-center justify-center text-fg-secondary"
                 onClick={() => setView(new Date(view.getFullYear(), view.getMonth() + 1, 1))}
                 aria-label="Next month"
+                data-test-id={testId('next-month')}
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -399,6 +419,8 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                     type="button"
                     disabled={dayDisabled}
                     aria-disabled={dayDisabled || undefined}
+                    data-test-id={testId('day')}
+                    data-date={toIsoDate(date)}
                     onMouseEnter={() =>
                       !dayDisabled &&
                       range &&

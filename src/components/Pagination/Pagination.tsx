@@ -71,14 +71,15 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
     <nav
       ref={ref}
       aria-label={ariaLabel ?? 'Pagination'}
-      data-test-id={dataTestId}
+      data-test-id={testId('pagination')}
       className={cn('inline-flex items-center gap-1', className)}
       {...rest}
     >
       <button
         type="button"
         onClick={() => !prevDisabled && onPageChange(page - 1)}
-        data-test-id={testId('prev-page')}
+        disabled={prevDisabled}
+        data-test-id={testId('pagination-prev-page')}
         aria-label="Previous page"
         className={cn(itemBase, navButtonStyles)}
       >
@@ -104,7 +105,7 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
             type="button"
             onClick={() => onPageChange(item)}
             aria-current={isActive ? 'page' : undefined}
-            data-test-id={testId('page-link')}
+            data-test-id={testId('pagination-page-link')}
             data-page={item}
             className={cn(
               itemBase,
@@ -123,7 +124,7 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(function Pagi
         onClick={() => !nextDisabled && onPageChange(page + 1)}
         disabled={nextDisabled}
         aria-label="Next page"
-        data-test-id={testId('next-page')}
+        data-test-id={testId('pagination-next-page')}
         className={cn(itemBase, navButtonStyles)}
       >
         <ChevronRight className="h-4 w-4" />
