@@ -97,6 +97,8 @@ export function DropdownTrigger({ children }: DropdownTriggerProps) {
     onClick: (e: ReactMouseEvent) => {
       const orig = childProps.onClick as ((e: ReactMouseEvent) => void) | undefined;
       orig?.(e);
+      // The trigger click belongs to the menu only — don't let it reach a parent's onClick.
+      e.stopPropagation();
       if (!e.defaultPrevented) setOpen(!open);
     },
     'aria-haspopup': 'menu',
@@ -121,6 +123,7 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
       closeOnScroll = false,
       className,
       dataTestId,
+      onClick,
       ...rest
     },
     ref,
@@ -218,6 +221,12 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
         data-side={strategy === 'fixed' ? resolvedSide : undefined}
         data-align={align}
         onKeyDown={handleKeyDown}
+        onClick={(event) => {
+          onClick?.(event);
+          // The panel is portaled, but React still bubbles its events through the
+          // React tree to the parent of <DropdownMenu> — keep item clicks inside the menu.
+          event.stopPropagation();
+        }}
         style={strategy === 'fixed' ? style : undefined}
         className={cn(
           panelBaseClass,
