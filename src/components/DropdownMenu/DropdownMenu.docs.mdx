@@ -39,7 +39,8 @@ accepts `onClick`, e.g. `Button`), followed by a `DropdownContent` holding
 `DropdownTrigger` clones its child element rather than rendering its own
 DOM node: it attaches the click handler that toggles the menu (composed
 with any `onClick` the child already has — the toggle is skipped if that
-handler calls `preventDefault()`) plus `aria-haspopup="menu"` and
+handler calls `preventDefault()`), stops the click from bubbling to any
+parent `onClick`, plus `aria-haspopup="menu"` and
 `aria-expanded`, and points an internal ref at the child so
 `DropdownContent` can tell trigger clicks apart from outside clicks.
 Because of this, `DropdownTrigger` accepts exactly one child element and
