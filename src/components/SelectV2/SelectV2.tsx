@@ -597,13 +597,32 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     getOptionLabel: optionLabelText,
     formatOptionLabel: (opt: SelectV2Option, meta: FormatOptionLabelMeta<SelectV2Option>) => {
       if (meta.context === 'value') return opt.label;
-      return anyOptionHasDescription && opt.description ? (
-        <span className="flex flex-col min-w-0">
-          <span className="truncate">{opt.label}</span>
-          <span className="truncate text-p-sm text-fg-secondary">{opt.description}</span>
+      const content =
+        anyOptionHasDescription && opt.description ? (
+          <span className="flex flex-col min-w-0">
+            <span className="truncate">{opt.label}</span>
+            <span className="truncate text-p-sm text-fg-secondary">{opt.description}</span>
+          </span>
+        ) : (
+          opt.label
+        );
+      if (!opt.actions) return content;
+      return (
+        <span className="flex min-w-0 flex-1 items-center gap-2">
+          <span className="min-w-0 flex-1 truncate">{content}</span>
+          {/* Keep row selection and select blur out of the actions area. */}
+          <span
+            data-test-id={selectTestId({ dataTestId }, `option-${String(opt.value)}-actions`)}
+            className="ml-auto inline-flex shrink-0 items-center"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {opt.actions}
+          </span>
         </span>
-      ) : (
-        opt.label
       );
     },
     isOptionDisabled: (o: SelectV2Option) => !!o.disabled,

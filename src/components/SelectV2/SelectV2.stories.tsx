@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { Info } from 'lucide-react';
+import { Info, MoreHorizontal } from 'lucide-react';
 import { SelectV2 } from './SelectV2';
 import { Tooltip } from '../Tooltip';
+import { DropdownMenu, DropdownTrigger, DropdownContent, DropdownItem } from '../DropdownMenu';
 import type { SelectV2BaseProps, SelectV2Option } from './SelectV2.types';
 import type { OptionValue } from '../../types';
 
@@ -192,6 +193,39 @@ export const WithDescriptions: Story = {
     return <Controlled />;
   },
   args: { label: 'Reviewer', options: peopleOptions, placeholder: 'Choose a reviewer…' },
+};
+
+export const WithOptionActions: Story = {
+  name: 'Per-option actions',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<OptionValue | undefined>('ceo');
+      const options: SelectV2Option[] = ['ceo', 'board'].map((v) => ({
+        value: v,
+        label: v === 'ceo' ? 'Chairman of MB /CEO' : 'Chairman of the board',
+        actions: (
+          <DropdownMenu>
+            <DropdownTrigger>
+              <button
+                type="button"
+                aria-label="Position actions"
+                className="rounded-md p-1 text-fg-secondary hover:bg-bg-container hover:text-fg-default"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </button>
+            </DropdownTrigger>
+            <DropdownContent align="end" autoFocusFirstItem={false}>
+              <DropdownItem>Make position primary</DropdownItem>
+              <DropdownItem>Detach from Position</DropdownItem>
+            </DropdownContent>
+          </DropdownMenu>
+        ),
+      }));
+      return <SelectV2 {...args} options={options} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Position', options: [] },
 };
 
 export const WithLabelAddons: Story = {

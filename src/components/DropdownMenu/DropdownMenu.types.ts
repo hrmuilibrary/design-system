@@ -50,6 +50,10 @@ export interface DropdownContentProps extends HTMLAttributes<HTMLDivElement>, Ba
   matchTriggerWidth?: boolean;
   /** Closes the menu when any ancestor scrolls. */
   closeOnScroll?: boolean;
+  /** Focuses the first item when the menu opens (default `true`). Set `false` when
+   *  the trigger lives inside another focus-sensitive widget — e.g. a `SelectV2`
+   *  option's `actions`, whose menu closes as soon as its input loses focus. */
+  autoFocusFirstItem?: boolean;
 }
 
 export interface DropdownItemProps extends ButtonHTMLAttributes<HTMLButtonElement>, BaseProps {

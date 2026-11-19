@@ -14,6 +14,11 @@ export interface SelectV2Option {
   disabled?: boolean;
   /** Group heading this option belongs under. */
   group?: string;
+  /** Content pinned to the end of the option's row in the menu — e.g. a "⋯"
+   *  button opening a per-option `DropdownMenu`. Not shown in the closed
+   *  control's selected value. Clicks inside it never select the option or
+   *  close the select, so the consumer owns what the interaction does. */
+  actions?: ReactNode;
 }
 
 /** react-select props SelectV2 already computes/owns internally and can't be

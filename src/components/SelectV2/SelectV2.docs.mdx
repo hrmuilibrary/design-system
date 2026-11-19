@@ -1,4 +1,4 @@
-import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import { Meta, Primary, Controls, Stories, Canvas } from '@storybook/addon-docs/blocks';
 import * as SelectV2Stories from './SelectV2.stories';
 
 <Meta of={SelectV2Stories} />
@@ -87,6 +87,39 @@ need to call back into `value`/`onChange` itself.
 
 `creatable` composes with `loadOptions` — SelectV2 picks react-select's
 `AsyncCreatableSelect` under the hood when both are set.
+
+## Per-option actions
+
+Set `actions` on an option to pin content to the end of its menu row — e.g.
+a "⋯" button that opens a `DropdownMenu` of per-option commands. It is
+rendered in the menu only, not in the closed control's selected value.
+Clicks inside the actions area never select the option or close the
+select; what the interaction does is up to the content you pass. It is
+pointer-oriented, and a `DropdownMenu` used here needs
+`autoFocusFirstItem={false}` on its `DropdownContent` — otherwise focus
+moving into it closes the select, taking the actions with it. The row's arrow-key navigation doesn't move focus into
+it.
+
+<Canvas of={SelectV2Stories.WithOptionActions} />
+
+```tsx
+const options = [
+  {
+    value: 'ceo',
+    label: 'Chairman of MB /CEO',
+    actions: (
+      <DropdownMenu>
+        <DropdownTrigger>
+          <button aria-label="Actions">⋯</button>
+        </DropdownTrigger>
+        <DropdownContent align="end" autoFocusFirstItem={false}>
+          <DropdownItem>Make position primary</DropdownItem>
+        </DropdownContent>
+      </DropdownMenu>
+    ),
+  },
+];
+```
 
 ## Virtualized menu
 

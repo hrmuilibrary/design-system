@@ -178,7 +178,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   const [resolvedPlacement, setResolvedPlacement] = useState<'bottom' | 'top'>(
     menuPlacement === 'top' ? 'top' : 'bottom',
   );
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   // Wraps the trigger only — the popover is absolutely positioned, so this
   // rect always reports the trigger's own box.
