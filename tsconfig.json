@@ -20,5 +20,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src", ".storybook", "vite.config.ts", "vite.lib.config.ts", "eslint.config.js"]
+  "include": ["src", ".storybook/**/*", "vite.config.ts", "vite.lib.config.ts", "eslint.config.js"]
 }

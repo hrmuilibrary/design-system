@@ -121,6 +121,7 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
       shift = true,
       matchTriggerWidth = false,
       closeOnScroll = false,
+      autoFocusFirstItem = true,
       className,
       dataTestId,
       onClick,
@@ -167,8 +168,11 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
         if (resolveAnchorElement(anchorRef)?.contains(target)) return;
         setOpen(false);
       };
-      document.addEventListener('mousedown', onDoc);
-      return () => document.removeEventListener('mousedown', onDoc);
+      // Capture phase: a host (e.g. SelectV2's option `actions` area) may stopPropagation()
+      // on mousedown, which would otherwise hide outside clicks from this listener and
+      // leave several menus open at once.
+      document.addEventListener('mousedown', onDoc, true);
+      return () => document.removeEventListener('mousedown', onDoc, true);
     }, [open, setOpen, triggerRef, anchorRef]);
 
     useEffect(() => {
@@ -179,7 +183,7 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
     }, [open, closeOnScroll, setOpen]);
 
     useEffect(() => {
-      if (!open) return;
+      if (!open || !autoFocusFirstItem) return;
       const raf = requestAnimationFrame(() => {
         const first = contentRef.current?.querySelector<HTMLElement>(
           '[role="menuitem"]:not(:disabled)',
@@ -187,7 +191,7 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
         first?.focus();
       });
       return () => cancelAnimationFrame(raf);
-    }, [open]);
+    }, [open, autoFocusFirstItem]);
 
     if (!open) return null;
 
@@ -209,7 +213,7 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
         items[0]?.focus();
       } else if (event.key === 'End') {
         event.preventDefault();
-        items[items.length - 1]?.focus();
+        items.at(-1)?.focus();
       }
     };
 

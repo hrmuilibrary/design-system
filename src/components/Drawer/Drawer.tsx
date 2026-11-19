@@ -54,6 +54,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
   },
   ref,
 ) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const { mounted, state } = useMountTransition(open, animated ? MOTION_DURATION.slow : 0);
   const shown = state === 'entered';
@@ -65,17 +66,24 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
   // already sliding off-screen for the length of the exit transition.
   useEffect(() => {
     if (!mounted) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', onKey);
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
-      document.removeEventListener('keydown', onKey);
       document.body.style.overflow = prev;
     };
-  }, [mounted, onClose]);
+  }, [mounted]);
+
+  // Native modal <dialog>: showModal() provides the top layer, inert background,
+  // focus containment and implicit aria-modal, so none of that is hand-rolled.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!mounted || !dialog || dialog.open) return;
+    dialog.showModal();
+    panelRef.current?.focus();
+    return () => {
+      if (dialog.open) dialog.close();
+    };
+  }, [mounted]);
 
   useEffect(() => {
     if (!open) return;
@@ -90,13 +98,18 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
   const sizeCls = isHorizontal ? horizontalSize[size] : verticalSize[size];
 
   const content = (
-    <div
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      ref={dialogRef}
+      // Escape fires the native `cancel` event; hand closing over to the consumer
+      // (controlled `open`) instead of letting the browser close it directly.
+      onCancel={(e) => {
+        e.preventDefault();
+        onClose();
+      }}
       aria-hidden={state === 'exiting' || undefined}
       aria-labelledby={title ? 'drawer-title' : undefined}
       aria-describedby={description ? 'drawer-desc' : undefined}
-      className="fixed inset-0 z-50"
+      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none overflow-hidden border-0 bg-transparent p-0 text-inherit backdrop:bg-transparent"
       data-test-id={dataTestId}
     >
       <div
@@ -165,7 +178,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
           </div>
         )}
       </div>
-    </div>
+    </dialog>
   );
 
   return createPortal(content, document.body);
