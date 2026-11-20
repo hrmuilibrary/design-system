@@ -4,6 +4,7 @@ import { Modal } from './Modal';
 import type { ModalProps } from './Modal.types';
 import { Button } from '../Button';
 import { Drawer } from '../Drawer';
+import { SelectV2 } from '../SelectV2';
 
 // Modal is a controlled component (`open` / `onClose`), so every story wraps
 // it with local state and a trigger button instead of rendering it
@@ -94,7 +95,26 @@ export const ScrollableContent: Story = {
   },
 };
 
+function SmallTemplate({ open: initialOpen, ...args }: ModalProps) {
+  const [open, setOpen] = useState(initialOpen);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open modal</Button>
+      <Modal {...args} open={open} onClose={() => setOpen(false)}>
+        <SelectV2
+          label="Pick an option"
+          options={Array.from({ length: 10 }, (_, i) => ({
+            value: `option-${i + 1}`,
+            label: `Option ${i + 1}`,
+          }))}
+        />
+      </Modal>
+    </>
+  );
+}
+
 export const Small: Story = {
+  render: SmallTemplate,
   args: { size: 'sm' },
 };
 
