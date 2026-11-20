@@ -1,7 +1,10 @@
-import { forwardRef, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { MouseEvent as ReactMouseEvent, KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
+import { usePortalContainer } from '../../lib/PortalContext';
+import { useFloatingPosition } from '../../lib/useFloatingPosition';
 import { createTestId } from '../../lib/testId';
 import type { DatePickerProps, DatePickerSize } from './DatePicker.types';
 
@@ -175,15 +178,26 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<Date>(value ?? rangeValue?.start ?? new Date());
   const [hoverEnd, setHoverEnd] = useState<Date | null>(null);
-  const [resolvedPlacement, setResolvedPlacement] = useState<'bottom' | 'top'>(
-    menuPlacement === 'top' ? 'top' : 'bottom',
-  );
+  const [popoverEl, setPopoverEl] = useState<HTMLDivElement | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  // Wraps the trigger only — the popover is absolutely positioned, so this
-  // rect always reports the trigger's own box.
+  // Wraps the trigger only — the popover is portaled, so this rect always
+  // reports the trigger's own box.
   const fieldRef = useRef<HTMLDivElement>(null);
-  const popoverRef = useRef<HTMLDivElement>(null);
+  // Portaled into the enclosing Drawer/Modal dialog (top layer), else <body>, so it
+  // is neither clipped by scrolling ancestors nor painted under a dialog.
+  const portalContainer = usePortalContainer();
+  const { style: popoverStyle, resolvedSide } = useFloatingPosition({
+    anchor: fieldRef,
+    panel: popoverEl,
+    open,
+    side: menuPlacement === 'top' ? 'top' : 'bottom',
+    align: 'start',
+    offset: MENU_GAP,
+    flip: menuPlacement === 'auto',
+    // The popover's height changes with the month (5- vs 6-week grids).
+    recomputeKey: `${view.getFullYear()}-${view.getMonth()}-${range}`,
+  });
   const hasError = error || !!errorText;
   const describedBy = errorText
     ? `${triggerId}-error`
@@ -195,34 +209,16 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     if (disabled) setOpen(false);
   }, [disabled]);
 
-  // Runs before paint, so the popover never flashes on the wrong side. `view`
-  // and `range` are dependencies because both change the popover's height
-  // (5- vs 6-week months), and with it whether it still fits below.
-  useLayoutEffect(() => {
-    if (!open) return;
-    if (menuPlacement !== 'auto') {
-      setResolvedPlacement(menuPlacement);
-      return;
-    }
-    const field = fieldRef.current;
-    const popover = popoverRef.current;
-    if (!field || !popover) return;
-    const rect = field.getBoundingClientRect();
-    const popoverHeight = popover.offsetHeight + MENU_GAP;
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const spaceAbove = rect.top;
-    setResolvedPlacement(spaceBelow < popoverHeight && spaceAbove > spaceBelow ? 'top' : 'bottom');
-  }, [open, menuPlacement, view, range]);
-
   useEffect(() => {
     if (!open) return;
     const onClick = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node))
-        setOpen(false);
+      const target = event.target as Node;
+      if (containerRef.current?.contains(target) || popoverEl?.contains(target)) return;
+      setOpen(false);
     };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
-  }, [open]);
+  }, [open, popoverEl]);
 
   const display = range
     ? rangeValue?.start
@@ -352,92 +348,100 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           )}
         </button>
 
-        {open && (
-          <div
-            ref={popoverRef}
-            data-test-id={testId('calendar')}
-            className={cn(
-              'absolute z-50 left-0 rounded-xl border border-border-default bg-bg-default shadow-z3 p-3 w-[300px]',
-              resolvedPlacement === 'top' ? 'bottom-full mb-1' : 'top-full mt-1',
-            )}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <button
-                type="button"
-                className="w-8 h-8 rounded-md hover:bg-bg-container flex items-center justify-center text-fg-secondary"
-                onClick={() => setView(new Date(view.getFullYear(), view.getMonth() - 1, 1))}
-                aria-label="Previous month"
-                data-test-id={testId('prev-month')}
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <div
-                data-test-id={testId('month-label')}
-                data-month={`${view.getFullYear()}-${String(view.getMonth() + 1).padStart(2, '0')}`}
-                className="text-p-md font-semibold text-fg-default"
-              >
-                {monthNames[view.getMonth()]} {view.getFullYear()}
-              </div>
-              <button
-                type="button"
-                className="w-8 h-8 rounded-md hover:bg-bg-container flex items-center justify-center text-fg-secondary"
-                onClick={() => setView(new Date(view.getFullYear(), view.getMonth() + 1, 1))}
-                aria-label="Next month"
-                data-test-id={testId('next-month')}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="grid grid-cols-7 gap-1 text-center">
-              {weekdayNames.map((day, i) => (
-                <div key={i} className="text-p-xs text-fg-tertiary py-1">
-                  {day}
+        {open &&
+          portalContainer &&
+          createPortal(
+            <div
+              ref={setPopoverEl}
+              data-test-id={testId('calendar')}
+              data-side={resolvedSide}
+              style={popoverStyle}
+              className="z-50 rounded-xl border border-border-default bg-bg-default shadow-z3 p-3 w-[300px]"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <button
+                  type="button"
+                  className="w-8 h-8 rounded-md hover:bg-bg-container flex items-center justify-center text-fg-secondary"
+                  onClick={() => setView(new Date(view.getFullYear(), view.getMonth() - 1, 1))}
+                  aria-label="Previous month"
+                  data-test-id={testId('prev-month')}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <div
+                  data-test-id={testId('month-label')}
+                  data-month={`${view.getFullYear()}-${String(view.getMonth() + 1).padStart(2, '0')}`}
+                  className="text-p-md font-semibold text-fg-default"
+                >
+                  {monthNames[view.getMonth()]} {view.getFullYear()}
                 </div>
-              ))}
-              {cells.map((date, index) => {
-                if (!date) return <div key={index} />;
-                const dayDisabled = isDayDisabled(date, minDate, maxDate, excludeDates, filterDate);
-                const isSelected = !range && sameDay(date, value ?? null);
-                const isStart = range && sameDay(date, currentRange.start);
-                const isEnd = range && sameDay(date, rangeEnd);
-                const isInRange =
-                  range &&
-                  !!currentRange.start &&
-                  !!rangeEnd &&
-                  date > currentRange.start &&
-                  date < rangeEnd;
-                const stateClassName = dayDisabled
-                  ? 'text-fg-disabled cursor-not-allowed'
-                  : isSelected || isStart || isEnd
-                    ? 'bg-brand-500 text-white'
-                    : isInRange
-                      ? 'bg-bg-brand-lighter text-brand-700'
-                      : 'text-fg-default hover:bg-bg-container';
-                return (
-                  <button
-                    key={index}
-                    type="button"
-                    disabled={dayDisabled}
-                    aria-disabled={dayDisabled || undefined}
-                    data-test-id={testId('day')}
-                    data-date={toIsoDate(date)}
-                    onMouseEnter={() =>
-                      !dayDisabled &&
-                      range &&
-                      currentRange.start &&
-                      !currentRange.end &&
-                      setHoverEnd(date)
-                    }
-                    onClick={() => !dayDisabled && pick(date)}
-                    className={cn('h-8 rounded-md text-p-sm font-medium', stateClassName)}
-                  >
-                    {date.getDate()}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
+                <button
+                  type="button"
+                  className="w-8 h-8 rounded-md hover:bg-bg-container flex items-center justify-center text-fg-secondary"
+                  onClick={() => setView(new Date(view.getFullYear(), view.getMonth() + 1, 1))}
+                  aria-label="Next month"
+                  data-test-id={testId('next-month')}
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="grid grid-cols-7 gap-1 text-center">
+                {weekdayNames.map((day, i) => (
+                  <div key={i} className="text-p-xs text-fg-tertiary py-1">
+                    {day}
+                  </div>
+                ))}
+                {cells.map((date, index) => {
+                  if (!date) return <div key={index} />;
+                  const dayDisabled = isDayDisabled(
+                    date,
+                    minDate,
+                    maxDate,
+                    excludeDates,
+                    filterDate,
+                  );
+                  const isSelected = !range && sameDay(date, value ?? null);
+                  const isStart = range && sameDay(date, currentRange.start);
+                  const isEnd = range && sameDay(date, rangeEnd);
+                  const isInRange =
+                    range &&
+                    !!currentRange.start &&
+                    !!rangeEnd &&
+                    date > currentRange.start &&
+                    date < rangeEnd;
+                  const stateClassName = dayDisabled
+                    ? 'text-fg-disabled cursor-not-allowed'
+                    : isSelected || isStart || isEnd
+                      ? 'bg-brand-500 text-white'
+                      : isInRange
+                        ? 'bg-bg-brand-lighter text-brand-700'
+                        : 'text-fg-default hover:bg-bg-container';
+                  return (
+                    <button
+                      key={index}
+                      type="button"
+                      disabled={dayDisabled}
+                      aria-disabled={dayDisabled || undefined}
+                      data-test-id={testId('day')}
+                      data-date={toIsoDate(date)}
+                      onMouseEnter={() =>
+                        !dayDisabled &&
+                        range &&
+                        currentRange.start &&
+                        !currentRange.end &&
+                        setHoverEnd(date)
+                      }
+                      onClick={() => !dayDisabled && pick(date)}
+                      className={cn('h-8 rounded-md text-p-sm font-medium', stateClassName)}
+                    >
+                      {date.getDate()}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>,
+            portalContainer,
+          )}
       </div>
       {errorText ? (
         <p id={`${triggerId}-error`} className="text-p-sm text-red-700">

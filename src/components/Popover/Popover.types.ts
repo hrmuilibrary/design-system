@@ -26,6 +26,6 @@ export interface PopoverProps extends BaseProps {
   /** Moves focus into the bubble on open, restoring it to the trigger on close. Default `false` — there is no focus trap in v1, so use sparingly for content that's genuinely keyboard-operable. */
   autoFocus?: boolean;
   className?: string;
-  /** Portal target. Defaults to `document.body`. */
+  /** Portal target. Defaults to the enclosing Drawer/Modal dialog, else `document.body`. */
   container?: HTMLElement | null;
 }

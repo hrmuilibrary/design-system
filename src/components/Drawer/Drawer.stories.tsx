@@ -2,6 +2,9 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ArrowLeft, Pin } from 'lucide-react';
 import { Button } from '../Button';
+import { DatePicker } from '../DatePicker';
+import { DropdownContent, DropdownItem, DropdownMenu, DropdownTrigger } from '../DropdownMenu';
+import { SelectV2 } from '../SelectV2';
 import { Drawer } from './Drawer';
 import type { DrawerProps } from './Drawer.types';
 
@@ -9,7 +12,7 @@ import type { DrawerProps } from './Drawer.types';
 // wraps it with local state and a trigger button instead of rendering it
 // permanently open — that keeps the docs canvas usable and demonstrates the
 // real open/close interaction (overlay click, Escape, close button).
-function Template(args: DrawerProps) {
+function Template(args: Readonly<DrawerProps>) {
   const [open, setOpen] = useState(args.open);
 
   return (
@@ -193,5 +196,50 @@ export const NotAnimated: Story = {
     animated: false,
     title: 'Instant open/close',
     description: 'The pre-1.x behavior — mounts and unmounts synchronously, with no slide/fade.',
+  },
+};
+
+export const WithSelectV2: Story = {
+  args: {
+    title: 'Drawer with a select',
+    description: 'The select menu must render above the drawer.',
+    children: (
+      <SelectV2
+        label="Country"
+        placeholder="Choose a country"
+        options={[
+          { label: 'Armenia', value: 'am' },
+          { label: 'Georgia', value: 'ge' },
+          { label: 'Germany', value: 'de' },
+        ]}
+      />
+    ),
+  },
+};
+
+export const WithDropdownMenu: Story = {
+  args: {
+    title: 'Drawer with a dropdown menu',
+    description: 'The menu must render above the drawer.',
+    children: (
+      <DropdownMenu>
+        <DropdownTrigger>
+          <Button variant="secondary">Actions</Button>
+        </DropdownTrigger>
+        <DropdownContent>
+          <DropdownItem>Edit</DropdownItem>
+          <DropdownItem>Duplicate</DropdownItem>
+          <DropdownItem destructive>Delete</DropdownItem>
+        </DropdownContent>
+      </DropdownMenu>
+    ),
+  },
+};
+
+export const WithDatePicker: Story = {
+  args: {
+    title: 'Drawer with a date picker',
+    description: 'The calendar must render above the drawer.',
+    children: <DatePicker label="Date" />,
   },
 };

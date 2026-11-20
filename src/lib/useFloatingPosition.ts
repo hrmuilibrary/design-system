@@ -15,6 +15,10 @@ export interface UseFloatingPositionOptions {
   flip?: boolean;
   /** Clamps the cross-axis position so the panel stays inside the viewport. */
   shift?: boolean;
+  /** Sets the panel's `min-width` to the anchor's width (e.g. a select-style menu). */
+  matchAnchorWidth?: boolean;
+  /** Changing this re-measures the panel — for content whose size changes while open. */
+  recomputeKey?: unknown;
 }
 
 export interface FloatingPosition {
@@ -31,7 +35,8 @@ const ARROW_MARGIN = 10; // keep the arrow off the panel's rounded corners
 
 /** Computes `position: fixed` coordinates (+ a matching arrow offset) for a
  *  panel anchored to a trigger element on any of 4 sides x 3 alignments,
- *  so the panel can portal to `document.body` without being clipped by an
+ *  so the panel can portal out of its parent (to `document.body` or an enclosing
+ *  dialog) without being clipped by an
  *  `overflow: hidden` ancestor. Recomputes on open, resize, and any
  *  ancestor scroll. */
 export function useFloatingPosition({
@@ -43,6 +48,8 @@ export function useFloatingPosition({
   offset = 8,
   flip = true,
   shift = true,
+  matchAnchorWidth = false,
+  recomputeKey,
 }: UseFloatingPositionOptions): FloatingPosition {
   const [position, setPosition] = useState<FloatingPosition>({
     style: { position: 'fixed', top: 0, left: 0, visibility: 'hidden' },
@@ -157,7 +164,16 @@ export function useFloatingPosition({
         };
       }
 
-      setPosition({ style: { position: 'fixed', top, left }, arrowStyle, resolvedSide });
+      setPosition({
+        style: {
+          position: 'fixed',
+          top,
+          left,
+          ...(matchAnchorWidth ? { minWidth: anchorRect.width } : {}),
+        },
+        arrowStyle,
+        resolvedSide,
+      });
     };
 
     compute();
@@ -167,7 +183,7 @@ export function useFloatingPosition({
       window.removeEventListener('resize', compute);
       document.removeEventListener('scroll', compute, { capture: true });
     };
-  }, [open, anchor, panel, side, align, offset, flip, shift]);
+  }, [open, anchor, panel, side, align, offset, flip, shift, matchAnchorWidth, recomputeKey]);
 
   return position;
 }

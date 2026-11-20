@@ -28,7 +28,7 @@
   :root.dark {
     color-scheme: dark;
   }
-  
+
   * {
     border-color: var(--color-border-default);
   }
