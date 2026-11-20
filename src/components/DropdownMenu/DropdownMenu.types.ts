@@ -6,10 +6,10 @@ import type {
   RefObject,
 } from 'react';
 import type { BaseProps } from '../../types';
-import type { AnchoredAlign, AnchoredSide } from '../../lib/useAnchoredPosition';
+import type { FloatingAlign, FloatingSide } from '../../lib/useFloatingPosition';
 
-export type DropdownContentAlign = AnchoredAlign;
-export type DropdownContentSide = AnchoredSide;
+export type DropdownContentAlign = Exclude<FloatingAlign, 'center'>;
+export type DropdownContentSide = Extract<FloatingSide, 'top' | 'bottom'>;
 export type DropdownContentStrategy = 'fixed' | 'absolute';
 
 export interface DropdownMenuProps extends HTMLAttributes<HTMLDivElement>, BaseProps {
@@ -71,7 +71,7 @@ export interface DropdownItemProps extends ButtonHTMLAttributes<HTMLButtonElemen
   meta?: ReactNode;
 }
 
-export interface DropdownSeparatorProps extends HTMLAttributes<HTMLDivElement>, BaseProps {}
+export interface DropdownSeparatorProps extends HTMLAttributes<HTMLHRElement>, BaseProps {}
 
 export interface DropdownLabelProps extends HTMLAttributes<HTMLDivElement>, BaseProps {
   children: ReactNode;

@@ -1,8 +1,9 @@
-import { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
+import { PortalContext } from '../../lib/PortalContext';
 import { useHideBodyScroll } from '../../hooks';
 import type { ModalProps, ModalSize } from './Modal.types';
 
@@ -31,6 +32,8 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
   ref,
 ) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  // Exposed to descendants so their floating content portals inside this top-layer dialog.
+  const [dialogEl, setDialogEl] = useState<HTMLDialogElement | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useHideBodyScroll(open);
@@ -59,7 +62,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
 
   const content = (
     <dialog
-      ref={dialogRef}
+      ref={mergeRefs(dialogRef, setDialogEl)}
       // Escape fires the native `cancel` event; hand closing over to the consumer
       // (controlled `open`) instead of letting the browser close it directly.
       onCancel={(e) => {
@@ -128,5 +131,8 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
     </dialog>
   );
 
-  return createPortal(content, document.body);
+  return createPortal(
+    <PortalContext.Provider value={dialogEl}>{content}</PortalContext.Provider>,
+    document.body,
+  );
 });

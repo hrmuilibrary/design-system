@@ -16,7 +16,8 @@ import { createPortal } from 'react-dom';
 import { Check } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
-import { useAnchoredPosition } from '../../lib/useAnchoredPosition';
+import { usePortalContainer } from '../../lib/PortalContext';
+import { useFloatingPosition } from '../../lib/useFloatingPosition';
 import type {
   DropdownContentProps,
   DropdownItemProps,
@@ -133,10 +134,10 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
     const contentRef = useRef<HTMLDivElement>(null);
     const [panelEl, setPanelEl] = useState<HTMLDivElement | null>(null);
     // A lazy-getter wrapper: `.current` is only evaluated when read (by
-    // useAnchoredPosition's own effect, after commit), so a RefObject anchor's
+    // useFloatingPosition's own effect, after commit), so a RefObject anchor's
     // `.current` is still read fresh post-commit, exactly like before — while a
     // plain-HTMLElement anchor (or the triggerRef fallback) needs no ref indirection.
-    // Memoized on identity so useAnchoredPosition's effect (which depends on
+    // Memoized on identity so useFloatingPosition's effect (which depends on
     // `anchor` by identity) doesn't re-run on every render.
     const positionAnchorRef = useMemo<RefObject<HTMLElement | null>>(
       () => ({
@@ -147,7 +148,9 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
       [anchorRef, triggerRef],
     );
 
-    const { style, resolvedSide } = useAnchoredPosition({
+    const portalTarget = usePortalContainer();
+
+    const { style, resolvedSide } = useFloatingPosition({
       anchor: positionAnchorRef,
       panel: panelEl,
       open: open && strategy === 'fixed',
@@ -244,7 +247,7 @@ export const DropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(
       </div>
     );
 
-    return strategy === 'fixed' ? createPortal(panel, document.body) : panel;
+    return strategy === 'fixed' ? createPortal(panel, portalTarget ?? document.body) : panel;
   },
 );
 
@@ -305,14 +308,13 @@ export const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(fun
   );
 });
 
-export const DropdownSeparator = forwardRef<HTMLDivElement, DropdownSeparatorProps>(
+export const DropdownSeparator = forwardRef<HTMLHRElement, DropdownSeparatorProps>(
   function DropdownSeparator({ className, dataTestId, ...rest }, ref) {
     return (
-      <div
+      <hr
         ref={ref}
-        role="separator"
         data-test-id={dataTestId}
-        className={cn('my-1 h-px bg-border-default', className)}
+        className={cn('my-1 h-px border-0 bg-border-default', className)}
         {...rest}
       />
     );

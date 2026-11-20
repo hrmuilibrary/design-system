@@ -29,6 +29,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '../../lib/cn';
 import { createTestId } from '../../lib/testId';
 import { mergeRefs } from '../../lib/mergeRefs';
+import { usePortalContainer } from '../../lib/PortalContext';
 import { Checkbox } from '../Checkbox';
 import { useVisibleTagCount } from './useVisibleTagCount';
 import { SELECT_V2_TRANSLATIONS } from './SelectV2.i18n';
@@ -588,6 +589,10 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     instanceRef.current?.onMenuClose();
   }, [selectAllState, visibleSelectableOptions, currentMulti, mergeKnown, onChange]);
 
+  // Inside a Drawer/Modal (top-layer <dialog>) the menu must portal into that dialog,
+  // otherwise it paints underneath it.
+  const portalContainer = usePortalContainer();
+
   const commonProps: Record<string, unknown> = {
     ...reactSelectProps,
     dataTestId,
@@ -664,11 +669,9 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
         }
       : {}),
     menuPlacement: reactSelectProps.menuPlacement ?? 'auto',
-    // Portal the menu to <body> so overflow-clipping ancestors (e.g. a scrollable
-    // Modal body) can't clip it or force it to scroll inside them.
-    menuPortalTarget:
-      reactSelectProps.menuPortalTarget ??
-      (typeof document !== 'undefined' ? document.body : undefined),
+    // Portal the menu out of overflow-clipping ancestors (e.g. a scrollable Modal body):
+    // into the enclosing Drawer/Modal dialog if any, else <body>.
+    menuPortalTarget: reactSelectProps.menuPortalTarget ?? portalContainer ?? undefined,
     menuPosition: reactSelectProps.menuPosition ?? 'fixed',
     components: {
       Control,

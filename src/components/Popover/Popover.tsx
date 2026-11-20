@@ -11,6 +11,7 @@ import {
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
+import { usePortalContainer } from '../../lib/PortalContext';
 import { useFloatingPosition, type FloatingSide } from '../../lib/useFloatingPosition';
 import type { PopoverProps } from './Popover.types';
 
@@ -65,6 +66,8 @@ export function Popover({
     offset,
     flip,
   });
+
+  const contextContainer = usePortalContainer();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -123,7 +126,7 @@ export function Popover({
     'aria-expanded': isOpen,
   } as Record<string, unknown>);
 
-  const portalTarget = container ?? (typeof document !== 'undefined' ? document.body : null);
+  const portalTarget = container ?? contextContainer;
 
   return (
     <>
