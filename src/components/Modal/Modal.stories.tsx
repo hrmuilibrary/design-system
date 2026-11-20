@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Modal } from './Modal';
 import type { ModalProps } from './Modal.types';
 import { Button } from '../Button';
+import { Drawer } from '../Drawer';
 
 // Modal is a controlled component (`open` / `onClose`), so every story wraps
 // it with local state and a trigger button instead of rendering it
@@ -114,4 +115,30 @@ export const CustomClassName: Story = {
   args: {
     className: 'bg-bg-container border-2 border-brand-500',
   },
+};
+
+function OverDrawerTemplate() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  return (
+    <>
+      <Button onClick={() => setDrawerOpen(true)}>Open drawer</Button>
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="Edit item">
+        <Button variant="danger" onClick={() => setModalOpen(true)}>
+          Discard changes
+        </Button>
+      </Drawer>
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Discard changes"
+        description="Are you sure you want to discard the changes you made?"
+      />
+    </>
+  );
+}
+
+export const OverDrawer: Story = {
+  name: 'Opened from a Drawer',
+  render: () => <OverDrawerTemplate />,
 };

@@ -5,6 +5,7 @@ import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
 import { MOTION_DURATION } from '../../lib/motion';
 import { useMountTransition } from '../../lib/useMountTransition';
+import { useHideBodyScroll } from '../../hooks';
 import type { DrawerProps, DrawerSide, DrawerSize } from './Drawer.types';
 
 const horizontalSize: Record<DrawerSize, string> = {
@@ -64,14 +65,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
   // sliding away. Focus restore fires as soon as `open` goes false,
   // instead — otherwise the user's focus would sit on a drawer that's
   // already sliding off-screen for the length of the exit transition.
-  useEffect(() => {
-    if (!mounted) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [mounted]);
+  useHideBodyScroll(mounted);
 
   // Native modal <dialog>: showModal() provides the top layer, inert background,
   // focus containment and implicit aria-modal, so none of that is hand-rolled.
