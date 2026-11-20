@@ -203,11 +203,21 @@ function PinnedRowsMenu(props: Readonly<ComponentProps<typeof RSComponents.Menu>
       {props.children}
       {saveSelectionState && (
         <div
+          data-test-id={selectTestId(props.selectProps, 'save_template')}
+          role="button"
+          tabIndex={0}
+          aria-pressed={saveSelectionState.checked}
           className="border-t border-border-default px-3 py-2"
           onMouseDown={(e) => e.preventDefault()}
           onClick={(e) => {
             e.preventDefault();
             onSaveSelectionToggle?.();
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onSaveSelectionToggle?.();
+            }
           }}
         >
           <Checkbox

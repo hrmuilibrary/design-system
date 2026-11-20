@@ -1,6 +1,7 @@
 import { createContext, forwardRef, useContext, useId, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { createTestId } from '../../lib/testId';
 import { Divider } from '../Divider';
 import { includesOptionValue, isSameOptionValue } from '../../lib/optionValue';
 import type { AccordionItemProps, AccordionProps } from './Accordion.types';
@@ -99,6 +100,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(func
       <h3>
         <button
           id={triggerId}
+          data-test-id={createTestId(dataTestId)('trigger')}
           type="button"
           onClick={() => toggle(value)}
           disabled={disabled}
