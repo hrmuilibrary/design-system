@@ -1,8 +1,10 @@
-import { forwardRef, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { forwardRef, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { MouseEvent as ReactMouseEvent, KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { createTestId } from '../../lib/testId';
+import { useFloatingPosition } from '../../lib/useFloatingPosition';
 import type { DatePickerProps, DatePickerSize } from './DatePicker.types';
 
 // Heights, text sizes and horizontal padding mirror Input/Select exactly so a
@@ -12,10 +14,6 @@ const sizeStyles: Record<DatePickerSize, string> = {
   md: 'h-10 text-p-std px-3',
   sm: 'h-8 text-p-sm px-2.5',
 };
-
-// Matches the popover's `mt-1`/`mb-1` offset, so the fit test measures the
-// same gap the rendered popover actually occupies.
-const MENU_GAP = 4;
 
 const SUNDAY_FIRST_REGIONS = new Set(['US', 'CA', 'MX', 'JP', 'BR', 'IL', 'PH', 'KR', 'TW']);
 
@@ -175,15 +173,20 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<Date>(value ?? rangeValue?.start ?? new Date());
   const [hoverEnd, setHoverEnd] = useState<Date | null>(null);
-  const [resolvedPlacement, setResolvedPlacement] = useState<'bottom' | 'top'>(
-    menuPlacement === 'top' ? 'top' : 'bottom',
-  );
+  const [panelEl, setPanelEl] = useState<HTMLDivElement | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  // Wraps the trigger only — the popover is absolutely positioned, so this
-  // rect always reports the trigger's own box.
   const fieldRef = useRef<HTMLDivElement>(null);
-  const popoverRef = useRef<HTMLDivElement>(null);
+
+  const { style } = useFloatingPosition({
+    anchor: fieldRef,
+    panel: panelEl,
+    open,
+    side: menuPlacement === 'top' ? 'top' : 'bottom',
+    align: 'start',
+    flip: menuPlacement === 'auto',
+    offset: 4,
+  });
   const hasError = error || !!errorText;
   const describedBy = errorText
     ? `${triggerId}-error`
@@ -195,34 +198,17 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     if (disabled) setOpen(false);
   }, [disabled]);
 
-  // Runs before paint, so the popover never flashes on the wrong side. `view`
-  // and `range` are dependencies because both change the popover's height
-  // (5- vs 6-week months), and with it whether it still fits below.
-  useLayoutEffect(() => {
-    if (!open) return;
-    if (menuPlacement !== 'auto') {
-      setResolvedPlacement(menuPlacement);
-      return;
-    }
-    const field = fieldRef.current;
-    const popover = popoverRef.current;
-    if (!field || !popover) return;
-    const rect = field.getBoundingClientRect();
-    const popoverHeight = popover.offsetHeight + MENU_GAP;
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const spaceAbove = rect.top;
-    setResolvedPlacement(spaceBelow < popoverHeight && spaceAbove > spaceBelow ? 'top' : 'bottom');
-  }, [open, menuPlacement, view, range]);
-
   useEffect(() => {
     if (!open) return;
     const onClick = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node))
-        setOpen(false);
+      const target = event.target as Node;
+      if (containerRef.current?.contains(target)) return;
+      if (panelEl?.contains(target)) return;
+      setOpen(false);
     };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
-  }, [open]);
+  }, [open, panelEl]);
 
   const display = range
     ? rangeValue?.start
@@ -294,7 +280,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           )}
         </label>
       )}
-      <div ref={fieldRef} className="relative">
+      <div ref={fieldRef}>
         <button
           ref={ref}
           id={triggerId}
@@ -352,15 +338,15 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           )}
         </button>
 
-        {open && (
-          <div
-            ref={popoverRef}
-            data-test-id={testId('calendar')}
-            className={cn(
-              'absolute z-50 left-0 rounded-xl border border-border-default bg-bg-default shadow-z3 p-3 w-[300px]',
-              resolvedPlacement === 'top' ? 'bottom-full mb-1' : 'top-full mt-1',
-            )}
-          >
+        {open &&
+          typeof document !== 'undefined' &&
+          createPortal(
+            <div
+              ref={setPanelEl}
+              data-test-id={testId('calendar')}
+              style={style}
+              className="z-50 rounded-xl border border-border-default bg-bg-default shadow-z3 p-3 w-[300px]"
+            >
             <div className="flex items-center justify-between mb-2">
               <button
                 type="button"
@@ -436,7 +422,8 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                 );
               })}
             </div>
-          </div>
+          </div>,
+          document.body,
         )}
       </div>
       {errorText ? (
