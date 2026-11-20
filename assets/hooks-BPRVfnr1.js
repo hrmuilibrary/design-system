@@ -1,1 +1,0 @@
-import{i as e,s as t}from"./preload-helper-BdFrVu1K.js";import{O as n}from"./iframe-CZTB8NHO.js";function r(e){(0,i.useEffect)(()=>{if(e)return a===0&&(o=document.body.style.overflow,document.body.style.overflow=`hidden`),a+=1,()=>{--a,a===0&&(document.body.style.overflow=o)}},[e])}var i,a,o,s=e((()=>{i=t(n(),1),a=0,o=``})),c=e((()=>{s()}));export{s as n,r,c as t};
