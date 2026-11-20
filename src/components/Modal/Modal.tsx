@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { mergeRefs } from '../../lib/mergeRefs';
+import { useHideBodyScroll } from '../../hooks';
 import type { ModalProps, ModalSize } from './Modal.types';
 
 const sizeStyles: Record<ModalSize, string> = {
@@ -29,21 +30,23 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
   },
   ref,
 ) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  useHideBodyScroll(open);
+
+  // Native modal <dialog>: showModal() places it in the browser top layer, so a
+  // Modal opened while a Drawer (also a top-layer dialog) is open stacks above
+  // it and stays interactive — a z-indexed div can never beat the top layer.
   useEffect(() => {
-    if (!open) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    const dialog = dialogRef.current;
+    if (!open || !dialog || dialog.open) return;
+    dialog.showModal();
+    panelRef.current?.focus();
     return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prevOverflow;
+      if (dialog.open) dialog.close();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -55,12 +58,17 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
   if (!open) return null;
 
   const content = (
-    <div
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      ref={dialogRef}
+      // Escape fires the native `cancel` event; hand closing over to the consumer
+      // (controlled `open`) instead of letting the browser close it directly.
+      onCancel={(e) => {
+        e.preventDefault();
+        onClose();
+      }}
       aria-labelledby={title ? 'modal-title' : undefined}
       aria-describedby={description ? 'modal-desc' : undefined}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 m-0 flex h-full max-h-none w-full max-w-none items-center justify-center border-0 bg-transparent p-4 text-inherit backdrop:bg-transparent"
     >
       <div
         className="absolute inset-0 bg-black/50"
@@ -117,7 +125,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
           </div>
         )}
       </div>
-    </div>
+    </dialog>
   );
 
   return createPortal(content, document.body);

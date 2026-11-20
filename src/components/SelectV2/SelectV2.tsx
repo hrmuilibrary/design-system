@@ -664,6 +664,12 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
         }
       : {}),
     menuPlacement: reactSelectProps.menuPlacement ?? 'auto',
+    // Portal the menu to <body> so overflow-clipping ancestors (e.g. a scrollable
+    // Modal body) can't clip it or force it to scroll inside them.
+    menuPortalTarget:
+      reactSelectProps.menuPortalTarget ??
+      (typeof document !== 'undefined' ? document.body : undefined),
+    menuPosition: reactSelectProps.menuPosition ?? 'fixed',
     components: {
       Control,
       Menu: PinnedRowsMenu,

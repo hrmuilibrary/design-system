@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Info, MoreHorizontal } from 'lucide-react';
 import { SelectV2 } from './SelectV2';
 import { Tooltip } from '../Tooltip';
+import { Modal } from '../Modal';
 import { DropdownMenu, DropdownTrigger, DropdownContent, DropdownItem } from '../DropdownMenu';
 import type { SelectV2BaseProps, SelectV2Option } from './SelectV2.types';
 import type { OptionValue } from '../../types';
@@ -485,4 +486,29 @@ export const AllSizes: Story = {
     }
     return <Controlled />;
   },
+};
+
+export const InsideModal: Story = {
+  name: 'Inside a Modal (menu portals to body)',
+  render: (args) => {
+    function Controlled() {
+      const [open, setOpen] = useState(true);
+      const [value, setValue] = useState<OptionValue | undefined>();
+      return (
+        <>
+          <button type="button" onClick={() => setOpen(true)}>
+            Open modal
+          </button>
+          <Modal open={open} onClose={() => setOpen(false)} title="Select in a modal">
+            <div className="max-h-48 overflow-auto">
+              <SelectV2 {...args} value={value} onChange={setValue} />
+              <div className="h-64" />
+            </div>
+          </Modal>
+        </>
+      );
+    }
+    return <Controlled />;
+  },
+  args: { label: 'Favorite fruit', options: fruitOptions },
 };
