@@ -73,7 +73,9 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
     const dialog = dialogRef.current;
     if (!mounted || !dialog || dialog.open) return;
     dialog.showModal();
-    panelRef.current?.focus();
+    // preventScroll: the panel is still translated off-screen here; a plain
+    // focus() would scroll the dialog to reveal it and kill the slide-in.
+    panelRef.current?.focus({ preventScroll: true });
     return () => {
       if (dialog.open) dialog.close();
     };
@@ -82,7 +84,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
   useEffect(() => {
     if (!open) return;
     const prevFocus = document.activeElement as HTMLElement | null;
-    panelRef.current?.focus();
+    panelRef.current?.focus({ preventScroll: true });
     return () => prevFocus?.focus?.();
   }, [open]);
 
@@ -103,7 +105,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(function Drawer(
       aria-hidden={state === 'exiting' || undefined}
       aria-labelledby={title ? 'drawer-title' : undefined}
       aria-describedby={description ? 'drawer-desc' : undefined}
-      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none overflow-hidden border-0 bg-transparent p-0 text-inherit backdrop:bg-transparent"
+      className="fixed inset-0 z-50 m-0 h-full max-h-none w-full max-w-none overflow-clip border-0 bg-transparent p-0 text-inherit backdrop:bg-transparent"
       data-test-id={dataTestId}
     >
       <div
