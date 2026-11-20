@@ -21,6 +21,14 @@
  * the variable at the point of use.
  */
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  :root.dark {
+    color-scheme: dark;
+  }
+  
   * {
     border-color: var(--color-border-default);
   }
