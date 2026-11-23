@@ -144,7 +144,7 @@ export function Popover({
             data-test-id={dataTestId}
             style={style}
             className={cn(
-              'fixed z-50 max-w-60 max-h-54 overflow-auto rounded-lg border border-border-default bg-bg-default p-3 text-fg-default shadow-z4',
+              'fixed z-50 rounded-lg border border-border-default bg-bg-default p-3 text-fg-default shadow-z4',
               className,
             )}
           >
