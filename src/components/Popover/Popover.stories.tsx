@@ -57,11 +57,26 @@ export const WithInteractiveContent: Story = {
 
 const SIDES = ['top', 'bottom', 'left', 'right'] as const;
 
+const SCROLL_ITEMS = Array.from({ length: 20 }, (_, i) => `Item ${i + 1}`);
+
+const scrollableContent = (side: string) => (
+  <div className="flex flex-col gap-1">
+    <p className="text-label-md font-semibold">Side: {side}</p>
+    <ul className="flex flex-col gap-1">
+      {SCROLL_ITEMS.map((item) => (
+        <li key={item} className="text-p-sm text-fg-secondary">
+          {item}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
 export const AllSides: Story = {
   render: (args) => (
     <div className="grid grid-cols-2 gap-16 p-16">
       {SIDES.map((side) => (
-        <Popover key={side} {...args} side={side} content={`Side: ${side}`}>
+        <Popover key={side} {...args} side={side} closeOnScroll={false} className="max-h-54 overflow-y-auto" content={scrollableContent(side)}>
           <Button variant="secondary">{side}</Button>
         </Popover>
       ))}
