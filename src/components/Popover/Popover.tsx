@@ -91,11 +91,14 @@ export function Popover({
 
   useEffect(() => {
     if (!isOpen || !closeOnScroll) return;
-    const onScroll = () => setOpen(false);
+    const onScroll = (event: Event) => {
+      if (panelEl?.contains(event.target as Node)) return;
+      setOpen(false);
+    };
     document.addEventListener('scroll', onScroll, { capture: true, passive: true });
     return () => document.removeEventListener('scroll', onScroll, { capture: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, closeOnScroll]);
+  }, [isOpen, closeOnScroll, panelEl]);
 
   useEffect(() => {
     if (!isOpen || !autoFocus || !panelEl) return;
@@ -144,7 +147,7 @@ export function Popover({
             data-test-id={dataTestId}
             style={style}
             className={cn(
-              'fixed z-50 rounded-lg border border-border-default bg-bg-default p-3 text-fg-default shadow-z4',
+              'fixed z-50 max-w-60 max-h-54 overflow-auto rounded-lg border border-border-default bg-bg-default p-3 text-fg-default shadow-z4',
               className,
             )}
           >
