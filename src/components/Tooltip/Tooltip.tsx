@@ -1,5 +1,8 @@
+import { createPortal } from 'react-dom';
 import { cloneElement, forwardRef, isValidElement, useId, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
+import { mergeRefs } from '../../lib/mergeRefs';
+import { useFloatingPosition, type FloatingSide } from '../../lib/useFloatingPosition';
 import type { TooltipProps, TooltipSide, TooltipSize } from './Tooltip.types';
 
 const sizeStyles: Record<TooltipSize, string> = {
@@ -23,13 +26,30 @@ const arrowPosition: Record<TooltipSide, string> = {
     'right-full top-1/2 -translate-y-1/2 border-r-fg-default border-y-transparent border-l-transparent',
 };
 
+const arrowBorderStyles: Record<FloatingSide, string> = {
+  top: 'border-t-fg-default border-x-transparent border-b-transparent',
+  bottom: 'border-b-fg-default border-x-transparent border-t-transparent',
+  left: 'border-l-fg-default border-y-transparent border-r-transparent',
+  right: 'border-r-fg-default border-y-transparent border-l-transparent',
+};
+
 export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Tooltip(
-  { content, children, side = 'top', size = 'sm', delay = 150, className, dataTestId },
+  { content, children, side = 'top', size = 'sm', delay = 150, portalTarget, className, dataTestId },
   ref,
 ) {
   const [open, setOpen] = useState(false);
+  const [panelEl, setPanelEl] = useState<HTMLSpanElement | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const anchorRef = useRef<HTMLSpanElement>(null);
   const tooltipId = useId();
+
+  const { style, arrowStyle, resolvedSide } = useFloatingPosition({
+    anchor: anchorRef,
+    panel: panelEl,
+    open: open && !!portalTarget,
+    side,
+    offset: 8,
+  });
 
   const show = () => {
     if (timer.current) clearTimeout(timer.current);
@@ -51,24 +71,40 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
     'aria-describedby': open ? tooltipId : childProps['aria-describedby'],
   } as Record<string, unknown>);
 
-  return (
-    <span ref={ref} data-test-id={dataTestId} className="relative inline-flex">
-      {trigger}
-      {open && (
-        <span
-          role="tooltip"
-          id={tooltipId}
-          className={cn(
-            'absolute z-50 whitespace-pre-wrap w-max rounded-md bg-fg-default text-bg-default shadow-z3 pointer-events-none select-none',
-            sizeStyles[size],
-            sidePosition[side],
-            className,
-          )}
-        >
-          {content}
-          <span aria-hidden className={cn('absolute h-0 w-0 border-4', arrowPosition[side])} />
-        </span>
+  const bubble = (
+    <span
+      ref={portalTarget ? setPanelEl : undefined}
+      role="tooltip"
+      id={tooltipId}
+      style={portalTarget ? style : undefined}
+      className={cn(
+        'z-50 whitespace-pre-wrap w-max rounded-md bg-fg-default text-bg-default shadow-z3 pointer-events-none select-none',
+        sizeStyles[size],
+        !portalTarget && ['absolute', sidePosition[side]],
+        className,
       )}
+    >
+      {content}
+      {portalTarget ? (
+        <span
+          aria-hidden
+          style={arrowStyle}
+          className={cn('absolute h-0 w-0 border-4', arrowBorderStyles[resolvedSide])}
+        />
+      ) : (
+        <span aria-hidden className={cn('absolute h-0 w-0 border-4', arrowPosition[side])} />
+      )}
+    </span>
+  );
+
+  return (
+    <span
+      ref={mergeRefs(ref, anchorRef)}
+      data-test-id={dataTestId}
+      className={cn('inline-flex', !portalTarget && 'relative')}
+    >
+      {trigger}
+      {open && (portalTarget ? createPortal(bubble, portalTarget) : bubble)}
     </span>
   );
 });

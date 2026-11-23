@@ -5,6 +5,7 @@ import { Button } from '../Button';
 import { DatePicker } from '../DatePicker';
 import { DropdownContent, DropdownItem, DropdownMenu, DropdownTrigger } from '../DropdownMenu';
 import { SelectV2 } from '../SelectV2';
+import { Tooltip } from '../Tooltip';
 import { Drawer } from './Drawer';
 import type { DrawerProps } from './Drawer.types';
 
@@ -61,8 +62,23 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {};
 
+function LeftSideTemplate({ open: initialOpen, ...args }: DrawerProps) {
+  const [open, setOpen] = useState(initialOpen);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open drawer</Button>
+      <Drawer {...args} open={open} onClose={() => setOpen(false)}>
+        <Tooltip content="This tooltip portals above the drawer" side="right">
+          <Button variant="secondary">Hover for tooltip</Button>
+        </Tooltip>
+      </Drawer>
+    </>
+  );
+}
+
 export const LeftSide: Story = {
   args: { side: 'left' },
+  render: LeftSideTemplate,
 };
 
 export const TopSide: Story = {
