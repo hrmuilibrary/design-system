@@ -27,6 +27,7 @@ import type {
 import { Check, ChevronDown, Loader2, X } from 'lucide-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '../../lib/cn';
+import { RequiredMark } from '../../lib/RequiredMark';
 import { createTestId } from '../../lib/testId';
 import { mergeRefs } from '../../lib/mergeRefs';
 import { usePortalContainer } from '../../lib/PortalContext';
@@ -702,11 +703,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
               className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
             >
               {label}
-              {required && (
-                <span className="text-fg-danger" aria-hidden>
-                  *
-                </span>
-              )}
+              {required && <RequiredMark />}
             </label>
           )}
           {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}

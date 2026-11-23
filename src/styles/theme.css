@@ -28,7 +28,7 @@
   --color-fg-info: var(--color-blue-600);
   --color-fg-success: var(--color-green-600);
   --color-fg-warning: var(--color-yellow-800);
-  --color-fg-danger: var(--color-red-800);
+  --color-fg-danger: var(--color-red-600);
 
   /* Borders */
   --color-border-default: var(--color-gray-200);
@@ -65,6 +65,8 @@
   --color-fg-secondary: var(--color-gray-400);
   --color-fg-tertiary: var(--color-gray-500);
   --color-fg-disabled: var(--color-gray-600);
+  /* Same red as light mode, per design (light + dark mockups both use red-600). */
+  --color-fg-danger: var(--color-red-600);
 
   --color-border-default: rgba(255, 255, 255, 0.05);
   --color-border-subtle: rgba(255, 255, 255, 0.03);

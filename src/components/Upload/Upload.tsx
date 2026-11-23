@@ -10,6 +10,7 @@ import {
   Pencil,
 } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { RequiredMark } from '../../lib/RequiredMark';
 import { Button } from '../Button';
 import type {
   FileValidationOptions,
@@ -177,11 +178,7 @@ export const Upload = forwardRef<HTMLDivElement, UploadProps>(function Upload(
       {label && (
         <span className="text-p-std font-medium text-fg-default inline-flex items-center gap-1">
           {label}
-          {required && (
-            <span className="text-red-600" aria-hidden>
-              *
-            </span>
-          )}
+          {required && <RequiredMark />}
         </span>
       )}
       {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}
