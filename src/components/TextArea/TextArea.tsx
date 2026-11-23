@@ -1,5 +1,6 @@
 import { forwardRef, useId, useState, type ChangeEvent } from 'react';
 import { cn } from '../../lib/cn';
+import { RequiredMark } from '../../lib/RequiredMark';
 import type { TextAreaProps } from './TextArea.types';
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextArea(
@@ -55,11 +56,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function 
               className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
             >
               {label}
-              {required && (
-                <span className="text-red-600" aria-hidden>
-                  *
-                </span>
-              )}
+              {required && <RequiredMark />}
             </label>
           )}
           {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}

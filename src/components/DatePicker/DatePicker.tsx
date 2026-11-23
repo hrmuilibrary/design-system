@@ -3,6 +3,7 @@ import type { MouseEvent as ReactMouseEvent, KeyboardEvent as ReactKeyboardEvent
 import { Calendar, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
+import { RequiredMark } from '../../lib/RequiredMark';
 import { usePortalContainer } from '../../lib/PortalContext';
 import { useFloatingPosition } from '../../lib/useFloatingPosition';
 import { createTestId } from '../../lib/testId';
@@ -283,11 +284,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
           className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
         >
           {label}
-          {required && (
-            <span className="text-red-600" aria-hidden>
-              *
-            </span>
-          )}
+          {required && <RequiredMark />}
         </label>
       )}
       <div ref={fieldRef} className="relative">

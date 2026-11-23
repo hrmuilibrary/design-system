@@ -1,5 +1,6 @@
 import { createContext, forwardRef, useContext, useId, type ChangeEvent } from 'react';
 import { cn } from '../../lib/cn';
+import { RequiredMark } from '../../lib/RequiredMark';
 import { isSameOptionValue } from '../../lib/optionValue';
 import type { RadioGroupProps, RadioProps, RadioSize, RadioValue } from './Radio.types';
 
@@ -77,11 +78,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
               className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
             >
               {label}
-              {required && (
-                <span className="text-red-600" aria-hidden>
-                  *
-                </span>
-              )}
+              {required && <RequiredMark />}
             </span>
           )}
           {groupEl}

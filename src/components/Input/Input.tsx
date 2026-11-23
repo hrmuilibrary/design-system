@@ -1,6 +1,7 @@
 import { forwardRef, useId } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { RequiredMark } from '../../lib/RequiredMark';
 import type { InputProps, InputSize } from './Input.types';
 
 const sizeStyles: Record<InputSize, string> = {
@@ -64,11 +65,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
               className="text-p-std font-medium text-fg-default inline-flex items-center gap-1"
             >
               {label}
-              {required && (
-                <span className="text-red-600" aria-hidden>
-                  *
-                </span>
-              )}
+              {required && <RequiredMark />}
             </label>
           )}
           {labelAddons && <span className="inline-flex items-center gap-1">{labelAddons}</span>}

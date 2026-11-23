@@ -149,7 +149,7 @@ export const lightTheme = {
   fgInfo: blue[600],
   fgSuccess: green[600],
   fgWarning: yellow[800],
-  fgDanger: red[800],
+  fgDanger: red[600],
 
   borderDefault: gray[200],
   borderSubtle: gray[100],
@@ -180,6 +180,7 @@ export const darkTheme = {
   fgSecondary: gray[400],
   fgTertiary: gray[500],
   fgDisabled: gray[600],
+  fgDanger: red[600],
 
   borderDefault: 'rgba(255, 255, 255, 0.05)',
   borderSubtle: 'rgba(255, 255, 255, 0.03)',

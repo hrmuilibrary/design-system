@@ -1,6 +1,7 @@
 import { forwardRef, useId } from 'react';
 import { Check, Minus } from 'lucide-react';
 import { cn } from '../../lib/cn';
+import { RequiredMark } from '../../lib/RequiredMark';
 import type { CheckboxProps, CheckboxSize } from './Checkbox.types';
 import { createTestId } from '../../lib/testId';
 
@@ -109,11 +110,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           {label && (
             <span className="text-p-std font-medium text-fg-default leading-tight inline-flex items-center gap-1">
               {label}
-              {required && (
-                <span className="text-red-600" aria-hidden>
-                  *
-                </span>
-              )}
+              {required && <RequiredMark />}
             </span>
           )}
           {errorText ? (
