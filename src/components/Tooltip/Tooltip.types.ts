@@ -13,5 +13,7 @@ export interface TooltipProps extends BaseProps {
   size?: TooltipSize;
   /** Delay in ms before the tooltip opens on hover/focus. */
   delay?: number;
+  /** DOM node to portal the tooltip into. Defaults to `document.body`. */
+  portalTarget?: HTMLElement | null;
   className?: string;
 }
