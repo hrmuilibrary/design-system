@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-DaJ6WEGw.js";function t(...e){return t=>{for(let n of e)n&&(typeof n==`function`?n(t):n.current=t)}}var n=e((()=>{}));export{t as n,n as t};
