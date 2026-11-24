@@ -13,7 +13,7 @@ export const FormContainer = forwardRef<HTMLFormElement, FormContainerProps>(fun
     validationSchema,
     defaultValues,
     buttons,
-    mode = 'onBlur',
+    mode = 'onChange',
     shouldUnregister,
     shouldFocusError = true,
     formId,
