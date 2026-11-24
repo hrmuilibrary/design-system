@@ -1,6 +1,7 @@
 import { forwardRef, useId } from 'react';
 import { cn } from '../../lib/cn';
 import type { SwitchProps, SwitchSize } from './Switch.types';
+import { createTestId } from '../../lib/testId';
 
 const trackSize: Record<SwitchSize, string> = {
   md: 'h-6 w-11',
@@ -30,6 +31,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
 ) {
   const reactId = useId();
   const inputId = id ?? reactId;
+  const testId = createTestId(dataTestId);
 
   const control = (
     <span className="relative inline-flex shrink-0">
@@ -42,6 +44,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
         defaultChecked={defaultChecked}
         disabled={disabled}
         className="peer sr-only"
+        data-test-id={testId('input')}
         {...rest}
       />
       <span
@@ -50,7 +53,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(function Switch(
           trackSize[size],
           'peer-checked:bg-brand-500 dark:peer-checked:bg-brand-500',
           'peer-focus-visible:ring-2 peer-focus-visible:ring-brand-300 peer-focus-visible:ring-offset-2',
-          disabled && '!bg-bg-subtle',
+          disabled && 'bg-bg-subtle!',
         )}
       />
       <span

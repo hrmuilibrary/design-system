@@ -10,14 +10,14 @@ type TProps = {
 const callbackStack: TProps[] = [];
 
 function handleMouseDownEvent(event: MouseEvent) {
-  const callbackObject = callbackStack[callbackStack.length - 1];
+  const callbackObject = callbackStack.at(-1);
   if (!callbackObject) {
     return;
   }
   const { ref, callback, shouldRemoveCallback } = callbackObject;
   if (ref && !ref.contains(event.target as Node)) {
     if (shouldRemoveCallback) {
-      callbackStack.splice(callbackStack.length - 1, 1);
+      callbackStack.splice(-1, 1);
     }
     callback(event);
   }

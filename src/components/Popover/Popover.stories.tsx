@@ -76,7 +76,14 @@ export const AllSides: Story = {
   render: (args) => (
     <div className="grid grid-cols-2 gap-16 p-16">
       {SIDES.map((side) => (
-        <Popover key={side} {...args} side={side} closeOnScroll={false} className="max-h-54 overflow-y-auto" content={scrollableContent(side)}>
+        <Popover
+          key={side}
+          {...args}
+          side={side}
+          closeOnScroll={false}
+          className="max-h-54 overflow-y-auto"
+          content={scrollableContent(side)}
+        >
           <Button variant="secondary">{side}</Button>
         </Popover>
       ))}
