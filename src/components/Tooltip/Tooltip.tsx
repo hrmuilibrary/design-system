@@ -34,7 +34,16 @@ const arrowBorderStyles: Record<FloatingSide, string> = {
 };
 
 export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Tooltip(
-  { content, children, side = 'top', size = 'sm', delay = 150, portalTarget, className, dataTestId },
+  {
+    content,
+    children,
+    side = 'top',
+    size = 'sm',
+    delay = 150,
+    portalTarget,
+    className,
+    dataTestId,
+  },
   ref,
 ) {
   const [open, setOpen] = useState(false);
