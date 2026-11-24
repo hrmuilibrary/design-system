@@ -391,14 +391,14 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     [knownOptions],
   );
 
-  const currentSingle = isControlled ? (value as OptionValue | undefined) : internalSingle;
+  const currentSingle = isControlled ? (value as OptionValue | null) : internalSingle;
   const currentMulti = useMemo(
     () => (isControlled ? (value as OptionValue[] | undefined) : internalMulti) ?? [],
     [isControlled, value, internalMulti],
   );
 
   const selectedSingle: SingleValue<SelectV2Option> =
-    !isMulti && currentSingle !== undefined ? resolveOption(currentSingle) : null;
+    !isMulti && currentSingle != null ? resolveOption(currentSingle) : null;
   const selectedMulti: MultiValue<SelectV2Option> = isMulti ? currentMulti.map(resolveOption) : [];
 
   const wrappedLoadOptions = useMemo(() => {
