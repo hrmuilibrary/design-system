@@ -56,13 +56,11 @@ export interface TimePickerProps extends BaseProps, SelectV2SharedProps {
   filterTime?: (time: string) => boolean;
   /** Fill the parent's width instead of the intrinsic min-width, like DatePicker. */
   fullWidth?: boolean;
-  /** Force the mobile UI (`true`, a dialog with hour/minute columns) or the
+  /** Force the mobile UI (`true`, a dialog with hour/minute wheels) or the
    *  desktop dropdown (`false`). Default: mobile at viewports ≤ 768px (`useIsMobile`). */
   mobile?: boolean;
   /** Mobile dialog title. Defaults to `label`, then `'Select time'`. */
   mobileTitle?: ReactNode;
   /** Mobile dialog confirm button text. Default `'Apply'`. */
   mobileApplyText?: string;
-  /** Mobile dialog cancel button text. Default `'Cancel'`. */
-  mobileCancelText?: string;
 }

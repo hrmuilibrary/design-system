@@ -13,8 +13,9 @@ the user's browser or OS locale. That's why it deliberately doesn't use
   `step` minutes. Shares SelectV2's trigger, menu, keyboard navigation,
   sizes, error and helper text, and dark-mode tokens.
 - **Mobile** (viewports ≤ 768px, or `mobile`): a select-like trigger that
-  opens a dialog with an `HH:mm` field and tappable hour/minute columns.
-  Nothing changes until **Apply**.
+  opens a dialog with iOS-style hour and minute wheels
+  ([`@ncdai/react-wheel-picker`](https://react-wheel-picker.chanhdai.com)),
+  as in the previous library. Nothing changes until **Apply**.
 
 <Primary />
 
@@ -75,9 +76,8 @@ With `searchable` (default), users can type instead of scrolling:
 | `0907` (not a suggestion) | a `09:07` row appears first, with the 09 hour's suggestions |
 
 A complete time is also kept if the user types it and leaves the field.
-Partial or invalid text is discarded, never turned into `00:00`. On mobile,
-the dialog's `HH:mm` field opens the numeric keyboard and stays in sync with
-the columns.
+Partial or invalid text is discarded, never turned into `00:00`. Typing is a
+desktop feature; on mobile the time is picked with the wheels.
 
 ## Limits
 
@@ -96,6 +96,15 @@ same and renders the message below the control, replacing `helperText`.
 ## Mobile
 
 `mobile` forces either UI; by default it follows `useIsMobile()` (≤ 768px).
-`mobileTitle` (defaults to `label`), `mobileApplyText` and `mobileCancelText`
-customize the dialog. With `clearable`, the dialog also gets a **Clear**
-button.
+
+The dialog shows two infinite wheels, hours `00`–`23` and minutes `00`–`59`
+(every minute, regardless of `step`). It opens at the current value or, when
+empty, at the current time. Unavailable times are greyed out on the wheels
+and **Apply** stays disabled while one is selected. Close the dialog with
+its X to discard the change.
+
+`mobileTitle` (defaults to `label`) and `mobileApplyText` customize the
+dialog. With `clearable`, it also gets a **Clear** button.
+
+The wheels' structural CSS ships in `dist/styles.css`, so there's nothing
+extra to import.

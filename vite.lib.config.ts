@@ -47,6 +47,7 @@ export default defineConfig({
         'react-select/async',
         'react-select/creatable',
         'react-select/async-creatable',
+        '@ncdai/react-wheel-picker',
       ],
       output: {
         preserveModules: false,

@@ -1,14 +1,14 @@
 import { useId, useMemo, useState } from 'react';
 import { Clock } from 'lucide-react';
+import { WheelPicker, WheelPickerWrapper, type WheelPickerOption } from '@ncdai/react-wheel-picker';
 import { cn } from '../../lib/cn';
 import { createTestId } from '../../lib/testId';
 import { RequiredMark } from '../../lib/RequiredMark';
 import { Button } from '../Button';
-import { Input } from '../Input';
 import { Modal } from '../Modal';
 import type { TimePickerSize } from './TimePicker.types';
 import type { TimePickerViewProps } from './TimePickerDesktop';
-import { pad2, parseTypedTime } from './TimePicker.utils';
+import { dateToTime, pad2 } from './TimePicker.utils';
 
 // Same heights, padding and text sizes as SelectV2's control, so the mobile
 // trigger lines up with the desktop dropdown and other fields.
@@ -18,75 +18,39 @@ const triggerSizeClasses: Record<TimePickerSize, string> = {
   sm: 'min-h-8 px-2.5 text-p-sm',
 };
 
-const HOURS = Array.from({ length: 24 }, (_, h) => h);
+const HOURS = Array.from({ length: 24 }, (_, h) => pad2(h));
+const MINUTES = Array.from({ length: 60 }, (_, m) => pad2(m));
 
-interface ColumnItem {
-  value: number;
-  disabled: boolean;
-}
-
-function TimeColumn({
-  title,
-  items,
-  selected,
-  onSelect,
-  testId,
-}: {
-  title: string;
-  items: ColumnItem[];
-  selected: number | null;
-  onSelect: (value: number) => void;
-  testId?: string;
-}) {
-  return (
-    <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-      <span className="text-label-sm font-medium text-fg-tertiary text-center">{title}</span>
-      <div
-        role="listbox"
-        aria-label={title}
-        data-test-id={testId}
-        className="flex h-56 flex-col gap-0.5 overflow-y-auto overscroll-contain rounded-lg border border-border-default p-1"
-      >
-        {items.map((item) => {
-          const isSelected = item.value === selected;
-          return (
-            <button
-              key={item.value}
-              type="button"
-              role="option"
-              aria-selected={isSelected}
-              aria-disabled={item.disabled}
-              disabled={item.disabled}
-              onClick={() => onSelect(item.value)}
-              className={cn(
-                'shrink-0 rounded-md px-3 py-2.5 text-center text-p-md tabular-nums transition-colors',
-                isSelected
-                  ? 'bg-bg-brand-lighter font-medium text-fg-brand'
-                  : 'text-fg-default hover:bg-bg-subtle',
-                item.disabled && 'cursor-not-allowed opacity-40 hover:bg-transparent',
-              )}
-            >
-              {pad2(item.value)}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+// Wheel styling, ported from the previous library's `mobile_time_picker`:
+// hours hug the centre from the left, minutes from the right, over one shared
+// highlight band; the selected row is larger and bolder. Semantic tokens only,
+// so it follows `.dark`.
+const optionBase = 'text-p-md font-medium text-fg-tertiary data-[disabled]:opacity-40';
+const highlightBase = 'text-p-lg font-semibold text-fg-default data-[disabled]:opacity-40';
+const hourClassNames = {
+  optionItem: cn(optionBase, 'justify-end pr-5'),
+  highlightWrapper: 'bg-bg-subtle rounded-l-lg',
+  highlightItem: cn(highlightBase, 'justify-end pr-5'),
+};
+const minuteClassNames = {
+  optionItem: cn(optionBase, 'justify-start pl-5'),
+  highlightWrapper: 'bg-bg-subtle rounded-r-lg',
+  highlightItem: cn(highlightBase, 'justify-start pl-5'),
+};
 
 /**
- * Mobile UI: a select-like trigger that opens a dialog with an `HH:mm` field
- * (numeric keyboard) and tappable hour/minute columns. Nothing changes until
- * Apply, so a half-picked time never leaks out.
+ * Mobile UI, matching the previous library's TimePicker: a select-like
+ * trigger that opens a dialog with infinite hour (00–23) and minute (00–59)
+ * wheels (`@ncdai/react-wheel-picker`), confirmed with Apply. Unavailable
+ * times (`minTime`, `maxTime`, `excludeTimes`, `filterTime`) are greyed out
+ * on the wheels and can't be applied.
  */
 export function TimePickerMobile({
   value,
   onCommit,
+  times,
   isDisabled,
-  step,
   clearable = false,
-  searchable = true,
   size = 'md',
   label,
   required = false,
@@ -97,76 +61,57 @@ export function TimePickerMobile({
   errorText,
   mobileTitle,
   mobileApplyText = 'Apply',
-  mobileCancelText = 'Cancel',
   id,
   className,
   dataTestId,
-}: TimePickerViewProps & { step: number }) {
+}: TimePickerViewProps) {
   const reactId = useId();
   const triggerId = id ?? reactId;
   const testId = createTestId(dataTestId);
   const hasError = error || !!errorText;
 
   const [open, setOpen] = useState(false);
-  const [hour, setHour] = useState<number | null>(null);
-  const [minute, setMinute] = useState<number | null>(null);
-  const [text, setText] = useState('');
+  const [hour, setHour] = useState('00');
+  const [minute, setMinute] = useState('00');
 
-  const draft = hour !== null && minute !== null ? `${pad2(hour)}:${pad2(minute)}` : null;
-  const draftAllowed = draft !== null && !isDisabled(draft);
+  const isAllowed = (h: string, m: string) => !isDisabled(`${h}:${m}`);
 
-  // Minute column follows `step`; a typed/selected off-grid minute is added so it shows as selected.
-  const minuteValues = useMemo(() => {
-    const values = new Set<number>();
-    for (let m = 0; m < 60; m += Math.min(step, 60)) values.add(m);
-    if (minute !== null) values.add(minute);
-    return [...values].sort((a, b) => a - b);
-  }, [step, minute]);
+  const hourOptions = useMemo<WheelPickerOption[]>(
+    () =>
+      HOURS.map((h) => ({
+        value: h,
+        label: h,
+        disabled: !MINUTES.some((m) => !isDisabled(`${h}:${m}`)),
+      })),
+    [isDisabled],
+  );
+  const minuteOptions = useMemo<WheelPickerOption[]>(
+    () => MINUTES.map((m) => ({ value: m, label: m, disabled: isDisabled(`${hour}:${m}`) })),
+    [hour, isDisabled],
+  );
 
-  const hourItems = HOURS.map((h) => ({
-    value: h,
-    disabled: minuteValues.every((m) => isDisabled(`${pad2(h)}:${pad2(m)}`)),
-  }));
-  const minuteItems = minuteValues.map((m) => ({
-    value: m,
-    disabled: hour !== null && isDisabled(`${pad2(hour)}:${pad2(m)}`),
-  }));
+  const firstAllowedMinute = (h: string) => MINUTES.find((m) => isAllowed(h, m));
 
-  const setDraft = (h: number | null, m: number | null) => {
+  // Like the previous TimePicker, open at the current value or, when empty,
+  // at the current time — falling back to the first available suggestion
+  // if "now" is out of range.
+  const openDialog = () => {
+    const now = dateToTime(new Date());
+    const start = value ?? (!isDisabled(now) ? now : (times.find((t) => !isDisabled(t)) ?? now));
+    const [h = '00', m = '00'] = start.split(':');
     setHour(h);
     setMinute(m);
-    setText(h !== null && m !== null ? `${pad2(h)}:${pad2(m)}` : h !== null ? `${pad2(h)}:` : '');
-  };
-
-  const openDialog = () => {
-    const [h, m] = value ? value.split(':').map(Number) : [null, null];
-    setDraft(h ?? null, m ?? null);
     setOpen(true);
   };
 
-  const selectHour = (h: number) => {
-    // Keep the minute if it's still allowed in the new hour, else take the first allowed one.
-    const keep = minute !== null && !isDisabled(`${pad2(h)}:${pad2(minute)}`);
-    const firstAllowed = minuteValues.find((m) => !isDisabled(`${pad2(h)}:${pad2(m)}`));
-    setDraft(h, keep ? minute : (firstAllowed ?? null));
+  const changeHour = (h: string) => {
+    setHour(h);
+    // Keep the minute if it's still allowed in the new hour, else jump to the first allowed one.
+    if (!isAllowed(h, minute)) setMinute(firstAllowedMinute(h) ?? minute);
   };
 
-  const handleTextChange = (next: string) => {
-    setText(next);
-    const time = parseTypedTime(next);
-    if (time) {
-      const [h, m] = time.split(':').map(Number);
-      setHour(h ?? null);
-      setMinute(m ?? null);
-    }
-  };
-
-  const textInvalid = text !== '' && !parseTypedTime(text) && !/^\d{2}:$/.test(text);
-  const textError = textInvalid
-    ? 'Enter a time as HH:mm'
-    : draft && !draftAllowed
-      ? 'This time isn’t available'
-      : undefined;
+  const draft = `${hour}:${minute}`;
+  const draftAllowed = !isDisabled(draft);
 
   const apply = () => {
     if (!draftAllowed) return;
@@ -236,10 +181,10 @@ export function TimePickerMobile({
         size="sm"
         dataTestId={testId('dialog')}
         footer={
-          <div className="flex w-full items-center gap-2">
+          <div className="flex w-full gap-2">
             {clearable && value && (
               <Button
-                variant="tertiary"
+                variant="secondary"
                 onClick={() => {
                   onCommit(null);
                   setOpen(false);
@@ -249,52 +194,35 @@ export function TimePickerMobile({
                 Clear
               </Button>
             )}
-            <div className="ml-auto flex gap-2">
-              <Button variant="secondary" onClick={() => setOpen(false)}>
-                {mobileCancelText}
-              </Button>
-              <Button onClick={apply} disabled={!draftAllowed} dataTestId={testId('apply')}>
-                {mobileApplyText}
-              </Button>
-            </div>
+            <Button
+              fullWidth
+              onClick={apply}
+              disabled={!draftAllowed}
+              dataTestId={testId('apply')}
+              className="flex-1"
+            >
+              {mobileApplyText}
+            </Button>
           </div>
         }
       >
-        <div className="flex flex-col gap-4">
-          {searchable && (
-            <Input
-              aria-label="Time"
-              placeholder="HH:mm"
-              inputMode="numeric"
-              autoComplete="off"
-              size="lg"
-              value={text}
-              onChange={(e) => handleTextChange(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') apply();
-              }}
-              error={!!textError}
-              errorText={textError}
-              dataTestId={testId('input')}
-              className="tabular-nums"
+        <div className="py-2" data-test-id={testId('wheels')}>
+          <WheelPickerWrapper className="justify-center">
+            <WheelPicker
+              value={hour}
+              onValueChange={changeHour}
+              options={hourOptions}
+              infinite
+              classNames={hourClassNames}
             />
-          )}
-          <div className="flex gap-3">
-            <TimeColumn
-              title="HH"
-              items={hourItems}
-              selected={hour}
-              onSelect={selectHour}
-              testId={testId('hours')}
+            <WheelPicker
+              value={minute}
+              onValueChange={setMinute}
+              options={minuteOptions}
+              infinite
+              classNames={minuteClassNames}
             />
-            <TimeColumn
-              title="mm"
-              items={minuteItems}
-              selected={minute}
-              onSelect={(m) => setDraft(hour ?? 0, m)}
-              testId={testId('minutes')}
-            />
-          </div>
+          </WheelPickerWrapper>
         </div>
       </Modal>
     </div>

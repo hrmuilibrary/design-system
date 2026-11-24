@@ -13,8 +13,8 @@ import { createTimeDisabler, generateTimes, normalizeTime, safeStep } from './Ti
  * - Desktop: a SelectV2 (react-select) dropdown of suggested times every
  *   `step` minutes. Users can type a time too — partial input filters the
  *   suggestions, a complete time that isn't suggested gets its own row.
- * - Mobile (≤ 768px, or `mobile`): a trigger that opens a dialog with an
- *   `HH:mm` field and hour/minute columns, confirmed with Apply.
+ * - Mobile (≤ 768px, or `mobile`): a trigger that opens a dialog with hour
+ *   and minute wheels, confirmed with Apply (as in the previous library).
  *
  * This file owns the value (controlled or not) and the constraints; the two
  * UIs only render them.
@@ -71,11 +71,7 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(function T
 
   return (
     <div ref={ref} className={cn(fullWidth ? 'w-full' : 'w-fit min-w-[260px]', wrapperClassName)}>
-      {isMobile ? (
-        <TimePickerMobile {...shared} step={resolvedStep} />
-      ) : (
-        <TimePickerDesktop {...shared} />
-      )}
+      {isMobile ? <TimePickerMobile {...shared} /> : <TimePickerDesktop {...shared} />}
     </div>
   );
 });
