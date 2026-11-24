@@ -93,12 +93,19 @@ function SearchInput(props: Readonly<ComponentProps<typeof RSComponents.Input>>)
 }
 
 function DropdownIndicator(props: Readonly<ComponentProps<typeof RSComponents.DropdownIndicator>>) {
+  // `dropdownIcon` is threaded through `selectProps`, same as `dataTestId`.
+  const { dropdownIcon } = props.selectProps as unknown as { dropdownIcon?: ReactNode };
   return (
     <RSComponents.DropdownIndicator {...props}>
-      <ChevronDown
-        className={cn('h-4 w-4 transition-transform', props.selectProps.menuIsOpen && 'rotate-180')}
-        aria-hidden
-      />
+      {dropdownIcon ?? (
+        <ChevronDown
+          className={cn(
+            'h-4 w-4 transition-transform',
+            props.selectProps.menuIsOpen && 'rotate-180',
+          )}
+          aria-hidden
+        />
+      )}
     </RSComponents.DropdownIndicator>
   );
 }
@@ -294,6 +301,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     placeholder,
     label,
     labelAddons,
+    dropdownIcon,
     helperText,
     errorText,
     error = false,
@@ -597,6 +605,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
   const commonProps: Record<string, unknown> = {
     ...reactSelectProps,
     dataTestId,
+    dropdownIcon,
     inputId,
     unstyled: true,
     classNames,

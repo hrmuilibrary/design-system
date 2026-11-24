@@ -1,5 +1,6 @@
 import { useMemo, type FocusEvent } from 'react';
 import type { FilterOptionOption } from 'react-select';
+import { Clock } from 'lucide-react';
 import { SelectV2 } from '../SelectV2';
 import type { SelectV2Option } from '../SelectV2';
 import type { TimePickerProps } from './TimePicker.types';
@@ -85,6 +86,7 @@ export function TimePickerDesktop({
         (option.data as { __isNew__?: boolean }).__isNew__ === true ||
         matchesTypedTime(option.value, input, (t) => timeSet.has(t))
       }
+      dropdownIcon={<Clock className="h-4 w-4" aria-hidden />}
       creatable={searchable}
       isValidNewOption={(input) => typedNewTime(input) !== null}
       formatCreateLabel={(input) => typedNewTime(input)}

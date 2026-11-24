@@ -86,6 +86,9 @@ export interface SelectV2BaseProps extends BaseProps, Partial<SelectV2ReactSelec
   label?: ReactNode;
   /** Content rendered on the label row, right of the label text — e.g. an info tooltip trigger. */
   labelAddons?: ReactNode;
+  /** Replaces the chevron at the end of the control, e.g. a clock icon for a
+   *  time field. Unlike the chevron, it doesn't flip when the menu opens. */
+  dropdownIcon?: ReactNode;
   helperText?: ReactNode;
   errorText?: ReactNode;
   error?: boolean;
