@@ -1,17 +1,45 @@
 import type { ReactNode } from 'react';
 import type { BaseProps } from '../../types';
+import type { SelectV2BaseProps, SelectV2Size } from '../SelectV2/SelectV2.types';
 
-export type TimePickerSize = 'lg' | 'md' | 'sm';
+export type TimePickerSize = SelectV2Size;
 
-/** Mirrors SelectV2's and DatePicker's `menuPlacement` surface. */
-export type TimePickerMenuPlacement = 'auto' | 'bottom' | 'top';
+/** react-select's `menuPlacement` union, same as SelectV2/DatePicker. */
+export type TimePickerMenuPlacement = NonNullable<SelectV2BaseProps['menuPlacement']>;
 
-export interface TimePickerProps extends BaseProps {
+/** Field props TimePicker shares with SelectV2. Inherited rather than
+ *  redeclared, so their types and docs live in one place. */
+type SelectV2SharedProps = Pick<
+  SelectV2BaseProps,
+  | 'label'
+  | 'helperText'
+  | 'error'
+  | 'errorText'
+  | 'size'
+  | 'disabled'
+  | 'required'
+  | 'placeholder'
+  | 'clearable'
+  | 'searchable'
+  | 'menuPlacement'
+  | 'id'
+  | 'className'
+  | 'wrapperClassName'
+>;
+
+/**
+ * Props for TimePicker. The shared field props come from SelectV2, but a few
+ * defaults differ: `required` defaults to `false` (SelectV2: `true`),
+ * `searchable` to `true` (typing a time — `"930"`, `"0930"`, `"09:30"`), and
+ * `placeholder` to `'Select time'`. On mobile, `menuPlacement` has no effect.
+ */
+export interface TimePickerProps extends BaseProps, SelectV2SharedProps {
   /** Selected time as a 24-hour `"HH:mm"` string. `null` = controlled with no
    *  selection; leave `undefined` (optionally with `defaultValue`) to let the
    *  picker manage its own state. */
   value?: string | null;
-  /** Initial time when uncontrolled. */
+  /** Initial time (`"HH:mm"`) when uncontrolled. Declared here rather than
+   *  inherited: react-select's `defaultValue` takes an option object. */
   defaultValue?: string | null;
   /** Fires with the picked or typed `"HH:mm"` time, or `null` when cleared. */
   onChange?: (value: string | null) => void;
@@ -26,30 +54,8 @@ export interface TimePickerProps extends BaseProps {
   excludeTimes?: string[];
   /** Arbitrary per-time predicate, evaluated alongside `minTime`/`maxTime`/`excludeTimes`. Times it rejects are disabled. */
   filterTime?: (time: string) => boolean;
-  /** Shows a clear control once a time is selected; clearing fires `onChange(null)`. */
-  clearable?: boolean;
-  /** Lets the user type a time — `"930"`, `"0930"`, `"9:30"` or `"09:30"`.
-   *  Partial input (`"9"`) filters the suggestions; a complete time that isn't
-   *  suggested (`"0907"`) is offered as its own row. Default `true`. */
-  searchable?: boolean;
-  size?: TimePickerSize;
-  label?: ReactNode;
-  /** Renders a red asterisk next to the label. */
-  required?: boolean;
-  /** Neutral message rendered below the control, replaced by `errorText` when present. */
-  helperText?: ReactNode;
-  /** Default `'Select time'`. */
-  placeholder?: string;
   /** Fill the parent's width instead of the intrinsic min-width, like DatePicker. */
   fullWidth?: boolean;
-  disabled?: boolean;
-  /** Which side the desktop list opens on. `'auto'` (default) flips upward
-   *  only when there isn't room below. Same surface as SelectV2/DatePicker. */
-  menuPlacement?: TimePickerMenuPlacement;
-  /** Switch the trigger to the danger border/ring styles. */
-  error?: boolean;
-  /** Message rendered below the control; also switches the trigger to the danger styles. */
-  errorText?: ReactNode;
   /** Force the mobile UI (`true`, a dialog with hour/minute columns) or the
    *  desktop dropdown (`false`). Default: mobile at viewports ≤ 768px (`useIsMobile`). */
   mobile?: boolean;
@@ -59,7 +65,4 @@ export interface TimePickerProps extends BaseProps {
   mobileApplyText?: string;
   /** Mobile dialog cancel button text. Default `'Cancel'`. */
   mobileCancelText?: string;
-  id?: string;
-  className?: string;
-  wrapperClassName?: string;
 }
