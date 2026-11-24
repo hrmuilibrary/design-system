@@ -1,0 +1,110 @@
+import { Meta, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as TimePickerStories from './TimePicker.stories';
+
+<Meta of={TimePickerStories} />
+
+# TimePicker
+
+A 24-hour time-of-day picker. Times are always shown as `HH:mm`, whatever
+the user's browser or OS locale. That's why it deliberately doesn't use
+`<input type="time">`, whose 12h/24h display follows the OS.
+
+- **Desktop**: a `SelectV2` (react-select) dropdown of suggested times every
+  `step` minutes. Shares SelectV2's trigger, menu, keyboard navigation,
+  sizes, error and helper text, and dark-mode tokens.
+- **Mobile** (viewports ≤ 768px, or `mobile`): a select-like trigger that
+  opens a dialog with iOS-style hour and minute wheels
+  ([`@ncdai/react-wheel-picker`](https://react-wheel-picker.chanhdai.com)),
+  as in the previous library. Nothing changes until **Apply**.
+
+<Primary />
+
+## Props
+
+<Controls />
+
+## Variants
+
+<Stories />
+
+## Value
+
+`value` is a 24-hour `"HH:mm"` string; `onChange` fires with the new time,
+or `null` when cleared. Pass `null` for a controlled picker with nothing
+selected, or leave `value` out (optionally with `defaultValue`) to let the
+picker manage its own state.
+
+```tsx
+const [time, setTime] = useState<string | null>(null);
+<TimePicker label="Start time" value={time} onChange={setTime} />;
+```
+
+Inside a `FormContainer`, wire it up through `FormField` like any other field:
+
+```tsx
+<FormField
+  name="startTime"
+  render={({ value, onChange, error, errorText }) => (
+    <TimePicker
+      label="Start time"
+      value={value}
+      onChange={onChange}
+      error={error}
+      errorText={errorText}
+    />
+  )}
+/>
+```
+
+Working with `Date`s? Two helpers convert in both directions:
+
+```tsx
+import { timeToDate, dateToTime } from '@dinofront/design_system';
+
+timeToDate('09:30', someDay); // new Date on someDay's calendar day at 09:30:00 local
+dateToTime(new Date()); // e.g. "14:05"
+```
+
+## Typing a time
+
+With `searchable` (default), users can type instead of scrolling:
+
+| Typed                     | Result                                                      |
+| ------------------------- | ----------------------------------------------------------- |
+| `9` / `09`                | the list narrows to the 09 hour                             |
+| `930` / `0930` / `09:30`  | `09:30` is highlighted; Enter picks it                      |
+| `0907` (not a suggestion) | a `09:07` row appears first, with the 09 hour's suggestions |
+
+A complete time is also kept if the user types it and leaves the field.
+Partial or invalid text is discarded, never turned into `00:00`. Typing is a
+desktop feature; on mobile the time is picked with the wheels.
+
+## Limits
+
+`minTime` / `maxTime` (inclusive), `excludeTimes` and `filterTime` make times
+unavailable. Suggested times **stay in the list**, greyed out and announced
+as disabled, and unavailable times can't be typed either. Same naming as
+DatePicker's `minDate` / `maxDate` / `excludeDates` / `filterDate`.
+
+## Validation state
+
+`error` switches the trigger to the danger border/ring; `errorText` does the
+same and renders the message below the control, replacing `helperText`.
+`required` adds the shared red asterisk. Unlike `SelectV2`, TimePicker is
+**not** required by default.
+
+## Mobile
+
+`mobile` forces either UI; by default it follows `useIsMobile()` (≤ 768px).
+
+The dialog shows two infinite wheels, hours `00`–`23` and minutes `00`–`59`
+(every minute, regardless of `step`). It opens at the current value or, when
+empty, at the current time. Unavailable times are greyed out on the wheels
+and **Apply** stays disabled while one is selected. Close the dialog with
+its X to discard the change.
+
+`mobileTitle` (defaults to `label`) and `mobileApplyText` customize the
+dialog. With `clearable`, it also gets a **Clear** button.
+
+The wheels' structural CSS ships in `dist/styles.css`, so there's nothing
+extra to import.

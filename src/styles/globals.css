@@ -1,5 +1,12 @@
 @import 'tailwindcss';
 
+/*
+ * Structural styles for TimePicker's mobile wheels (positioning, 3D ring,
+ * fade mask). Imported into the components layer so Tailwind utilities passed
+ * through the wheel's `classNames` still win over these defaults.
+ */
+@import '@ncdai/react-wheel-picker/style.css' layer(components);
+
 @import './tokens.css';
 @import './theme.css';
 

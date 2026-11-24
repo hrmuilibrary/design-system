@@ -76,10 +76,19 @@ export interface SelectV2BaseProps extends BaseProps, Partial<SelectV2ReactSelec
   /** Label for the "create" row, e.g. `(v) => `Add "${v}"``. Defaults to
    *  react-select's own `Create "..."` wording. */
   formatCreateLabel?: (inputValue: string) => ReactNode;
+  /** With `creatable`: decides whether the typed text offers a "create" row.
+   *  Defaults to react-select's rule (non-empty and not matching an existing
+   *  option's label). */
+  isValidNewOption?: (inputValue: string) => boolean;
+  /** With `creatable`: where the "create" row sits in the list. Default `'last'`. */
+  createOptionPosition?: 'first' | 'last';
   placeholder?: string;
   label?: ReactNode;
   /** Content rendered on the label row, right of the label text — e.g. an info tooltip trigger. */
   labelAddons?: ReactNode;
+  /** Replaces the chevron at the end of the control, e.g. a clock icon for a
+   *  time field. Unlike the chevron, it doesn't flip when the menu opens. */
+  dropdownIcon?: ReactNode;
   helperText?: ReactNode;
   errorText?: ReactNode;
   error?: boolean;
@@ -130,7 +139,9 @@ export interface SelectV2BaseProps extends BaseProps, Partial<SelectV2ReactSelec
 export type SelectV2Props =
   | (SelectV2BaseProps & {
       isMulti?: false;
-      value?: OptionValue;
+      /** `undefined` leaves the select uncontrolled; `null` keeps it
+       *  controlled with nothing selected. */
+      value?: OptionValue | null;
       defaultValue?: OptionValue;
       onChange?: (value: OptionValue | undefined) => void;
     })

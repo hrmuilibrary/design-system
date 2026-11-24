@@ -45,6 +45,7 @@ export * from './components/Tabs';
 export * from './components/Text';
 export * from './components/TextArea';
 export * from './components/ThemeSwitch';
+export * from './components/TimePicker';
 export * from './components/Tooltip';
 export * from './components/UnderConstruction';
 export * from './components/Upload';

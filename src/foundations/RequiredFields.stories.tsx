@@ -5,6 +5,7 @@ import { Input } from '../components/Input';
 import { Radio, RadioGroup } from '../components/Radio';
 import { SelectV2 } from '../components/SelectV2';
 import { TextArea } from '../components/TextArea';
+import { TimePicker } from '../components/TimePicker';
 import { Upload } from '../components/Upload';
 
 /**
@@ -35,6 +36,7 @@ function AllRequiredFields() {
       <TextArea label="TextArea" placeholder="Comment" required />
       <SelectV2 label="SelectV2" placeholder="Country" options={options} required />
       <DatePicker label="DatePicker" required />
+      <TimePicker label="TimePicker" required fullWidth />
       <RadioGroup label="RadioGroup" name="required-demo" required>
         <Radio value="a" label="Option A" />
         <Radio value="b" label="Option B" />
