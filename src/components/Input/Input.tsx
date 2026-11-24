@@ -1,8 +1,9 @@
-import { forwardRef, useId } from 'react';
+import { forwardRef, useId, type ReactNode } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { RequiredMark } from '../../lib/RequiredMark';
 import type { InputProps, InputSize } from './Input.types';
+import { createTestId } from '../../lib/testId';
 
 const sizeStyles: Record<InputSize, string> = {
   lg: 'h-12 text-p-md',
@@ -28,6 +29,20 @@ const iconSlotSize: Record<InputSize, string> = {
   sm: 'w-8',
 };
 
+interface InputMessageProps {
+  id: string;
+  isError: boolean;
+  children: ReactNode;
+}
+
+function InputMessage({ id, isError, children }: Readonly<InputMessageProps>) {
+  return (
+    <p id={id} className={cn('text-p-sm', isError ? 'text-red-700' : 'text-fg-secondary')}>
+      {children}
+    </p>
+  );
+}
+
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     label,
@@ -52,8 +67,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 ) {
   const reactId = useId();
   const inputId = id ?? reactId;
-  const describedBy = errorText ? `${inputId}-error` : helperText ? `${inputId}-help` : undefined;
   const hasError = error || !!errorText;
+
+  const messageId = `${inputId}-${errorText ? 'error' : 'help'}`;
+  const message = errorText || helperText;
+  const describedBy = message ? messageId : undefined;
+
+  const testId = createTestId(dataTestId);
 
   return (
     <div className={cn('flex flex-col gap-1.5 w-full', wrapperClassName)} data-test-id={dataTestId}>
@@ -109,6 +129,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             required={required}
             aria-invalid={hasError || undefined}
             aria-describedby={describedBy}
+            data-test-id={testId('input')}
             className={cn(
               'w-full h-full bg-transparent outline-none',
               'placeholder:text-fg-tertiary text-fg-default',
@@ -138,15 +159,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           </span>
         )}
       </div>
-      {errorText ? (
-        <p id={`${inputId}-error`} className="text-p-sm text-red-700">
-          {errorText}
-        </p>
-      ) : helperText ? (
-        <p id={`${inputId}-help`} className="text-p-sm text-fg-secondary">
-          {helperText}
-        </p>
-      ) : null}
+      {message && (
+        <InputMessage id={messageId} isError={!!errorText}>
+          {message}
+        </InputMessage>
+      )}
     </div>
   );
 });
