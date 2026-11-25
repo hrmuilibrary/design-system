@@ -21,7 +21,7 @@ export interface DatePickerProps extends BaseProps {
   rangeValue?: DateRange;
   onChangeRange?: (range: DateRange) => void;
   size?: DatePickerSize;
-  /** BCP-47 locale tag. Derives month names, weekday abbreviations, and the first day of the week. */
+  /** BCP-47 locale tag for the month names and weekday abbreviations. The week always starts on Monday, whatever the locale. */
   locale?: string;
   /** Trigger display format. Supports `dd`/`MM`/`yyyy` tokens plus a literal
    *  separator. Defaults to the pre-existing `'dd.MM.yyyy'`. Applied to both

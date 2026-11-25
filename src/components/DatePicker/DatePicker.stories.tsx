@@ -160,7 +160,7 @@ export const RangeWithMinMax: Story = {
 };
 
 export const RussianLocale: Story = {
-  name: 'Locale (ru-RU, Monday-first)',
+  name: 'Locale (ru-RU)',
   args: { locale: 'ru-RU', label: 'Date' },
 };
 

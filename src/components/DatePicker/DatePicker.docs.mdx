@@ -66,15 +66,14 @@ joins the same set of constraints — an arbitrary per-day predicate that
 disables any day it rejects, evaluated alongside `minDate`/`maxDate`/
 `excludeDates` rather than instead of them.
 
-## Locale
+## Locale and week start
 
-`locale` takes a BCP-47 tag (e.g. `'ru-RU'`, `'fr-FR'`) and derives the
-month names, weekday abbreviations, and first day of the week from it via
-the platform's `Intl` APIs — no date library required. **The default
-changed from Monday-first to Sunday-first**: earlier versions hard-coded a
-Monday-first grid, but the new default locale (`'en'`) starts the week on
-Sunday. This is intentional, not a regression — pass a Monday-first locale
-(e.g. `'en-GB'`) if you need the old grid shape.
+`locale` takes a BCP-47 tag (e.g. `'ru-RU'`, `'hy-AM'`) and translates the
+month names and weekday abbreviations via the platform's `Intl` APIs — no
+date library required. It defaults to English.
+
+The week always starts on **Monday**, whatever the locale (`'en-US'`
+included). This isn't configurable.
 
 ## Custom format
 
