@@ -187,6 +187,15 @@ SelectV2 renders react-select in `unstyled` mode and maps every part
 built from the same semantic tokens as `Select`/`MultiSelect`, so it looks
 like a native sibling rather than a third-party widget.
 
+## Search matching
+
+Typing filters options word by word: every word in the search box must
+appear somewhere in the option's `searchText` (or its string `label`), in any
+order and ignoring case. `Abel Emm` and `Emmerich Abel` both find
+`Abel Macejkovic Emmerich`. The multi-select "Select all" row counts with the
+same rule. Pass your own `filterOption` to replace it; async selects
+(`loadOptions`) leave filtering to the server and are not affected.
+
 ## Controlling the search text
 
 `inputValue` and `onInputChange` pass straight through to react-select.

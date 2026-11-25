@@ -42,6 +42,7 @@ import {
   MULTI_VALUE_REMOVE_CLASS,
   buildClassNames,
   clearStoredSelection,
+  filterOptionBySearchWords,
   hasStoredSelection,
   matchesSearch,
   optionLabelText,
@@ -628,6 +629,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
   const portalContainer = usePortalContainer();
 
   const commonProps: Record<string, unknown> = {
+    ...(isAsync ? {} : { filterOption: filterOptionBySearchWords }),
     ...reactSelectProps,
     dataTestId,
     dropdownIcon,

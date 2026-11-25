@@ -31,11 +31,23 @@ export function optionLabelText(option: SelectV2Option): string {
   );
 }
 
+// Every whitespace-separated word of the input must appear somewhere in the
+// option's text, in any order — so "Abel Emm" finds "Abel Macejkovic Emmerich".
 export function matchesSearch(option: SelectV2Option, inputValue: string): boolean {
-  const needle = inputValue.trim().toLowerCase();
-  if (!needle) return true;
+  const words = inputValue.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return true;
   const haystack = `${optionLabelText(option)} ${String(option.value)}`.toLowerCase();
-  return haystack.includes(needle);
+  return words.every((word) => haystack.includes(word));
+}
+
+// Default react-select `filterOption`: keeps the creatable "Create …" row and
+// filters everything else with `matchesSearch`, so the visible list and the
+// multi-select "Select all" count always agree.
+export function filterOptionBySearchWords(
+  candidate: { data: SelectV2Option & { __isNew__?: boolean } },
+  inputValue: string,
+): boolean {
+  return candidate.data.__isNew__ === true || matchesSearch(candidate.data, inputValue);
 }
 
 export function readStoredSelection(storageKey: string): unknown {
