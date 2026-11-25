@@ -88,6 +88,21 @@ export function parseTypedTime(input: string): string | null {
 }
 
 /**
+ * Whether a keystroke may type a character into the time field: digits and
+ * `:` only. Editing keys and shortcuts aren't plain characters, so they pass.
+ */
+export function isTimeInputKey(event: {
+  key: string;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  altKey: boolean;
+}): boolean {
+  if (event.ctrlKey || event.metaKey || event.altKey) return true;
+  if (event.key.length > 1) return true;
+  return /[\d:]/.test(event.key);
+}
+
+/**
  * The prefix of `"HH:mm"` options that match partially typed text:
  * `"9"` → `"09"`, `"1"` → `"1"` (01, 10–19), `"14"` → `"14:"`, `"93"` → `"09:3"`,
  * `"9:3"` → `"09:3"`, `"175"` → `"17:5"`. `null` when the text can't be a time.
@@ -118,21 +133,17 @@ export function typedTimePrefix(input: string): string | null {
 }
 
 /**
- * Whether a suggested option should stay visible for the typed text. A
- * complete time that is itself a suggestion narrows the list to just it (so
- * Enter picks it); one that isn't (e.g. "09:07" with a 15-minute step) keeps
- * that hour's suggestions visible next to the typed time's own row.
+ * Whether a suggested option should stay visible for the typed text. Partial
+ * text keeps every suggestion it's a prefix of ("9" → the 09 hour). A
+ * complete time narrows the list to that time alone: just the suggestion if
+ * there is one, otherwise nothing here (the typed-time row is added
+ * separately). Keeping other rows visible would let react-select's highlight
+ * stay on them — e.g. on the selected 01:15 while editing it to 01:18 — so
+ * Enter would pick that row instead of the typed time.
  */
-export function matchesTypedTime(
-  option: string,
-  input: string,
-  isSuggested: (time: string) => boolean,
-): boolean {
+export function matchesTypedTime(option: string, input: string): boolean {
   const prefix = typedTimePrefix(input);
-  if (prefix === null) return false;
-  if (option.startsWith(prefix)) return true;
-  const complete = parseTypedTime(input);
-  return complete !== null && !isSuggested(complete) && option.startsWith(complete.slice(0, 3));
+  return prefix !== null && option.startsWith(prefix);
 }
 
 /**

@@ -30,8 +30,9 @@ type SelectV2SharedProps = Pick<
 /**
  * Props for TimePicker. The shared field props come from SelectV2, but a few
  * defaults differ: `required` defaults to `false` (SelectV2: `true`),
- * `searchable` to `true` (typing a time — `"930"`, `"0930"`, `"09:30"`), and
- * `placeholder` to `'Select time'`. On mobile, `menuPlacement` has no effect.
+ * `searchable` to `true` (typing a time — `"930"`, `"0930"`, `"09:30"`),
+ * `clearable` to `true` (SelectV2: `false`), and `placeholder` to
+ * `'Select time'`. On mobile, `menuPlacement` has no effect.
  */
 export interface TimePickerProps extends BaseProps, SelectV2SharedProps {
   /** Selected time as a 24-hour `"HH:mm"` string. `null` = controlled with no

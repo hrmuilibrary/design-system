@@ -31,6 +31,8 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(function T
     filterTime,
     mobile,
     fullWidth = false,
+    // The one place this default lives, so desktop and mobile always agree.
+    clearable = true,
     wrapperClassName,
     ...rest
   },
@@ -67,7 +69,7 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(function T
     [minTime, maxTime, excludeKey, filterTime],
   );
 
-  const shared = { ...rest, value: currentValue, onCommit: commit, times, isDisabled };
+  const shared = { ...rest, clearable, value: currentValue, onCommit: commit, times, isDisabled };
 
   return (
     <div ref={ref} className={cn(fullWidth ? 'w-full' : 'w-fit min-w-[260px]', wrapperClassName)}>

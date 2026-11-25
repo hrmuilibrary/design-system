@@ -187,6 +187,34 @@ SelectV2 renders react-select in `unstyled` mode and maps every part
 built from the same semantic tokens as `Select`/`MultiSelect`, so it looks
 like a native sibling rather than a third-party widget.
 
+## Controlling the search text
+
+`inputValue` and `onInputChange` pass straight through to react-select.
+SelectV2 keeps its own input state either way, so leaving both off behaves
+exactly as before; pass them to read or drive what's in the search box.
+
+`onInputChange` fires for every react-select action, not only typing — the
+automatic clears on select, menu close and blur come through it too, so a
+controlled `inputValue` keeps emptying itself the way an uncontrolled one
+would. Seeding the box with the current selection is the main reason to
+reach for this, and lets the user amend a value instead of retyping it:
+
+```tsx
+const [text, setText] = useState('');
+
+<SelectV2
+  options={options}
+  value={value}
+  onChange={setValue}
+  inputValue={text}
+  onInputChange={setText}
+  onFocus={() => value && setText(String(value))}
+/>;
+```
+
+`TimePicker` uses exactly this to make a selected `01:00` editable down to
+`01:20`.
+
 ## Accessibility
 
 Keyboard navigation, combobox ARIA roles, and live-region announcements are
