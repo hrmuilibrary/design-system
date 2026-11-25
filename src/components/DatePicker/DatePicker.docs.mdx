@@ -66,6 +66,19 @@ joins the same set of constraints — an arbitrary per-day predicate that
 disables any day it rejects, evaluated alongside `minDate`/`maxDate`/
 `excludeDates` rather than instead of them.
 
+## Non-working days and today
+
+Pass non-working days and holidays as `excludeDates`. They can't be picked
+and are shown grey, like days outside `minDate`/`maxDate` or rejected by
+`filterDate`.
+
+```tsx
+<DatePicker label="Leave start" excludeDates={holidays} />
+```
+
+Today's date always has a brand outline (and `aria-current="date"`). When
+today is the selected day, the filled selection style wins.
+
 ## Locale and week start
 
 `locale` takes a BCP-47 tag (e.g. `'ru-RU'`, `'hy-AM'`) and translates the

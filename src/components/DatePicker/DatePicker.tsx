@@ -96,6 +96,7 @@ function formatDate(date: Date, format: string): string {
 
 function buildGrid(view: Date) {
   const first = startOfMonth(view);
+  // getDay() is 0 = Sunday; shift so Monday is column 0.
   const offset = (first.getDay() + 6) % 7;
   const daysInMonth = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
   const cells: (Date | null)[] = [];
@@ -236,6 +237,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
     };
   }, [locale]);
   const cells = buildGrid(view);
+  const today = startOfDay(new Date());
   const testId = createTestId(dataTestId);
   const currentRange = rangeValue ?? { start: null, end: null };
   const rangeEnd = currentRange.end ?? hoverEnd;
@@ -365,6 +367,10 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                     excludeDates,
                     filterDate,
                   );
+                  // Non-working days (`excludeDates`) look like any other
+                  // disabled day; `data-excluded` lets tests tell them apart.
+                  const isExcluded = !!excludeDates?.some((excluded) => sameDay(excluded, date));
+                  const isToday = sameDay(date, today);
                   const isSelected = !range && sameDay(date, value ?? null);
                   const isStart = range && sameDay(date, currentRange.start);
                   const isEnd = range && sameDay(date, rangeEnd);
@@ -381,6 +387,11 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                       : isInRange
                         ? 'bg-bg-brand-lighter text-brand-700'
                         : 'text-fg-default hover:bg-bg-container';
+                  // Today: a brand outline, unless it's filled as the selection.
+                  const todayClassName =
+                    isToday && !(isSelected || isStart || isEnd)
+                      ? 'ring-1 ring-inset ring-border-brand font-semibold'
+                      : undefined;
                   return (
                     <button
                       key={index}
@@ -389,6 +400,9 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                       aria-disabled={dayDisabled || undefined}
                       data-test-id={testId('day')}
                       data-date={toIsoDate(date)}
+                      data-today={isToday || undefined}
+                      data-excluded={isExcluded || undefined}
+                      aria-current={isToday ? 'date' : undefined}
                       onMouseEnter={() =>
                         !dayDisabled &&
                         range &&
@@ -397,7 +411,11 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
                         setHoverEnd(date)
                       }
                       onClick={() => !dayDisabled && pick(date)}
-                      className={cn('h-8 rounded-md text-p-sm font-medium', stateClassName)}
+                      className={cn(
+                        'h-8 rounded-md text-p-sm font-medium',
+                        stateClassName,
+                        todayClassName,
+                      )}
                     >
                       {date.getDate()}
                     </button>

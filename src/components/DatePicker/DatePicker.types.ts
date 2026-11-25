@@ -42,7 +42,7 @@ export interface DatePickerProps extends BaseProps {
   minDate?: Date;
   /** Latest selectable day, inclusive. Later days render disabled. Time-of-day is ignored. */
   maxDate?: Date;
-  /** Individual days that can't be picked. Matched by calendar day; time-of-day is ignored. */
+  /** Individual days that can't be picked, e.g. non-working days and holidays. Shown grey, like other disabled days. Matched by calendar day; time-of-day is ignored. */
   excludeDates?: Date[];
   /** Arbitrary per-day predicate, evaluated alongside `minDate`/`maxDate`/`excludeDates`. Days it rejects render disabled. */
   filterDate?: (date: Date) => boolean;
