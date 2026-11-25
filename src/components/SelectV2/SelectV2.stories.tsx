@@ -37,6 +37,22 @@ const peopleOptions: SelectV2Option[] = [
   },
 ];
 
+const employeeOptions: SelectV2Option[] = [
+  { value: 1, label: 'Abel Macejkovic Emmerich', description: 'CEO' },
+  { value: 2, label: 'Abraham Avetik Mkrtchyan', description: 'Product Manager' },
+  { value: 3, label: 'Adam Robert Keller', description: 'Junior Specialist' },
+  { value: 4, label: 'Ani Aram Muradyan', description: 'Senior Product Designer' },
+  { value: 5, label: 'Emma Abel Hartmann', description: 'Business Analyst' },
+  { value: 6, label: 'Gohar Davit Gevorgyan', description: 'Senior Frontend Developer' },
+  { value: 7, label: 'Lilit Aram Arzumanyan', description: 'Frontend Developer' },
+  { value: 8, label: 'Sona Karen Arshakyan', description: 'C# Back-end Developer' },
+  { value: 9, label: 'Sheridan Paul Goodwin', description: 'Advisor' },
+  { value: 10, label: 'Mary Anne Keller', description: 'HR Partner' },
+];
+
+const multiWordSearchHelperText =
+  'Try "Abel Emm", "keller adam", "aram" or "Ani Muradyan" — every word must match, in any order.';
+
 const bigOptions: SelectV2Option[] = Array.from({ length: 5000 }, (_, i) => ({
   value: i,
   label: `Option #${i + 1}`,
@@ -194,6 +210,41 @@ export const WithDescriptions: Story = {
     return <Controlled />;
   },
   args: { label: 'Reviewer', options: peopleOptions, placeholder: 'Choose a reviewer…' },
+};
+
+export const MultiWordSearch: Story = {
+  name: 'Search by multiple words',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<OptionValue | undefined>();
+      return <SelectV2 {...args} value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: {
+    label: 'Employee',
+    options: employeeOptions,
+    placeholder: 'Search by name…',
+    helperText: multiWordSearchHelperText,
+    clearable: true,
+  },
+};
+
+export const MultiWordSearchMulti: Story = {
+  name: 'Search by multiple words (isMulti)',
+  render: (args) => {
+    function Controlled() {
+      const [value, setValue] = useState<OptionValue[]>([]);
+      return <SelectV2 {...args} isMulti value={value} onChange={setValue} />;
+    }
+    return <Controlled />;
+  },
+  args: {
+    label: 'Employees',
+    options: employeeOptions,
+    placeholder: 'Search by name…',
+    helperText: multiWordSearchHelperText,
+  },
 };
 
 export const WithOptionActions: Story = {
