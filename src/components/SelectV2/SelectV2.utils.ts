@@ -31,11 +31,13 @@ export function optionLabelText(option: SelectV2Option): string {
   );
 }
 
+// Every whitespace-separated word of the input must appear somewhere in the
+// option's text, in any order — so "Abel Emm" finds "Abel Macejkovic Emmerich".
 export function matchesSearch(option: SelectV2Option, inputValue: string): boolean {
-  const needle = inputValue.trim().toLowerCase();
-  if (!needle) return true;
+  const words = inputValue.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return true;
   const haystack = `${optionLabelText(option)} ${String(option.value)}`.toLowerCase();
-  return haystack.includes(needle);
+  return words.every((word) => haystack.includes(word));
 }
 
 export function readStoredSelection(storageKey: string): unknown {

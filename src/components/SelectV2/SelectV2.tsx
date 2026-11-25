@@ -628,6 +628,17 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
   const portalContainer = usePortalContainer();
 
   const commonProps: Record<string, unknown> = {
+    // Word-by-word search (see `matchesSearch`) is the built-in filter, so the
+    // visible list and the "Select all" count agree. Async selects leave
+    // filtering to the server; the creatable "Create …" row is always kept.
+    ...(isAsync
+      ? {}
+      : {
+          filterOption: (
+            candidate: { data: SelectV2Option & { __isNew__?: boolean } },
+            input: string,
+          ) => candidate.data.__isNew__ === true || matchesSearch(candidate.data, input),
+        }),
     ...reactSelectProps,
     dataTestId,
     dropdownIcon,
