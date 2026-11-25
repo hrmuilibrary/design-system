@@ -109,11 +109,11 @@ export function buildClassNames(
     indicatorSeparator: () => 'hidden',
     menu: ({ placement }) =>
       cn(
-        'rounded-lg border border-border-default bg-bg-default shadow-z4 overflow-hidden z-50!',
+        'rounded-lg border border-border-default bg-bg-default shadow-z4 overflow-hidden z-50',
         placement === 'top' ? 'mb-1' : 'mt-1',
       ),
     menuList: () => 'max-h-60 overflow-y-auto py-1',
-    menuPortal: () => 'z-50!',
+    menuPortal: () => 'z-50',
     group: () => 'py-1',
     groupHeading: () =>
       'px-3 pt-2 pb-1 text-label-sm font-medium uppercase tracking-wide text-fg-tertiary select-none',
