@@ -19,6 +19,7 @@ import AsyncCreatableSelect from 'react-select/async-creatable';
 import type {
   FormatOptionLabelMeta,
   GroupBase,
+  InputActionMeta,
   MenuListProps,
   MultiValue,
   SelectInstance,
@@ -89,7 +90,21 @@ function Control(props: Readonly<ComponentProps<typeof RSComponents.Control>>) {
 
 function SearchInput(props: Readonly<ComponentProps<typeof RSComponents.Input>>) {
   const testIdProps = { 'data-test-id': selectTestId(props.selectProps, 'search') };
-  return <RSComponents.Input {...props} {...testIdProps} />;
+  // After a selection react-select hides the input (opacity 0) so the chosen
+  // value shows instead. When the consumer controls `inputValue` and keeps
+  // text in the box (e.g. TimePicker showing the time as editable text), the
+  // value display is suppressed by that text, so hiding it would leave the
+  // field blank: keep it visible.
+  const { inputValueControlled } = props.selectProps as unknown as {
+    inputValueControlled?: boolean;
+  };
+  return (
+    <RSComponents.Input
+      {...props}
+      {...testIdProps}
+      isHidden={inputValueControlled ? false : props.isHidden}
+    />
+  );
 }
 
 function DropdownIndicator(props: Readonly<ComponentProps<typeof RSComponents.DropdownIndicator>>) {
@@ -320,6 +335,8 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     className,
     wrapperClassName,
     dataTestId,
+    inputValue: inputValueProp,
+    onInputChange: onInputChangeProp,
     ...reactSelectProps
   } = props;
   // `singleLine` only exists on the `isMulti: true` branch of the
@@ -546,13 +563,21 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     return { checked: savePinned, label: saveSelectionLabel ?? t.saveSelectionLabel };
   }, [storageKey, savePinned, saveSelectionLabel, t]);
 
-  const [inputValue, setInputValue] = useState('');
+  const [internalInputValue, setInternalInputValue] = useState('');
+  // Same rule as react-select's own state manager: the prop wins when given.
+  const inputValue = inputValueProp ?? internalInputValue;
+  const controlsInput =
+    isSelectAllEligible || inputValueProp !== undefined || onInputChangeProp !== undefined;
   // Since `inputValue` is controlled here, react-select's built-in clearing
   // (on `set-value` after a selection, `menu-close`, `input-blur`) only takes
   // effect if we honor every action, not just `input-change`.
-  const handleInputChange = useCallback((nextInputValue: string) => {
-    setInputValue(nextInputValue);
-  }, []);
+  const handleInputChange = useCallback(
+    (nextInputValue: string, actionMeta: InputActionMeta) => {
+      setInternalInputValue(nextInputValue);
+      onInputChangeProp?.(nextInputValue, actionMeta);
+    },
+    [onInputChangeProp],
+  );
 
   const visibleSelectableOptions = useMemo(() => {
     if (!isSelectAllEligible) return [];
@@ -606,6 +631,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     ...reactSelectProps,
     dataTestId,
     dropdownIcon,
+    inputValueControlled: inputValueProp !== undefined,
     inputId,
     unstyled: true,
     classNames,
@@ -660,14 +686,10 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     loadingMessage: () => t.loadingMessage,
     'aria-invalid': hasError || undefined,
     'aria-required': required || undefined,
-    ...(isSelectAllEligible
-      ? {
-          inputValue,
-          onInputChange: handleInputChange,
-          selectAllState,
-          onSelectAllToggle: handleSelectAllToggle,
-        }
-      : {}),
+    // Only take over react-select's input state when something depends on it;
+    // every other select keeps react-select's own handling untouched.
+    ...(controlsInput ? { inputValue, onInputChange: handleInputChange } : {}),
+    ...(isSelectAllEligible ? { selectAllState, onSelectAllToggle: handleSelectAllToggle } : {}),
     ...(saveSelectionState
       ? { saveSelectionState, onSaveSelectionToggle: handleSaveSelectionToggle }
       : {}),

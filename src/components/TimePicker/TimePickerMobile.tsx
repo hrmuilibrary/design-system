@@ -50,7 +50,7 @@ export function TimePickerMobile({
   onCommit,
   times,
   isDisabled,
-  clearable = false,
+  clearable,
   size = 'md',
   label,
   required = false,

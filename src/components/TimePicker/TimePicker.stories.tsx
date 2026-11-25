@@ -30,7 +30,7 @@ const meta = {
     step: 15,
     fullWidth: false,
     searchable: true,
-    clearable: false,
+    clearable: true,
     disabled: false,
     error: false,
   },
@@ -55,9 +55,11 @@ export const Default: Story = {
   render: (args) => <Controlled {...args} />,
 };
 
+/** The time is editable text: click between the digits (or use the arrow
+ *  keys) and retype, e.g. 14:30 → click before the 0, Backspace, "4" → 14:40. */
 export const WithValue: Story = {
   render: (args) => <Controlled {...args} />,
-  args: { value: '14:30', clearable: true },
+  args: { value: '14:30' },
 };
 
 export const Required: Story = {
@@ -124,7 +126,7 @@ export const DarkTheme: Story = {
 /** The mobile dialog (forced with `mobile`; it's automatic at viewports ≤ 768px). */
 export const Mobile: Story = {
   render: (args) => <Controlled {...args} />,
-  args: { mobile: true, required: true, clearable: true, value: '09:30' },
+  args: { mobile: true, required: true, value: '09:30' },
 };
 
 export const MobileDark: Story = {

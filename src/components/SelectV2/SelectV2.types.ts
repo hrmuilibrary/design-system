@@ -34,7 +34,6 @@ type OwnedReactSelectProps =
   | 'getOptionValue'
   | 'id'
   | 'inputId'
-  | 'inputValue'
   | 'isClearable'
   | 'isDisabled'
   | 'isLoading'
@@ -44,7 +43,6 @@ type OwnedReactSelectProps =
   | 'loadingMessage'
   | 'noOptionsMessage'
   | 'onChange'
-  | 'onInputChange'
   | 'options'
   | 'placeholder'
   | 'required'
@@ -101,6 +99,11 @@ export interface SelectV2BaseProps extends BaseProps, Partial<SelectV2ReactSelec
   loading?: boolean;
   /** Shows a clear ("x") indicator once a value is selected. Default `false`. */
   clearable?: boolean;
+  /** Controls the search text, react-select style — e.g. seeding the box with
+   *  the current value so the user can amend it instead of retyping. Pair with
+   *  `onInputChange`, which also fires for react-select's automatic clears on
+   *  select, menu close and blur. */
+  inputValue?: string;
   /** Type-to-filter the option list. Defaults to `true`, except for a
    *  static (non-async, non-creatable) select with fewer than 10 options,
    *  where the search box is hidden automatically since it adds little
