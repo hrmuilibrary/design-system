@@ -21,7 +21,7 @@ export interface DatePickerProps extends BaseProps {
   rangeValue?: DateRange;
   onChangeRange?: (range: DateRange) => void;
   size?: DatePickerSize;
-  /** BCP-47 locale tag. Derives month names, weekday abbreviations, and the first day of the week. */
+  /** BCP-47 locale tag for the month names and weekday abbreviations. The week always starts on Monday, whatever the locale. */
   locale?: string;
   /** Trigger display format. Supports `dd`/`MM`/`yyyy` tokens plus a literal
    *  separator. Defaults to the pre-existing `'dd.MM.yyyy'`. Applied to both
@@ -42,7 +42,7 @@ export interface DatePickerProps extends BaseProps {
   minDate?: Date;
   /** Latest selectable day, inclusive. Later days render disabled. Time-of-day is ignored. */
   maxDate?: Date;
-  /** Individual days that can't be picked. Matched by calendar day; time-of-day is ignored. */
+  /** Individual days that can't be picked, e.g. non-working days and holidays. Shown grey, like other disabled days. Matched by calendar day; time-of-day is ignored. */
   excludeDates?: Date[];
   /** Arbitrary per-day predicate, evaluated alongside `minDate`/`maxDate`/`excludeDates`. Days it rejects render disabled. */
   filterDate?: (date: Date) => boolean;

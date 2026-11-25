@@ -132,6 +132,28 @@ export const ExcludedDates: Story = {
   },
 };
 
+/** Non-working days passed as `excludeDates` (here every weekend around the
+ *  current month) show grey. Today has a brand outline. */
+export const NonWorkingDays: Story = {
+  name: 'Non-working days and today',
+  render: (args) => {
+    function NonWorkingDemo() {
+      const [value, setValue] = useState<Date | null>(null);
+      const today = new Date();
+      const excludeDates: Date[] = [];
+      for (let offset = -45; offset <= 75; offset++) {
+        const day = new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset);
+        if (day.getDay() === 0 || day.getDay() === 6) excludeDates.push(day);
+      }
+      return <DatePicker {...args} value={value} onChange={setValue} excludeDates={excludeDates} />;
+    }
+    return <NonWorkingDemo />;
+  },
+  args: {
+    label: 'Leave start',
+  },
+};
+
 export const RangeWithMinMax: Story = {
   name: 'Range with min/max',
   render: (args) => {
@@ -160,7 +182,7 @@ export const RangeWithMinMax: Story = {
 };
 
 export const RussianLocale: Story = {
-  name: 'Locale (ru-RU, Monday-first)',
+  name: 'Locale (ru-RU)',
   args: { locale: 'ru-RU', label: 'Date' },
 };
 
