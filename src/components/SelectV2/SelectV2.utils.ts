@@ -40,16 +40,6 @@ export function matchesSearch(option: SelectV2Option, inputValue: string): boole
   return words.every((word) => haystack.includes(word));
 }
 
-// Default react-select `filterOption`: keeps the creatable "Create …" row and
-// filters everything else with `matchesSearch`, so the visible list and the
-// multi-select "Select all" count always agree.
-export function filterOptionBySearchWords(
-  candidate: { data: SelectV2Option & { __isNew__?: boolean } },
-  inputValue: string,
-): boolean {
-  return candidate.data.__isNew__ === true || matchesSearch(candidate.data, inputValue);
-}
-
 export function readStoredSelection(storageKey: string): unknown {
   try {
     const raw = window.localStorage.getItem(storageKey);
