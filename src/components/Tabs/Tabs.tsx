@@ -24,6 +24,7 @@ import type {
   TabsVariant,
 } from './Tabs.types';
 import type { OptionValue } from '../../types';
+import { createTestId } from '../../lib/testId';
 
 interface TabsContextValue {
   value: OptionValue;
@@ -201,6 +202,7 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab(
   const hasBadge = badge !== undefined && badge !== null && badge !== false;
   const tabId = id ?? `${tabsId}-tab-${value}`;
   const panelId = `${tabsId}-panel-${value}`;
+  const testId = createTestId(dataTestId);
 
   const base = cn(
     'group relative inline-flex items-center justify-center gap-2 font-medium outline-none transition-colors',
@@ -257,13 +259,13 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab(
       <span className="truncate">{children}</span>
       {hasBadge &&
         (badgeProps ? (
-          <Badge size="xs" {...badgeProps}>
+          <Badge size="xs" {...badgeProps} dataTestId={testId('badge')}>
             {badge}
           </Badge>
         ) : (
           <span
             className={cn(
-              'inline-flex items-center justify-center shrink-0 rounded-full px-1.5 h-5 min-w-[1.25rem]',
+              'inline-flex items-center justify-center shrink-0 rounded-full px-1.5 h-5 min-w-5',
               'text-label-xs font-semibold tabular-nums leading-none transition-colors',
               active ? badgeStyles[variant].on : badgeStyles[variant].off,
             )}
@@ -275,7 +277,7 @@ export const Tab = forwardRef<HTMLButtonElement, TabProps>(function Tab(
         <span
           aria-hidden
           className={cn(
-            'pointer-events-none absolute inset-x-0 -bottom-px h-[2px] rounded-full bg-brand-500 transition-opacity duration-150',
+            'pointer-events-none absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-brand-500 transition-opacity duration-150',
             active ? 'opacity-100' : 'opacity-0',
           )}
         />

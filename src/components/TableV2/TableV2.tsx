@@ -62,7 +62,7 @@ function useControllableState<T>(
   initial: T,
 ): [T, OnChangeFn<T>] {
   const [internal, setInternal] = useState(initial);
-  const value = controlledValue !== undefined ? controlledValue : internal;
+  const value = controlledValue ?? internal;
   const handleChange: OnChangeFn<T> = (updater) => {
     setInternal((old) =>
       typeof updater === 'function' ? (updater as (old: T) => T)(old) : updater,
@@ -74,6 +74,7 @@ function useControllableState<T>(
 
 interface HeaderCellProps<TData, TValue> {
   header: Header<TData, TValue>;
+  dataTestId: string | undefined;
   density: 'comfortable' | 'compact';
   enableSorting: boolean;
   enableFiltering: boolean;
@@ -87,6 +88,7 @@ const STRUCTURAL_COLUMN_IDS = new Set(['select', 'actions']);
 
 function HeaderCell<TData, TValue>({
   header,
+  dataTestId,
   density,
   enableSorting,
   enableFiltering,
@@ -94,7 +96,7 @@ function HeaderCell<TData, TValue>({
   enableColumnResizing,
   enablePinning,
   enableColumnVisibility,
-}: HeaderCellProps<TData, TValue>) {
+}: Readonly<HeaderCellProps<TData, TValue>>) {
   const column = header.column;
   const isStructural = STRUCTURAL_COLUMN_IDS.has(column.id);
   const canDrag = enableColumnOrdering && !isStructural;
@@ -112,6 +114,7 @@ function HeaderCell<TData, TValue>({
       ref={canDrag ? drag.setNodeRef : undefined}
       colSpan={header.colSpan}
       scope="col"
+      data-test-id={dataTestId}
       style={{
         width: enableColumnResizing ? header.getSize() : undefined,
         ...getPinnedStyles(column),
@@ -545,6 +548,7 @@ function TableV2Inner<TData, TValue = unknown>(
         <HeaderCell
           key={header.id}
           header={header}
+          dataTestId={testId(`header-${header.column.id}`)}
           density={density}
           enableSorting={enableSorting}
           enableFiltering={enableFiltering}

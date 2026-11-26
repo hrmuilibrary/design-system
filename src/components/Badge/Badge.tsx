@@ -2,6 +2,7 @@ import { forwardRef, type KeyboardEvent, type MouseEvent } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import type { BadgeProps, BadgeSize, BadgeStyle, BadgeVariant } from './Badge.types';
+import { createTestId } from '../../lib/testId';
 
 const sizeStyles: Record<BadgeSize, string> = {
   lg: 'h-7 px-2.5 text-p-std gap-1.5',
@@ -61,6 +62,12 @@ const accentStyles: Record<BadgeVariant, string> = {
   privacy: 'bg-purple-500 text-white',
 };
 
+const paletteByAppearance: Record<BadgeStyle, Record<BadgeVariant, string>> = {
+  filled: filledStyles,
+  outline: outlineStyles,
+  accent: accentStyles,
+};
+
 // Uniform per-appearance hover/active treatment rather than a 21-entry
 // (appearance x variant) table — brightness/neutral-tint reads consistently
 // across every color without hand-tuning a "one shade darker" value per
@@ -93,12 +100,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   },
   ref,
 ) {
-  const palette =
-    appearance === 'filled'
-      ? filledStyles[variant]
-      : appearance === 'outline'
-        ? outlineStyles[variant]
-        : accentStyles[variant];
+  const palette = paletteByAppearance[appearance][variant];
 
   if (dot) {
     return (
@@ -130,7 +132,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       onClick(event as unknown as MouseEvent<HTMLSpanElement>);
     }
   };
-
+  const testId = createTestId(dataTestId);
   return (
     <span
       ref={ref}
@@ -174,6 +176,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
       {onDismiss && (
         <button
           type="button"
+          data-test-id={testId('dismiss_button')}
           onClick={onDismiss}
           disabled={disabled}
           aria-label="Dismiss"
