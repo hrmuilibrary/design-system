@@ -118,7 +118,7 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
   {
     value,
     onChange,
-    clearable = false,
+    clearable = true,
     range = false,
     rangeValue,
     onChangeRange,
