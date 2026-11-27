@@ -1,1 +1,0 @@
-import{a as e,n as t}from"./rolldown-runtime-DaJ6WEGw.js";import{f as n}from"./iframe-LRtYaCwk.js";function r(e){(0,i.useEffect)(()=>{if(e)return a===0&&(o=document.body.style.overflow,document.body.style.overflow=`hidden`),a+=1,()=>{--a,a===0&&(document.body.style.overflow=o)}},[e])}var i,a,o,s=t((()=>{i=e(n(),1),a=0,o=``})),c=t((()=>{s()}));export{s as n,r,c as t};
