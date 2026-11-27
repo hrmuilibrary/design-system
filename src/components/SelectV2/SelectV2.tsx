@@ -322,7 +322,7 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
     error = false,
     required = true,
     loading = false,
-    clearable = false,
+    clearable = true,
     searchable,
     virtualized = false,
     emptyText,
