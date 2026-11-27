@@ -46,6 +46,7 @@ import {
   matchesSearch,
   optionLabelText,
   readStoredSelection,
+  sortSelectedFirst,
   writeStoredSelection,
 } from './SelectV2.utils';
 import type { SelectV2Option, SelectV2Props } from './SelectV2.types';
@@ -508,8 +509,12 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
   // react-select only renders group headings for its own nested
   // `GroupBase[]` shape, so fold same-group items together here. Items
   // without a `group` stay top-level, in their original relative order.
+  // For multi-selects, selected items are floated to the top (within their
+  // group, if grouped) so they're immediately visible when the menu opens.
   const groupedOptions = useMemo((): SelectV2Option[] | GroupBase<SelectV2Option>[] => {
-    if (!options.some((o) => o.group)) return options;
+    const selectedForSort = isMulti && !isAsync ? currentMulti : [];
+
+    if (!options.some((o) => o.group)) return sortSelectedFirst(options, selectedForSort);
 
     const groups = new Map<string, SelectV2Option[]>();
     const result: Array<SelectV2Option | GroupBase<SelectV2Option>> = [];
@@ -528,8 +533,12 @@ export const SelectV2 = forwardRef<Instance, SelectV2Props>(function SelectV2(pr
       group.push(option);
     }
 
+    for (const groupItems of groups.values()) {
+      groupItems.splice(0, groupItems.length, ...sortSelectedFirst(groupItems, selectedForSort));
+    }
+
     return result as SelectV2Option[] | GroupBase<SelectV2Option>[];
-  }, [options]);
+  }, [isMulti, isAsync, options, currentMulti]);
 
   // "Select all" only covers the static `options` case — async results
   // stream in from the server and aren't retained as a stable "currently

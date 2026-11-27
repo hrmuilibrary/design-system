@@ -1,6 +1,7 @@
 import type { ClassNamesConfig, GroupBase } from 'react-select';
 import { cn } from '../../lib/cn';
 import type { SelectV2Option, SelectV2Size } from './SelectV2.types';
+import type { OptionValue } from '../../types';
 
 const sizeControlStyles: Record<SelectV2Size, string> = {
   lg: 'min-h-12 text-p-md',
@@ -38,6 +39,18 @@ export function matchesSearch(option: SelectV2Option, inputValue: string): boole
   if (words.length === 0) return true;
   const haystack = `${optionLabelText(option)} ${String(option.value)}`.toLowerCase();
   return words.every((word) => haystack.includes(word));
+}
+
+export function sortSelectedFirst(
+  options: SelectV2Option[],
+  selectedValues: OptionValue[],
+): SelectV2Option[] {
+  if (selectedValues.length === 0) return options;
+  const selectedSet = new Set(selectedValues.map(String));
+  return [...options].sort(
+    (a, b) =>
+      (selectedSet.has(String(a.value)) ? 0 : 1) - (selectedSet.has(String(b.value)) ? 0 : 1),
+  );
 }
 
 export function readStoredSelection(storageKey: string): unknown {
@@ -109,11 +122,11 @@ export function buildClassNames(
     indicatorSeparator: () => 'hidden',
     menu: ({ placement }) =>
       cn(
-        'rounded-lg border border-border-default bg-bg-default shadow-z4 overflow-hidden z-50',
+        'rounded-lg border border-border-default bg-bg-default shadow-z4 overflow-hidden !z-[2]',
         placement === 'top' ? 'mb-1' : 'mt-1',
       ),
     menuList: () => 'max-h-60 overflow-y-auto py-1',
-    menuPortal: () => 'z-50',
+    menuPortal: () => '!z-[50]',
     group: () => 'py-1',
     groupHeading: () =>
       'px-3 pt-2 pb-1 text-label-sm font-medium uppercase tracking-wide text-fg-tertiary select-none',

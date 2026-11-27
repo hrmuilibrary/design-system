@@ -19,6 +19,7 @@ export interface UseFloatingPositionOptions {
   matchAnchorWidth?: boolean;
   /** Changing this re-measures the panel — for content whose size changes while open. */
   recomputeKey?: unknown;
+  zIndex?: number;
 }
 
 export interface FloatingPosition {
@@ -50,6 +51,7 @@ export function useFloatingPosition({
   shift = true,
   matchAnchorWidth = false,
   recomputeKey,
+  zIndex = 50,
 }: UseFloatingPositionOptions): FloatingPosition {
   const [position, setPosition] = useState<FloatingPosition>({
     style: { position: 'fixed', top: 0, left: 0, visibility: 'hidden' },
@@ -169,6 +171,7 @@ export function useFloatingPosition({
           position: 'fixed',
           top,
           left,
+          zIndex,
           ...(matchAnchorWidth ? { minWidth: anchorRect.width } : {}),
         },
         arrowStyle,
